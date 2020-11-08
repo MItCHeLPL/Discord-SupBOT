@@ -83,8 +83,8 @@ async def on_message(message):
     if (message.content.startswith('yo') and message.author.bot == False):
         await message.add_reaction('✅')
 
-    if(message.is_system()):
-        await message.channel.send("Yo, sup") #when new user joins server
+    if(message.is_system() and message.system_content.find("pinned") == -1):
+        await message.channel.send("Yo") #when new user joins server
 
     await bot.process_commands(message) #else
 
@@ -129,7 +129,8 @@ async def wiek(ctx, wiek : int):
 async def dmszary(ctx, text : str):
     """Pisze dm do szarego. (yo dmszary tekst)"""
 
-    user = bot.get_user(680816128045350933)
+    #user = bot.get_user(680816128045350933) #ID Szarego
+    user = bot.get_user(ctx.message.author.id)
     await user.send('\nYo,\n' + text)
     await ctx.send("Yo, wysłano dm do Szarego.")
 
@@ -145,7 +146,7 @@ async def impostor(ctx):
 
     user = await bot.fetch_user(member_ids[pickedUserId]) #id to user
     
-    await ctx.send("Yo, " + str(user.mention) + "jest impostorem.")
+    await ctx.send("Yo, " + str(user.mention) + " jest impostorem.")
 
 #counter
 @bot.command()
@@ -180,6 +181,8 @@ async def votekick(ctx, user : discord.Member):
 
     global kickArray
 
+    cleared = False
+
     channel = discord.utils.get(ctx.guild.voice_channels,  name=ctx.message.author.voice.channel.name) #get voice channel that caller is in
 
     member_ids = list(channel.voice_states.keys()) #list of user ids
@@ -195,6 +198,7 @@ async def votekick(ctx, user : discord.Member):
         else:
             if(usercount != kickArray[user]["usercount"] and kickArray[user]["usercount"] != None):#clears array of user when number of people changes
                 kickArray.clear()
+                cleared = True
                 await votekick(ctx, user)
             else:
                 if(ctx.message.author not in kickArray[user]['callers']):#adds new user
@@ -208,11 +212,15 @@ async def votekick(ctx, user : discord.Member):
     else:
         text += str(math.ceil(usercount/2))
 
+    #succesful kick
     if(kickArray[user]['votes'] > usercount/2):
         text += "\nWyrzucono: " + str(user.mention)
+        kickArray.clear()
+        cleared = True
         await user.edit(voice_channel=None)
 
-    await ctx.send(text)
+    if (cleared == false):
+        await ctx.send(text)
 
 #reddit
 @bot.command()
