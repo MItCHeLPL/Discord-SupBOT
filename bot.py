@@ -321,7 +321,8 @@ async def stats(ctx):
         bans += 1
 
     #Output
-    output = "__**Yo, statystyki serwera:**__"
+    output = "Yo,"
+    output += "\n__**Statystyki serwera:**__"
     output += "\n**➤Nazwa: **" + str(ctx.guild.name)
     output += "\n**➤Utworzono: **" + str(ctx.guild.created_at)[0:-7]
     output += "\n**➤Właściciel: **" + str(ctx.guild.owner.mention)
