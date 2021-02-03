@@ -22,7 +22,7 @@ client = discord.Client()
 
 #reddit ----------------------------------------------------------------------
 #reddit initialization
-reddit = praw.Reddit(client_id=os.getenv('PRAW.CLIENT_ID'), client_secret=os.getenv('PRAW.CLIENT_SECRET'), user_agent='BBSCH BOT')
+reddit = praw.Reddit(client_id=os.getenv('PRAW_CLIENT_ID'), client_secret=os.getenv('PRAW_CLIENT_SECRET'), user_agent='BBSCH BOT')
 
 #post to pick
 post_to_pick = 2
@@ -156,7 +156,7 @@ async def dmuser(ctx, user : discord.Member, text : str):
 #async def dmszary(ctx, text : str):
 #    """Pisze dm do szarego. (yo dmszary tekst)"""
 #
-#    user = bot.get_user(680816128045350933) #Szary ID
+#    user = bot.get_user(os.getenv('DISCORD_ID_SZARY')) #Szary ID
 #    await user.send('\nYo,\n' + text)
 #    await ctx.send("Yo, wysłano dm do Szarego.")
 
@@ -212,7 +212,7 @@ async def votekick(ctx, user : discord.Member):
 
     global kickArray
 
-    cleared = False
+    canceled = False
 
     channel = discord.utils.get(ctx.guild.voice_channels,  name=ctx.message.author.voice.channel.name) #get voice channel that caller is in
 
@@ -220,38 +220,38 @@ async def votekick(ctx, user : discord.Member):
 
     usercount = len(member_ids) #how many users are in the voice channel
 
-    if(ctx.message.author.voice.channel.name == user.voice.channel.name):#if user and target are on the same channel
+    if(ctx.message.author.voice.channel.id == user.voice.channel.id):#if user and target are on the same channel
         if(user not in kickArray):#initial user add
             kickArray[user] = {}
             kickArray[user]["votes"] = 1
             kickArray[user]["callers"] = [ctx.message.author]  
             kickArray[user]["usercount"] = usercount
-        else:
-            if(usercount != kickArray[user]["usercount"] and kickArray[user]["usercount"] != None):#clears array of user when number of people changes
+        else: #user is already in array
+            if(usercount != kickArray[user]["usercount"] and kickArray[user]["usercount"] != None): #clears array of user when number of people changes
                 kickArray.clear()
-                cleared = True
-                await votekick(ctx, user)
-            else:
-                if(ctx.message.author not in kickArray[user]['callers']):#adds new user
+                canceled = True
+                await ctx.send("Yo, Zmieniła się liczba użytkowników na kanale, rozpoczęto nowe głosowanie.")
+                await votekick(ctx, user) #add first vote
+            else: #add vote
+                if(ctx.message.author not in kickArray[user]['callers']):#adds new caller
                     kickArray[user]['votes'] += 1 
                     kickArray[user]['callers'].append(ctx.message.author)
 
     #output text
     text = "Votekick: " + str(user.mention) + " " + str(kickArray[user]['votes']) + "/"
-    if(math.ceil(usercount/2) % 2 == 0 or usercount == 2):
+    if((usercount/2) % 2 == 0 or usercount == 2): #if 2 users or 4,6...
         text += str(math.ceil(usercount/2) + 1)
     else:
-        text += str(math.ceil(usercount/2))
+        text += str(math.ceil(usercount/2)) #if 3,5... users
 
-    #succesful kick
-    if(kickArray[user]['votes'] > usercount/2):
+    #successful vote
+    if(kickArray[user]['votes'] > usercount/2): #if more than 50% users on vc voted
         text += "\nWyrzucono: " + str(user.mention)
         kickArray.clear()
-        cleared = True
-        await user.edit(voice_channel=None)
+        await user.edit(voice_channel=None) #kick user from vc
 
-    if (cleared == false):
-        await ctx.send(text)
+    if(canceled == False):#avoid double message
+        await ctx.send(text) #send output
 
 #send submission from reddit--------------------------------------------------
 #typed-in subreddit
@@ -310,15 +310,18 @@ async def stats(ctx):
     
     offline = ctx.guild.member_count - online
 
-    #Calculate kick amount
+    #Calculate total kick amount
     kicks = 0
     async for x in ctx.guild.audit_logs(before=None, after=None, oldest_first=None, action=discord.AuditLogAction.kick):
         kicks += 1
 
-    #Calculate ban amount
+    #Calculate total ban amount
     bans = 0
     async for x in ctx.guild.audit_logs(before=None, after=None, oldest_first=None, action=discord.AuditLogAction.ban):
         bans += 1
+
+    #Calculate current ban amount
+    bansnow = await ctx.guild.bans()
 
     #Output
     output = "Yo,"
@@ -336,13 +339,14 @@ async def stats(ctx):
 
     output += "\n\n**➤Ilość ról: **" + str(len(ctx.guild.roles))
 
-    output += "\n\n**➤Ilość banów: **" + str(bans)
-    output += "\n**➤Ilość kicków: **" + str(kicks)
+    output += "\n\n**➤Ilość banów aktualnie: **" + str(len(bansnow))
+    output += "\n**➤Ilość banów razem: **" + str(bans)
+    output += "\n**➤Ilość kicków razem: **" + str(kicks)
 
     output += "\n\n__**Statystyki bota:**__"
-    output += "\n**➤Ping: **" + str(round(ctx.bot.latency * 100, 2)) + "ms"
     output += "\n**➤Ilość serwerów na których jestem: **" + str(len(ctx.bot.guilds))
-
+    output += "\n**➤Ping: **" + str(round(ctx.bot.latency * 100, 2)) + "ms"
+    
     output += "\n\n__**Statystyki " + str(ctx.message.author.mention) + ":**__"
     output += "\n**➤Utworzono konto: **" + str(ctx.message.author.created_at)[0:-7]
     output += "\n**➤Dołączono do serwera: **" + str(ctx.message.author.joined_at)[0:-7]
