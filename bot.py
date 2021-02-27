@@ -2,6 +2,7 @@ import os
 import praw #reddit
 import random
 import math
+import asyncio
 import discord
 from dotenv import load_dotenv #loading tokens
 from discord.ext import commands
@@ -352,6 +353,68 @@ async def stats(ctx):
     output += "\n**➤Dołączono do serwera: **" + str(ctx.message.author.joined_at)[0:-7]
     
     await ctx.send(output)
+
+
+#VOICE---------------------------------------------------------------------------
+#MP3
+@bot.command()
+async def playbind(ctx, name:str, cooldown:int=None):
+    """Odtwarza binda (lista: 'yo bindlist')"""
+
+    if cooldown is None:
+        cooldown = 30
+
+    # grab the user who sent the command
+    user=ctx.message.author
+    voice_channel=user.voice.channel
+
+    if voice_channel != None: # only play music if user is in a voice channel
+        await leave(ctx) #leave from current vc
+        vc = await voice_channel.connect() #enter vc
+
+        vc.play(discord.FFmpegPCMAudio('mp3/'+name+'.mp3')) #play mp3
+
+        #wait cooldown amout of seconds and leave vc
+        while vc.is_playing():
+            await asyncio.sleep(1)
+        else:
+            await asyncio.sleep(cooldown)
+            await leave(ctx)
+
+
+@bot.command()
+async def bindlist(ctx):
+    """Wyświetla listę dostępnych bindów"""
+
+    list = os.listdir("./mp3") #take all the available binds
+
+    embedVar = discord.Embed(title="Dostępne bindy", description="'yo playbind [nazwabinda]'")
+    embedVar.colour = random.randint(0, 0xffffff)
+    
+    for val in list:
+        embedVar.add_field(name=str(val)[0:-4], value="yo playbind " + str(val)[0:-4], inline=False)
+
+    await ctx.send(embed=embedVar)
+
+
+@bot.command()
+async def join(ctx):
+    """Wchodzi na kanał"""
+    await playbind(ctx, 'yo', 300)
+
+
+@bot.command()
+async def leave(ctx):
+    """Wychodzi z kanału"""
+    #leave channel if is on voice channel
+    server = ctx.message.guild.voice_client
+    if server != None:
+        await server.disconnect()
+
+@bot.command()
+async def stop(ctx):
+    """Wychodzi z kanału"""
+    await leave(ctx)
 
 
 #Start bot --------------------------------------------------------------------
