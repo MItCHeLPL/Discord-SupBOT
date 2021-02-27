@@ -1,14 +1,16 @@
 import os
-import praw #reddit
 import random
 import math
 import asyncio
+import praw #reddit
 import discord
+import youtube_dl
 from dotenv import load_dotenv #loading tokens
 from discord.ext import commands
 from discord.utils import get
 from discord.ext.commands import CommandNotFound
 from discord.ext.commands import MemberConverter
+from gtts import gTTS as gtts
 
 #Bot initialization ----------------------------------------------------------
 load_dotenv() #read from .env file
@@ -110,7 +112,7 @@ async def on_command_error(ctx, error):
     if isinstance(error, CommandNotFound):
         await ctx.message.remove_reaction('✅', bot.user)
         await ctx.message.add_reaction('❌')
-        await ctx.send('Yo, nie rozumiem,\nWpisz "**yo help**" i przestań mi bota prześladować')
+        await ctx.reply('Yo, nie rozumiem,\nWpisz "**yo help**" i przestań mi bota prześladować')
 
 #on somebody is kicked from server run kick counter
 @bot.event
@@ -124,42 +126,74 @@ async def on_member_ban(guild, user):
     ctx = guild.system_channel
     await baninfo(ctx, user)
 
+#on something changes on bots vc
+@bot.event
+async def on_voice_state_update(member, before, after):
+    if(bot.voice_clients != [] and member.id != bot.user.id): #if bot is in the same voice channel
+
+        #ignore muting and deafing
+        if ((before.self_mute == False and after.self_mute == True) or (before.self_mute == True and after.self_mute == False)) or ((before.mute == False and after.mute == True) or (before.mute == True and after.mute == False)) or ((before.self_deaf == False and after.self_deaf == True) or (before.self_deaf == True and after.self_deaf == False)) or ((before.deaf == False and after.deaf == True) or (before.deaf == True and after.deaf == False)):
+            return
+
+        #somebody leaved/entered voice channel
+        else:
+            for server in bot.voice_clients: #cycle through all servers
+                if(server.channel == after.channel or server.channel == before.channel): #find if bot is/was on the same channel as user
+
+                    vc = server #get voice channel
+
+                    #play yo audio
+                    if vc.is_playing() == False:
+                        vc.play(discord.FFmpegPCMAudio('mp3/yo.mp3'), after=lambda e: print('Player error: %s' % e) if e else None)
+
+                    break
+
 #Bot commands----------------------------------------
 #sup
 @bot.command()
 async def sup(ctx):
     """Pytasz bota co tam u niego."""
-    await ctx.send("nm u?")
+    await ctx.reply("nm u?")
 
 #nm
 @bot.command()
 async def nm(ctx):
     """Reakcja bota na to że nic ciekawego się u ciebie nie dzieje."""
-    await ctx.send("cool.")
+    await ctx.reply("cool.")
 
 #wiek
 @bot.command()
 async def wiek(ctx, wiek : int):
     """Czy możesz rzucać kartę dla takiego wieku? (yo wiek liczba)"""
     wynik = (wiek/2) + 7
-    await ctx.send("Yo, " + str(wynik) + " i rzucasz kartę byniu.")
+    await ctx.reply("Yo, " + str(wynik) + " i rzucasz kartę byniu.")
 
 #send dm to user
 @bot.command()
-async def dmuser(ctx, user : discord.Member, text : str):
+async def dmuser(ctx, user : discord.Member, text : str, *args):
     """Pisze dm do użytkownika. (yo dmuser @użytkownik tekst)"""
 
-    await user.send('\nYo,\n' + text)
-    await ctx.send("Yo, wysłano dm do " + str(user.mention) + ".")
+    #get text after space
+    spaceText = ""
+    for txt in args:
+        spaceText += (" " + str(txt))
+
+    await user.send('\nYo,\n' + text + spaceText)
+    await ctx.reply("Yo, wysłano dm do " + str(user.mention) + ".")
 
 #send dm to Szary
-#@bot.command()
-#async def dmszary(ctx, text : str):
-#    """Pisze dm do szarego. (yo dmszary tekst)"""
-#
-#    user = bot.get_user(os.getenv('DISCORD_ID_SZARY')) #Szary ID
-#    await user.send('\nYo,\n' + text)
-#    await ctx.send("Yo, wysłano dm do Szarego.")
+@bot.command()
+async def dmszary(ctx, text : str, *args):
+    """Pisze dm do szarego. (yo dmszary tekst)"""
+
+    #get text after space
+    spaceText = ""
+    for txt in args:
+        spaceText += (" " + str(txt))
+
+    user = bot.get_user(os.getenv('DISCORD_ID_SZARY')) #Szary ID
+    await user.send('\nYo,\n' + text + spaceText)
+    await ctx.reply("Yo, wysłano dm do Szarego.")
 
 #picks random person from voicechannel you are in
 @bot.command()
@@ -174,7 +208,7 @@ async def impostor(ctx):
 
     user = await bot.fetch_user(member_ids[pickedUserId]) #id to user
     
-    await ctx.send("Yo, " + str(user.mention) + " jest impostorem.")
+    await ctx.reply("Yo, " + str(user.mention) + " jest impostorem.")
 
 #ban counter
 #get entries from audit log about said user and count ban entries
@@ -205,7 +239,6 @@ async def kickinfo(ctx, user : discord.Member):
     await ctx.send("Yo, " + str(user.mention) + " został zkickowany " + str(len(entries)) + " razy.")
 
 #vote kick---------------------------------------------------------------
-#TODO IMPROVE
 kickArray = {} #global array
 @bot.command()
 async def votekick(ctx, user : discord.Member):
@@ -252,11 +285,11 @@ async def votekick(ctx, user : discord.Member):
         await user.edit(voice_channel=None) #kick user from vc
 
     if(canceled == False):#avoid double message
-        await ctx.send(text) #send output
+        await ctx.reply(text) #send output
 
 #send submission from reddit--------------------------------------------------
 #typed-in subreddit
-@bot.command()
+@bot.command(aliases=['sub'])
 async def subreddit(ctx, sub : str):
     """Wysyła losowy post z danego subreddita. (yo reddit subreddit)"""
 
@@ -274,7 +307,7 @@ async def beaver(ctx):
     await ctx.send(embed=embed)
 
 #memes
-@bot.command()
+@bot.command(aliases=['Meme'])
 async def meme(ctx):
     """Wysyła losowego mema z r/memes."""
 
@@ -283,7 +316,7 @@ async def meme(ctx):
     await ctx.send(embed=embed)
 
 #dankmemes
-@bot.command()
+@bot.command(aliases=['DankMeme'])
 async def dankmeme(ctx):
     """Wysyła losowego mema z r/dankmemes."""
 
@@ -292,7 +325,7 @@ async def dankmeme(ctx):
     await ctx.send(embed=embed)
 
 #dankmemes
-@bot.command()
+@bot.command(aliases=['MakeMyDay'])
 async def makemyday(ctx):
     """Wysyła losowego mema z r/dankmemes."""
 
@@ -326,6 +359,8 @@ async def stats(ctx):
 
     #Output
     output = "Yo,"
+
+    #server
     output += "\n__**Statystyki serwera:**__"
     output += "\n**➤Nazwa: **" + str(ctx.guild.name)
     output += "\n**➤Utworzono: **" + str(ctx.guild.created_at)[0:-7]
@@ -341,13 +376,15 @@ async def stats(ctx):
     output += "\n\n**➤Ilość ról: **" + str(len(ctx.guild.roles))
 
     output += "\n\n**➤Ilość banów aktualnie: **" + str(len(bansnow))
-    output += "\n**➤Ilość banów razem: **" + str(bans)
-    output += "\n**➤Ilość kicków razem: **" + str(kicks)
+    output += "\n**➤Ilość banów w sumie: **" + str(bans)
+    output += "\n**➤Ilość kicków w sumie: **" + str(kicks)
 
+    #bot
     output += "\n\n__**Statystyki bota:**__"
     output += "\n**➤Ilość serwerów na których jestem: **" + str(len(ctx.bot.guilds))
     output += "\n**➤Ping: **" + str(round(ctx.bot.latency * 100, 2)) + "ms"
     
+    #user
     output += "\n\n__**Statystyki " + str(ctx.message.author.mention) + ":**__"
     output += "\n**➤Utworzono konto: **" + str(ctx.message.author.created_at)[0:-7]
     output += "\n**➤Dołączono do serwera: **" + str(ctx.message.author.joined_at)[0:-7]
@@ -357,64 +394,187 @@ async def stats(ctx):
 
 #VOICE---------------------------------------------------------------------------
 #MP3
-@bot.command()
+@bot.command(aliases=["bind"])
 async def playbind(ctx, name:str, cooldown:int=None):
     """Odtwarza binda (lista: 'yo bindlist')"""
 
+    #cooldown to leave channel
     if cooldown is None:
-        cooldown = 30
+        cooldown = 60 #wait 60sec by default
 
     # grab the user who sent the command
     user=ctx.message.author
     voice_channel=user.voice.channel
 
-    if voice_channel != None: # only play music if user is in a voice channel
-        await leave(ctx) #leave from current vc
-        vc = await voice_channel.connect() #enter vc
+    found = False #if user is in the same vc as bot
 
-        vc.play(discord.FFmpegPCMAudio('mp3/'+name+'.mp3')) #play mp3
+    if voice_channel != None: # only play music if user is in any voice channel
 
-        #wait cooldown amout of seconds and leave vc
-        while vc.is_playing():
-            await asyncio.sleep(1)
+        if(bot.voice_clients != []): #if bot is on any server
+
+            for server in bot.voice_clients: #cycle through all servers
+                if(server.channel == voice_channel): #find if bot is on the same channel as user
+                    vc = server #already on the same channel
+                    found = True #found user on the same channel
+                    break
+
+            if found == False: #User is on the same server, but on other channel
+                await leave(ctx, False, False) #switch channels
+                vc = await voice_channel.connect()
+                await ctx.reply("Yo, Dołączam na kanał **" + str(voice_channel.name) + "**, wyjdę z niego za **" + str(cooldown) + "sec**.") #send message to chat
+
         else:
-            await asyncio.sleep(cooldown)
-            await leave(ctx)
+            vc = await voice_channel.connect() #connect to the requested channel, bot isn't connected to the server
+            await ctx.reply("Yo, Dołączam na kanał **" + str(voice_channel.name) + "**, wyjdę z niego za **" + str(cooldown) + "sec**.") #send message to chat
+
+        vc.play(discord.FFmpegPCMAudio('mp3/'+name+'.mp3'), after=lambda e: print('Player error: %s' % e) if e else None) #play mp3
+
+        #say that bot plays mp3 file
+        if(name != "yo"):
+            await ctx.send('Yo, odtwarzam "**' + name + '**".') #send message to chat
 
 
-@bot.command()
+        #cooldown before leaving
+        while vc.is_playing(): #Checks if voice is playing
+            await asyncio.sleep(1) #While it's playing it sleeps for 1 second
+        else:
+            await asyncio.sleep(cooldown) #If it's not playing it waits cooldown seconds
+            while vc.is_playing(): #and checks once again if the bot is not playing
+                break #if it's playing it breaks
+            else:
+                await asyncio.sleep(cooldown) #wait again
+                await leave(ctx, True, True) #if not it disconnects
+
+
+@bot.command(aliases=['bindy'])
 async def bindlist(ctx):
     """Wyświetla listę dostępnych bindów"""
 
     list = os.listdir("./mp3") #take all the available binds
+    list = sorted(list, key=str.lower) #sort list alphabetically
 
-    embedVar = discord.Embed(title="Dostępne bindy", description="'yo playbind [nazwabinda]'")
-    embedVar.colour = random.randint(0, 0xffffff)
+    i = 0 #line counter
+    j = 1 #messages counter
+
+    color = random.randint(0, 0xffffff) #random color
+
+    #create new embed
+    embed=discord.Embed() 
+    embed.colour = color
+    embed.title = "Dostępne bindy: (1/" + str(math.ceil(len(list)/25)) + ")" #set title
+    embed.description="'yo playbind [nazwabinda]'" #set dsc
     
     for val in list:
-        embedVar.add_field(name=str(val)[0:-4], value="yo playbind " + str(val)[0:-4], inline=False)
 
-    await ctx.send(embed=embedVar)
+        #new message
+        if(i == 25):
+            #send embed
+            await ctx.send(embed=embed)
+
+            j += 1 #add to message counter
+
+            #create new embed
+            embed=discord.Embed() 
+            embed.colour = color
+            embed.title = "Yo, Dostępne bindy: (" + str(j) + "/" + str(math.ceil(len(list)/25)) + ")" #set title
+            embed.description="'yo playbind [nazwabinda]'" #set dsc
+
+            i = 0 #reset line counter
+
+        embed.add_field(name=str(val)[0:-4], value="yo playbind " + str(val)[0:-4], inline=False) #add field without .mp3
+        i += 1 #add to line counter
+
+    await ctx.send(embed=embed) #send last message
 
 
 @bot.command()
-async def join(ctx):
-    """Wchodzi na kanał"""
-    await playbind(ctx, 'yo', 300)
+async def join(ctx, cooldown:int=None):
+    """Wchodzi na kanał głosowy"""
+
+    #cooldown to leave channel
+    if cooldown is None:
+        cooldown = 600 #wait 10min by default
+
+    await playbind(ctx, 'yo', cooldown)
 
 
 @bot.command()
-async def leave(ctx):
-    """Wychodzi z kanału"""
+async def leave(ctx, sendMessage:bool=None, sayGoodbye:bool=None):
+    """Wychodzi z kanału głosowego"""
     #leave channel if is on voice channel
     server = ctx.message.guild.voice_client
     if server != None:
-        await server.disconnect()
+
+        if((sendMessage is not None and sendMessage == True) or (sendMessage is None)):
+            await ctx.send("Yo, wychodzę z kanału głosowego.")
+
+        if sayGoodbye == True or sayGoodbye is None:
+            vc = server #get voice channel
+            if vc.is_playing() == False:
+                vc.play(discord.FFmpegPCMAudio('mp3/yo.mp3'), after=lambda e: print('Player error: %s' % e) if e else None) #say goodbye
+            
+            while vc.is_playing(): #Checks if voice is playing
+                await asyncio.sleep(1) #While it's playing it sleeps for 1 second
+            else:
+                await server.disconnect() #leave
+
+        else:
+            await server.disconnect() #leave
+        
 
 @bot.command()
 async def stop(ctx):
-    """Wychodzi z kanału"""
-    await leave(ctx)
+    """Wychodzi z kanału głosowego"""
+    await leave(ctx, True, False)
+
+
+#TTS
+@bot.command(aliases=["TTS"])
+async def tts(ctx, userText : str, *args):
+    """Bot powtórzy co do niego napiszesz"""
+
+    #get text after space
+    spaceText = ""
+    for txt in args:
+        spaceText += (" " + str(txt))
+
+    txt = (userText + spaceText)
+
+    #generate tts
+    message = gtts(txt, lang = 'pl', tld='pl')
+    message.save('mp3/tts.mp3')
+
+    #play tts
+    await playbind(ctx, "tts")
+
+#Disabled because it's too much load for Raspberry Pi Zero W
+#YouTube
+#@bot.command(aliases=["playt", "yt", "youtube"])
+#async def playyt(ctx, youtubeLink):
+#
+#    #download vid
+#    youtube_dl.YoutubeDL({'format': 'bestaudio/best','outtmpl': 'mp3/yt.%(ext)s', 'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec':'mp3', #'preferredquality': '192'}]}).download([youtubeLink])
+#
+#    #play yt vid
+#    await playbind(ctx, "yt")
+
+
+#universal play
+@bot.command(aliases=["p"])
+async def play(ctx, txt):
+    """Odtwarza dźwięk"""
+
+    #Disabled because it's too much load for Raspberry Pi Zero W
+    #if link play yt
+    #if str(txt)[0:3] == "http":
+    #    await playyt(ctx, "yt")
+#
+    ##else play bind   
+    #else:
+    #    await playbind(ctx, txt)
+
+
+    await playbind(ctx, txt)
 
 
 #Start bot --------------------------------------------------------------------
