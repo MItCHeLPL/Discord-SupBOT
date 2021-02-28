@@ -287,6 +287,42 @@ async def votekick(ctx, user : discord.Member):
     if(canceled == False):#avoid double message
         await ctx.reply(text) #send output
 
+
+#Poll
+@bot.command(aliases=['poll', 'glosowanie', 'głosowanie'])
+async def ankieta(ctx, option1 : str, *args):
+    """Tworzy ankietę na max 10 opcji (yo ankieta [opcja1] [opcja2]...)"""
+
+    emojis = ['0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣']
+
+    #create options tables
+    options = []
+    options.append(option1)
+
+    #set text after space to options
+    for option in args:
+        options.append(str(option))
+
+    embed=discord.Embed() #create new embed
+    embed.colour = random.randint(0, 0xffffff) #random color
+    embed.title = "Ankieta" #set title
+
+    i = 0 #option id
+    for option in options:
+        if i<10:
+            embed.add_field(name=str(i), value=str(option), inline=False) #add option field
+            i += 1
+        else:
+            break
+
+    msg = await ctx.send(embed=embed)
+
+    for emoji in emojis:
+        if i > 0: 
+            await msg.add_reaction(emoji)
+            i -= 1
+
+
 #send submission from reddit--------------------------------------------------
 #typed-in subreddit
 @bot.command(aliases=['sub'])
@@ -430,7 +466,7 @@ async def playbind(ctx, name:str, cooldown:int=None):
         vc.play(discord.FFmpegPCMAudio('mp3/'+name+'.mp3'), after=lambda e: print('Player error: %s' % e) if e else None) #play mp3
 
         #say that bot plays mp3 file
-        if(name != "yo"):
+        if(name != "yo" and name != "tts" and name != "yt"):
             await ctx.send('Yo, odtwarzam "**' + name + '**".') #send message to chat
 
 
@@ -438,7 +474,6 @@ async def playbind(ctx, name:str, cooldown:int=None):
         while vc.is_playing(): #Checks if voice is playing
             await asyncio.sleep(1) #While it's playing it sleeps for 1 second
 
-        #TODO Improve cooldown to exit
         #cooldown to exit
         #else:
         #    await asyncio.sleep(cooldown) #If it's not playing it waits cooldown seconds
@@ -484,7 +519,8 @@ async def bindlist(ctx):
 
             i = 0 #reset line counter
 
-        embed.add_field(name=str(val)[0:-4], value="yo playbind " + str(val)[0:-4], inline=False) #add field without .mp3
+        if (str(val)[0:-4] != "yo" and str(val)[0:-4] != "tts" and str(val)[0:-4] != "yt"):
+            embed.add_field(name=str(val)[0:-4], value="yo playbind " + str(val)[0:-4], inline=False) #add field without .mp3
         i += 1 #add to line counter
 
     await ctx.send(embed=embed) #send last message
