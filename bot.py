@@ -421,11 +421,11 @@ async def playbind(ctx, name:str, cooldown:int=None):
             if found == False: #User is on the same server, but on other channel
                 await leave(ctx, False, False) #switch channels
                 vc = await voice_channel.connect()
-                await ctx.reply("Yo, Dołączam na kanał **" + str(voice_channel.name) + "**, wyjdę z niego za **" + str(cooldown) + "sec**.") #send message to chat
+                await ctx.reply("Yo, Dołączam na kanał **" + str(voice_channel.name) + "**.") #send message to chat
 
         else:
             vc = await voice_channel.connect() #connect to the requested channel, bot isn't connected to the server
-            await ctx.reply("Yo, Dołączam na kanał **" + str(voice_channel.name) + "**, wyjdę z niego za **" + str(cooldown) + "sec**.") #send message to chat
+            await ctx.reply("Yo, Dołączam na kanał **" + str(voice_channel.name) + "**.") #send message to chat
 
         vc.play(discord.FFmpegPCMAudio('mp3/'+name+'.mp3'), after=lambda e: print('Player error: %s' % e) if e else None) #play mp3
 
@@ -437,13 +437,16 @@ async def playbind(ctx, name:str, cooldown:int=None):
         #cooldown before leaving
         while vc.is_playing(): #Checks if voice is playing
             await asyncio.sleep(1) #While it's playing it sleeps for 1 second
-        else:
-            await asyncio.sleep(cooldown) #If it's not playing it waits cooldown seconds
-            while vc.is_playing(): #and checks once again if the bot is not playing
-                break #if it's playing it breaks
-            else:
-                await asyncio.sleep(cooldown) #wait again
-                await leave(ctx, True, True) #if not it disconnects
+
+        #TODO Improve cooldown to exit
+        #cooldown to exit
+        #else:
+        #    await asyncio.sleep(cooldown) #If it's not playing it waits cooldown seconds
+        #    while vc.is_playing(): #and checks once again if the bot is not playing
+        #        break #if it's playing it breaks
+        #    else:
+        #        await asyncio.sleep(cooldown) #wait again
+        #        await leave(ctx, True, True) #if not it disconnects
 
 
 @bot.command(aliases=['bindy'])
