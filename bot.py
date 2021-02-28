@@ -131,8 +131,16 @@ async def on_member_ban(guild, user):
 async def on_voice_state_update(member, before, after):
     if(bot.voice_clients != [] and member.id != bot.user.id): #if bot is in the same voice channel
 
-        #ignore muting and deafing
-        if ((before.self_mute == False and after.self_mute == True) or (before.self_mute == True and after.self_mute == False)) or ((before.mute == False and after.mute == True) or (before.mute == True and after.mute == False)) or ((before.self_deaf == False and after.self_deaf == True) or (before.self_deaf == True and after.self_deaf == False)) or ((before.deaf == False and after.deaf == True) or (before.deaf == True and after.deaf == False)):
+        #ignore bools
+        smute = ((before.self_mute == False and after.self_mute == True) or (before.self_mute == True and after.self_mute == False))
+        mute = ((before.mute == False and after.mute == True) or (before.mute == True and after.mute == False))
+        sdeaf = ((before.self_deaf == False and after.self_deaf == True) or (before.self_deaf == True and after.self_deaf == False))
+        deaf = ((before.deaf == False and after.deaf == True) or (before.deaf == True and after.deaf == False))
+        stream = ((before.self_stream == False and after.self_stream == True) or (before.self_stream == True and after.self_stream == False))
+        video = ((before.self_video == False and after.self_video == True) or (before.self_video == True and after.self_video == False))
+
+        #ignore
+        if smute or mute or sdeaf or deaf or stream or video:
             return
 
         #somebody leaved/entered voice channel
