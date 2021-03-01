@@ -146,13 +146,42 @@ async def on_voice_state_update(member, before, after):
         #somebody leaved/entered voice channel
         else:
             for server in bot.voice_clients: #cycle through all servers
-                if(server.channel == after.channel or server.channel == before.channel): #find if bot is/was on the same channel as user
+                if(server.channel == after.channel): #connect
 
                     vc = server #get voice channel
 
+                    hellos = ['mp3/yo.mp3', 'mp3VoiceLines/czesc.mp3', 'mp3VoiceLines/eloeloelo.mp3', 'mp3VoiceLines/hello_there.mp3', 'mp3VoiceLines/owitam.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/siema.mp3', 'mp3VoiceLines/siemkaa.mp3', 'mp3VoiceLines/yczesc.mp3', 'joł', 'cześć', 'witam', 'dzień dobry'] #greetings list
+                    voiceLineId = random.randint(0, (len(hellos)-1)) #random from greetings list
+
                     #play yo audio
                     if vc.is_playing() == False:
-                        vc.play(discord.FFmpegPCMAudio('mp3/yo.mp3'), after=lambda e: print('Player error: %s' % e) if e else None)
+
+                        if voiceLineId > 9: #if use tts   
+                            message = gtts(hellos[voiceLineId], lang = 'pl', tld='pl')
+                            message.save('mp3/tts.mp3')
+                            vc.play(discord.FFmpegPCMAudio('mp3/tts.mp3'), after=lambda e: print('Player error: %s' % e) if e else None)
+
+                        else:#play normal bind
+                            vc.play(discord.FFmpegPCMAudio(hellos[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else None)
+
+                    break
+
+                elif(server.channel == before.channel): #disconnect
+                    vc = server #get voice channel
+
+                    goodbyes = ['mp3/yo.mp3', 'mp3VoiceLines/czesc.mp3', 'mp3VoiceLines/eloeloelo.mp3', 'mp3VoiceLines/naura.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/siema.mp3', 'mp3VoiceLines/siemkaa.mp3', 'mp3VoiceLines/yczesc.mp3', 'joł', 'cześć', 'nara', 'do widzenia']
+                    voiceLineId = random.randint(0, (len(goodbyes)-1))
+
+                    #play yo audio
+                    if vc.is_playing() == False:
+
+                        if voiceLineId > 7: #if use tts   
+                            message = gtts(goodbyes[voiceLineId], lang = 'pl', tld='pl')
+                            message.save('mp3/tts.mp3')
+                            vc.play(discord.FFmpegPCMAudio('mp3/tts.mp3'), after=lambda e: print('Player error: %s' % e) if e else None)
+
+                        else:#play normal bind
+                            vc.play(discord.FFmpegPCMAudio(goodbyes[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else None)
 
                     break
 
@@ -527,7 +556,7 @@ async def bindlist(ctx):
 
             i = 0 #reset line counter
 
-        if (str(val)[0:-4] != "yo" and str(val)[0:-4] != "tts" and str(val)[0:-4] != "yt"):
+        if (str(val)[0:-4] != "tts" and str(val)[0:-4] != "yt"):
             embed.add_field(name=str(val)[0:-4], value="yo playbind " + str(val)[0:-4], inline=False) #add field without .mp3
         i += 1 #add to line counter
 
@@ -557,8 +586,20 @@ async def leave(ctx, sendMessage:bool=None, sayGoodbye:bool=None):
 
         if sayGoodbye == True or sayGoodbye is None:
             vc = server #get voice channel
+
+            goodbyes = ['mp3/yo.mp3', 'mp3VoiceLines/czesc.mp3', 'mp3VoiceLines/eloeloelo.mp3', 'mp3VoiceLines/naura.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/siema.mp3', 'mp3VoiceLines/siemkaa.mp3', 'mp3VoiceLines/yczesc.mp3', 'mp3VoiceLines/żegnam_was.mp3', 'joł', 'cześć', 'nara', 'do widzenia', 'jeszcze tu wrócę']
+            voiceLineId = random.randint(0, (len(goodbyes)-1))
+
             if vc.is_playing() == False:
-                vc.play(discord.FFmpegPCMAudio('mp3/yo.mp3'), after=lambda e: print('Player error: %s' % e) if e else None) #say goodbye
+
+                if voiceLineId > 8: #if use tts   
+                    message = gtts(goodbyes[voiceLineId], lang = 'pl', tld='pl')
+                    message.save('mp3/tts.mp3')
+                    vc.play(discord.FFmpegPCMAudio('mp3/tts.mp3'), after=lambda e: print('Player error: %s' % e) if e else None)
+
+                else: #play normal bind
+                    vc.play(discord.FFmpegPCMAudio(goodbyes[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else None)
+            
             
             while vc.is_playing(): #Checks if voice is playing
                 await asyncio.sleep(1) #While it's playing it sleeps for 1 second
@@ -576,7 +617,7 @@ async def stop(ctx):
 
 
 #TTS
-@bot.command(aliases=["TTS"])
+@bot.command(aliases=["TTS", "tss", "TSS"])
 async def tts(ctx, userText : str, *args):
     """Bot powtórzy co do niego napiszesz"""
 
