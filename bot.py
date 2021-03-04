@@ -78,6 +78,51 @@ def PostFromReddit(sub : str, ctx):
 
     return embed
 
+#Sounds----------------------------------------------------------------------------------------
+#arrays for sounds
+global hellos
+hellos = [11, 'mp3/yo.mp3', 'mp3VoiceLines/czesc.mp3', 'mp3VoiceLines/eloeloelo.mp3', 'mp3VoiceLines/hello_there.mp3', 'mp3VoiceLines/owitam.mp3', 'mp3VoiceLinesradczesc.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/siema.mp3', 'mp3VoiceLines/siemkaa.mp3', 'mp3VoiceLines/yczesc.mp3', 'jołsap', 'cześć', 'witam', 'dzień dobry'] #greetings list, first element is the last mp3
+global goodbyes
+goodbyes = [13, 'mp3/yo.mp3', 'mp3VoiceLines/czesc.mp3', 'mp3VoiceLines/eloeloelo.mp3', 'mp3VoiceLines/naura.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLinesradczesc.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/siema.mp3', 'mp3VoiceLines/siemkaa.mp3', 'mp3VoiceLines/yczesc.mp3', 'mp3VoiceLines/adios.mp3','mp3VoiceLines/gnight_girl_no_earrape.mp3', 'mp3VoiceLines/ja_spierdalam.mp3', 'joł', 'cześć', 'nara', 'do widzenia'] #goodbyes list, first element is the last mp3
+
+#Play sound from array
+def PlaySound(channel : discord.VoiceChannel, array):
+    for server in bot.voice_clients: #cycle through all servers
+        if(server.channel == channel): #connect
+
+            vc = server #get voice channel
+
+            voiceLineId = random.randint(1, (len(array)-1)) #random from greetings list
+
+            #play yo audio
+            if vc.is_playing() == False:
+
+                if voiceLineId > array[0]: #if use tts   
+                    message = gtts(array[voiceLineId], lang = 'pl', tld='pl')
+                    message.save('mp3/tts.mp3')
+                    vc.play(discord.FFmpegPCMAudio('mp3/tts.mp3'), after=lambda e: print('Player error: %s' % e) if e else None)
+
+                else:#play normal bind
+                    vc.play(discord.FFmpegPCMAudio(array[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else None)
+
+            break       
+
+#Channel editing--------------------------------------------------------------------------------
+async def RefreshInfoChannels():
+    for guild in bot.guilds:
+        if(guild.id == 495666208939573248): #boberschlesien
+                channel = discord.utils.get(guild.voice_channels, id=817042848490586152) #get info channel
+
+                #Calculate online/all members
+                online = 0
+                for user in guild.members:
+                    if user.status != discord.Status.offline:
+                        online += 1
+                
+                total = guild.member_count
+
+                await channel.edit(name='Online: ' + str(online) + '/' + str(total))
+
 #bot events------------------------------------------------
 #on bot start show this in console
 @bot.event
@@ -92,17 +137,35 @@ async def on_ready():
     #Listening to: "yo help" rich presence
     await bot.change_presence(activity = discord.Activity(type = discord.ActivityType.listening, name = 'yo help'))
 
+    print('\n Connected to:')
+    for guild in bot.guilds:
+        print(guild.name)
+
+        if(guild.id == 495666208939573248): #boberschlesien
+            channel = discord.utils.get(guild.voice_channels, id=615196854082207755) #get voice channel
+            
+            await channel.connect() #connect to channel
+
+            PlaySound(channel, hellos) #play hello sound
+
+        elif(guild.id == 536251306994827285): #scamelot
+            channel = discord.utils.get(guild.voice_channels, id=788503046685458502) #get voice channel
+
+            await channel.connect() #connect to channel
+
+            PlaySound(channel, hellos) #play hello sound
+
+    await RefreshInfoChannels() #refresh info channel
+
+
 #on messages with 'yo'
 @bot.event
 async def on_message(message):
     if (message.content == "yo" and message.author.bot == False):
-        await message.channel.send("yo") #if somebody says yo
+        await message.reply("yo") #if somebody says yo
 
     if (message.content.startswith('yo') and message.author.bot == False):
         await message.add_reaction('✅') #if message starts with yo
-
-    if(message.is_system() and message.system_content.find("pinned") == -1):
-        await message.channel.send("Yo") #when new user joins server
 
     await bot.process_commands(message) #else
 
@@ -114,17 +177,43 @@ async def on_command_error(ctx, error):
         await ctx.message.add_reaction('❌')
         await ctx.reply('Yo, nie rozumiem,\nWpisz "**yo help**" i przestań mi bota prześladować')
 
+#when somebody joins server
+@bot.event
+async def on_member_join(member): 
+    ctx = member.guild.system_channel #server messages channel
+
+    await ctx.send('Yo, witamy na serwerze ' + str(member.guild.name) + ', ' + str(member.mention)) #send hello message
+
+    if(member.guild.id == 495666208939573248): #if on boberschlesien
+        rank = discord.utils.get(member.guild.roles, id=503297149698572302) #Bot get guild(server) dj role
+        await member.add_roles(rank) #add role
+
+    await RefreshInfoChannels() #refresh info channel
+
 #on somebody is kicked from server run kick counter
 @bot.event
 async def on_member_remove(member):
     ctx = member.guild.system_channel
+
+    await ctx.send(str(member.mention) + ' opuścił serwer.')
+
     await kickinfo(ctx, member)
+
+    await RefreshInfoChannels() #refresh info channel
 
 #on somebody is banned from server run ban counter
 @bot.event
 async def on_member_ban(guild, user):
     ctx = guild.system_channel
+
+    await ctx.send(str(user.name) + ' został zbanowany z serwera.')
+
     await baninfo(ctx, user)
+
+#when somebody goes online etc.
+@bot.event
+async def on_member_update(before, after):
+    await RefreshInfoChannels() #refresh info channel
 
 #on something changes on bots vc
 @bot.event
@@ -147,43 +236,10 @@ async def on_voice_state_update(member, before, after):
         else:
             for server in bot.voice_clients: #cycle through all servers
                 if(server.channel == after.channel): #connect
-
-                    vc = server #get voice channel
-
-                    hellos = ['mp3/yo.mp3', 'mp3VoiceLines/czesc.mp3', 'mp3VoiceLines/eloeloelo.mp3', 'mp3VoiceLines/hello_there.mp3', 'mp3VoiceLines/owitam.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/siema.mp3', 'mp3VoiceLines/siemkaa.mp3', 'mp3VoiceLines/yczesc.mp3', 'joł sap', 'cześć', 'witam', 'dzień dobry'] #greetings list
-                    voiceLineId = random.randint(0, (len(hellos)-1)) #random from greetings list
-
-                    #play yo audio
-                    if vc.is_playing() == False:
-
-                        if voiceLineId > 10: #if use tts   
-                            message = gtts(hellos[voiceLineId], lang = 'pl', tld='pl')
-                            message.save('mp3/tts.mp3')
-                            vc.play(discord.FFmpegPCMAudio('mp3/tts.mp3'), after=lambda e: print('Player error: %s' % e) if e else None)
-
-                        else:#play normal bind
-                            vc.play(discord.FFmpegPCMAudio(hellos[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else None)
-
-                    break
+                    PlaySound(after.channel, hellos)
 
                 elif(server.channel == before.channel): #disconnect
-                    vc = server #get voice channel
-
-                    goodbyes = ['mp3/yo.mp3', 'mp3VoiceLines/czesc.mp3', 'mp3VoiceLines/eloeloelo.mp3', 'mp3VoiceLines/naura.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/siema.mp3', 'mp3VoiceLines/siemkaa.mp3', 'mp3VoiceLines/yczesc.mp3', 'joł', 'cześć', 'nara', 'do widzenia']
-                    voiceLineId = random.randint(0, (len(goodbyes)-1))
-
-                    #play yo audio
-                    if vc.is_playing() == False:
-
-                        if voiceLineId > 7: #if use tts   
-                            message = gtts(goodbyes[voiceLineId], lang = 'pl', tld='pl')
-                            message.save('mp3/tts.mp3')
-                            vc.play(discord.FFmpegPCMAudio('mp3/tts.mp3'), after=lambda e: print('Player error: %s' % e) if e else None)
-
-                        else:#play normal bind
-                            vc.play(discord.FFmpegPCMAudio(goodbyes[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else None)
-
-                    break
+                    PlaySound(before.channel, goodbyes)
 
 #Bot commands----------------------------------------
 #sup
@@ -405,7 +461,7 @@ async def makemyday(ctx):
     await dankmeme(ctx)
 
 #stats -----------------------------------------------------------------------
-@bot.command()
+@bot.command(aliases=['statystyki'])
 async def stats(ctx):
     """Pokazuje statystyki bota i serwera"""
 
@@ -563,7 +619,7 @@ async def bindlist(ctx):
     await ctx.send(embed=embed) #send last message
 
 
-@bot.command()
+@bot.command(aliases=["j", "J"])
 async def join(ctx, cooldown:int=None):
     """Wchodzi na kanał głosowy"""
 
@@ -574,7 +630,7 @@ async def join(ctx, cooldown:int=None):
     await playbind(ctx, 'yo', cooldown)
 
 
-@bot.command()
+@bot.command(aliases=["l", "L"])
 async def leave(ctx, sendMessage:bool=None, sayGoodbye:bool=None):
     """Wychodzi z kanału głosowego"""
     #leave channel if is on voice channel
@@ -584,23 +640,23 @@ async def leave(ctx, sendMessage:bool=None, sayGoodbye:bool=None):
         if((sendMessage is not None and sendMessage == True) or (sendMessage is None)):
             await ctx.send("Yo, wychodzę z kanału głosowego.")
 
+        #play goodbye sound
         if sayGoodbye == True or sayGoodbye is None:
+
             vc = server #get voice channel
 
-            goodbyes = ['mp3/yo.mp3', 'mp3VoiceLines/czesc.mp3', 'mp3VoiceLines/eloeloelo.mp3', 'mp3VoiceLines/naura.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/siema.mp3', 'mp3VoiceLines/siemkaa.mp3', 'mp3VoiceLines/yczesc.mp3', 'mp3VoiceLines/żegnam_was.mp3', 'joł', 'cześć', 'nara', 'do widzenia', 'jeszcze tu wrócę']
-            voiceLineId = random.randint(0, (len(goodbyes)-1))
+            voiceLineId = random.randint(1, (len(goodbyes)-1))
 
             if vc.is_playing() == False:
-
-                if voiceLineId > 10: #if use tts   
+            
+                if voiceLineId > goodbyes[0]: #if use tts   
                     message = gtts(goodbyes[voiceLineId], lang = 'pl', tld='pl')
                     message.save('mp3/tts.mp3')
                     vc.play(discord.FFmpegPCMAudio('mp3/tts.mp3'), after=lambda e: print('Player error: %s' % e) if e else None)
 
                 else: #play normal bind
                     vc.play(discord.FFmpegPCMAudio(goodbyes[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else None)
-            
-            
+
             while vc.is_playing(): #Checks if voice is playing
                 await asyncio.sleep(1) #While it's playing it sleeps for 1 second
             else:
@@ -610,10 +666,17 @@ async def leave(ctx, sendMessage:bool=None, sayGoodbye:bool=None):
             await server.disconnect() #leave
         
 
-@bot.command()
+@bot.command(aliases=["s", "S"])
 async def stop(ctx):
-    """Wychodzi z kanału głosowego"""
-    await leave(ctx, True, False)
+    """Zatrzymuje odtwarzanie"""
+    server = ctx.message.guild.voice_client 
+
+    if(server != None): #current voice channel   
+        vc = server #get voice channel  
+
+        #if playing stop
+        if vc.is_playing() == True:
+            vc.stop()
 
 
 #TTS
@@ -648,7 +711,7 @@ async def tts(ctx, userText : str, *args):
 
 
 #universal play
-@bot.command(aliases=["p"])
+@bot.command(aliases=["p", "P"])
 async def play(ctx, txt):
     """Odtwarza dźwięk"""
 
