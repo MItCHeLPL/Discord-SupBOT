@@ -161,8 +161,6 @@ async def on_ready():
     #Listening to: "yo help" rich presence
     await bot.change_presence(activity = discord.Activity(type = discord.ActivityType.listening, name = 'yo help'))
 
-    await RefreshInfoChannels() #refresh info channel
-
     print('\n Connected to:')
     for guild in bot.guilds:
         print(guild.name)
@@ -182,6 +180,8 @@ async def on_ready():
                 await channel.connect() #connect to channel
 
                 PlaySound(channel, hellos) #play hello sound
+
+    await RefreshInfoChannels() #refresh info channel
 
 
 #on messages with 'yo'
@@ -249,10 +249,8 @@ async def on_member_ban(guild, user):
 @bot.event
 async def on_member_update(before, after):
 
-    #when somebody goes online etc.
-    status = ((before.status == discord.Status.offline and after.status == discord.Status.Online) or (before.status == discord.Status.Online and after.status == discord.Status.offline))
-
-    if status:
+    #when somebody goes online or offline.
+    if before.status == discord.Status.offline or after.status == discord.Status.offline:
         await RefreshInfoChannels() #refresh info channel
 
 #on something changes on bots vc
