@@ -81,7 +81,7 @@ def PostFromReddit(sub : str, ctx):
 #Sounds----------------------------------------------------------------------------------------
 #arrays for sounds
 global hellos
-hellos = [11, 'mp3/yo.mp3', 'mp3VoiceLines/czesc.mp3', 'mp3VoiceLines/eloeloelo.mp3', 'mp3VoiceLines/hello_there.mp3', 'mp3VoiceLines/owitam.mp3', 'mp3VoiceLinesradczesc.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/siema.mp3', 'mp3VoiceLines/siemkaa.mp3', 'mp3VoiceLines/yczesc.mp3', 'jołsap', 'cześć', 'witam', 'dzień dobry'] #greetings list, first element is the last mp3
+hellos = [12, 'mp3/yo.mp3', 'mp3VoiceLines/czesc.mp3', 'mp3VoiceLines/eloeloelo.mp3', 'mp3VoiceLines/hello_there.mp3', 'mp3VoiceLines/owitam.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/siema.mp3', 'mp3VoiceLines/siemkaa.mp3', 'mp3VoiceLines/yczesc.mp3', 'mp3VoiceLines/witajx3.mp3', 'jołsap', 'cześć', 'witam', 'dzień dobry'] #greetings list, first element is the last mp3
 global goodbyes
 goodbyes = [13, 'mp3/yo.mp3', 'mp3VoiceLines/czesc.mp3', 'mp3VoiceLines/eloeloelo.mp3', 'mp3VoiceLines/naura.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLinesradczesc.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/siema.mp3', 'mp3VoiceLines/siemkaa.mp3', 'mp3VoiceLines/yczesc.mp3', 'mp3VoiceLines/adios.mp3','mp3VoiceLines/gnight_girl_no_earrape.mp3', 'mp3VoiceLines/ja_spierdalam.mp3', 'joł', 'cześć', 'nara', 'do widzenia'] #goodbyes list, first element is the last mp3
 
@@ -111,17 +111,41 @@ def PlaySound(channel : discord.VoiceChannel, array):
 async def RefreshInfoChannels():
     for guild in bot.guilds:
         if(guild.id == 495666208939573248): #boberschlesien
-                channel = discord.utils.get(guild.voice_channels, id=817042848490586152) #get info channel
+            channel = discord.utils.get(guild.voice_channels, id=817042848490586152) #get info channel
 
-                #Calculate online/all members
-                online = 0
-                for user in guild.members:
-                    if user.status != discord.Status.offline:
-                        online += 1
-                
-                total = guild.member_count
+            #Calculate online/all members
+            online = 0
+            for user in guild.members:
+                if user.status != discord.Status.offline:
+                    online += 1
+            
+            total = guild.member_count
 
-                await channel.edit(name='Online: ' + str(online) + '/' + str(total))
+            if(channel != None):
+                await channel.edit(name='🟢Online: ' + str(online) + '/' + str(total))
+
+        if(guild.id == 536251306994827285): #scamelot
+            channelOnline = discord.utils.get(guild.voice_channels, id=817057203970113546) #get info channel
+            channelOffline = discord.utils.get(guild.voice_channels, id=817060370425315328) #get info channel
+            channelTotal = discord.utils.get(guild.voice_channels, id=817060448649084952) #get info channel
+
+            #Calculate online/all members
+            online = 0
+            for user in guild.members:
+                if user.status != discord.Status.offline:
+                    online += 1
+
+            total = guild.member_count
+
+            offline = total - online
+
+            if(channelOnline != None):
+                await channelOnline.edit(name='Online: ' + str(online))
+            if(channelOffline != None):
+                await channelOffline.edit(name='Offline: ' + str(offline))
+            if(channelTotal != None):    
+                await channelTotal.edit(name='Total: ' + str(total))
+
 
 #bot events------------------------------------------------
 #on bot start show this in console
@@ -137,6 +161,8 @@ async def on_ready():
     #Listening to: "yo help" rich presence
     await bot.change_presence(activity = discord.Activity(type = discord.ActivityType.listening, name = 'yo help'))
 
+    await RefreshInfoChannels() #refresh info channel
+
     print('\n Connected to:')
     for guild in bot.guilds:
         print(guild.name)
@@ -144,18 +170,18 @@ async def on_ready():
         if(guild.id == 495666208939573248): #boberschlesien
             channel = discord.utils.get(guild.voice_channels, id=615196854082207755) #get voice channel
             
-            await channel.connect() #connect to channel
+            if(channel != None):
+                await channel.connect() #connect to channel
 
-            PlaySound(channel, hellos) #play hello sound
+                PlaySound(channel, hellos) #play hello sound
 
         elif(guild.id == 536251306994827285): #scamelot
             channel = discord.utils.get(guild.voice_channels, id=788503046685458502) #get voice channel
 
-            await channel.connect() #connect to channel
+            if(channel != None):
+                await channel.connect() #connect to channel
 
-            PlaySound(channel, hellos) #play hello sound
-
-    await RefreshInfoChannels() #refresh info channel
+                PlaySound(channel, hellos) #play hello sound
 
 
 #on messages with 'yo'
@@ -186,7 +212,16 @@ async def on_member_join(member):
 
     if(member.guild.id == 495666208939573248): #if on boberschlesien
         rank = discord.utils.get(member.guild.roles, id=503297149698572302) #Bot get guild(server) dj role
-        await member.add_roles(rank) #add role
+        if(rank != None):
+            await member.add_roles(rank) #add role
+
+    elif(member.guild.id == 536251306994827285): #if on scamelot
+        rank = discord.utils.get(member.guild.roles, id=582651678579359758) #Bot get guild(server) dj role
+        if(rank != None):
+            await member.add_roles(rank) #add role
+        rank = discord.utils.get(member.guild.roles, id=761862654121738270) #Bot get guild(server) scam role
+        if(rank != None):
+            await member.add_roles(rank) #add role
 
     await RefreshInfoChannels() #refresh info channel
 
@@ -195,7 +230,7 @@ async def on_member_join(member):
 async def on_member_remove(member):
     ctx = member.guild.system_channel
 
-    await ctx.send(str(member.mention) + ' opuścił serwer.')
+    await ctx.send('Yo, ' + str(member.mention) + ' opuścił serwer.')
 
     await kickinfo(ctx, member)
 
@@ -210,10 +245,15 @@ async def on_member_ban(guild, user):
 
     await baninfo(ctx, user)
 
-#when somebody goes online etc.
+#when somebody changes something to themselves
 @bot.event
 async def on_member_update(before, after):
-    await RefreshInfoChannels() #refresh info channel
+
+    #when somebody goes online etc.
+    status = ((before.status == discord.Status.offline and after.status == discord.Status.Online) or (before.status == discord.Status.Online and after.status == discord.Status.offline))
+
+    if status:
+        await RefreshInfoChannels() #refresh info channel
 
 #on something changes on bots vc
 @bot.event
@@ -285,8 +325,9 @@ async def dmszary(ctx, text : str, *args):
         spaceText += (" " + str(txt))
 
     user = bot.get_user(os.getenv('DISCORD_ID_SZARY')) #Szary ID
-    await user.send('\nYo,\n' + text + spaceText)
-    await ctx.reply("Yo, wysłano dm do Szarego.")
+    if(user != None):
+        await user.send('\nYo,\n' + text + spaceText)
+        await ctx.reply("Yo, wysłano dm do Szarego.")
 
 #picks random person from voicechannel you are in
 @bot.command()
@@ -315,7 +356,7 @@ async def baninfo(ctx, user : discord.Member):
         if(x.target == user):
             entries.append(x)
 
-    await ctx.send("Yo, " + str(user.mention) + " został zbanowany " + str(len(entries)) + " razy.")
+    await ctx.send(str(user.mention) + " został zbanowany " + str(len(entries)) + " razy.")
 
 #kick counter
 #get entries from audit log about said user and count kick entries
@@ -329,7 +370,7 @@ async def kickinfo(ctx, user : discord.Member):
         if(x.target == user):
             entries.append(x)
 
-    await ctx.send("Yo, " + str(user.mention) + " został zkickowany " + str(len(entries)) + " razy.")
+    await ctx.send(str(user.mention) + " został zkickowany " + str(len(entries)) + " razy.")
 
 #vote kick---------------------------------------------------------------
 kickArray = {} #global array
