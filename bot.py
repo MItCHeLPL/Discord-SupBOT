@@ -275,10 +275,10 @@ async def on_voice_state_update(member, before, after):
         else:
             for server in bot.voice_clients: #cycle through all servers
                 if(server.channel == after.channel): #connect
-                    PlaySound(after.channel, hellos, member.name)
+                    PlaySound(after.channel, hellos, member.display_name)
 
                 elif(server.channel == before.channel): #disconnect
-                    PlaySound(before.channel, goodbyes, member.name)
+                    PlaySound(before.channel, goodbyes, member.display_name)
 
 #Bot commands----------------------------------------
 #sup
