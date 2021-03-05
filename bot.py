@@ -87,7 +87,7 @@ global goodbyes
 goodbyes = [13, 'mp3/yo.mp3', 'mp3VoiceLines/czesc.mp3', 'mp3VoiceLines/eloeloelo.mp3', 'mp3VoiceLines/naura.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLinesradczesc.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/siema.mp3', 'mp3VoiceLines/siemkaa.mp3', 'mp3VoiceLines/yczesc.mp3', 'mp3VoiceLines/adios.mp3','mp3VoiceLines/gnight_girl_no_earrape.mp3', 'mp3VoiceLines/ja_spierdalam.mp3', 'joł', 'cześć', 'nara', 'do widzenia'] #goodbyes list, first element is the last mp3
 
 #Play sound from array
-def PlaySound(channel : discord.VoiceChannel, array, member):
+def PlaySound(channel : discord.VoiceChannel, array, member:str=None):
     for server in bot.voice_clients: #cycle through all servers
         if(server.channel == channel): #connect
 
@@ -98,7 +98,7 @@ def PlaySound(channel : discord.VoiceChannel, array, member):
             #play yo audio
             if vc.is_playing() == False:
 
-                if voiceLineId > array[0]: #if use tts   
+                if voiceLineId > array[0] and member != None: #if use tts   
                     message = gtts(array[voiceLineId] + " " + str(member), lang = 'pl', tld='pl')
                     message.save('mp3/tts.mp3')
                     vc.play(discord.FFmpegPCMAudio('mp3/tts.mp3'), after=lambda e: print('Player error: %s' % e) if e else None)
@@ -275,10 +275,10 @@ async def on_voice_state_update(member, before, after):
         else:
             for server in bot.voice_clients: #cycle through all servers
                 if(server.channel == after.channel): #connect
-                    PlaySound(after.channel, hellos, member.display_name)
+                    PlaySound(after.channel, hellos, str(member.display_name))
 
                 elif(server.channel == before.channel): #disconnect
-                    PlaySound(before.channel, goodbyes, member.display_name)
+                    PlaySound(before.channel, goodbyes, str(member.display_name))
 
 #Bot commands----------------------------------------
 #sup
