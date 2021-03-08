@@ -112,19 +112,18 @@ def PlaySound(channel : discord.VoiceChannel, array, member:str=None):
 async def RefreshInfoChannels():
     for guild in bot.guilds:
         if(guild.id == 495666208939573248): #boberschlesien
-            channel = discord.utils.get(guild.voice_channels, id=817042848490586152) #get info channel
-
-            #Calculate online/all members
-            online = 0
-            for user in guild.members:
-                if user.status != discord.Status.offline:
-                    online += 1
-            
-            total = guild.member_count
-
-            if(channel != None):
-                await channel.edit(name='🟢Online: ' + str(online) + '/' + str(total))
-
+           channel = discord.utils.get(guild.voice_channels, id=817042848490586152) #get info channel
+        
+           #Calculate online/all members
+           online = 0
+           for user in guild.members:
+               if user.status != discord.Status.offline:
+                   online += 1
+           
+           total = guild.member_count
+        
+           if(channel != None):
+               await channel.edit(name='🟢Online: ' + str(online) + '/' + str(total))  
         if(guild.id == 536251306994827285): #scamelot
             channelOnline = discord.utils.get(guild.voice_channels, id=817057203970113546) #get info channel
             channelOffline = discord.utils.get(guild.voice_channels, id=817060370425315328) #get info channel
@@ -182,7 +181,7 @@ async def on_ready():
 
                 PlaySound(channel, hellos) #play hello sound
 
-    await RefreshInfoChannels() #refresh info channel
+    #await RefreshInfoChannels() #refresh info channel
 
 
 #on messages with 'yo'
@@ -224,7 +223,7 @@ async def on_member_join(member):
         if(rank != None):
             await member.add_roles(rank) #add role
 
-    await RefreshInfoChannels() #refresh info channel
+    #await RefreshInfoChannels() #refresh info channel
 
 #on somebody is kicked from server run kick counter
 @bot.event
@@ -235,7 +234,7 @@ async def on_member_remove(member):
 
     await kickinfo(ctx, member)
 
-    await RefreshInfoChannels() #refresh info channel
+    #await RefreshInfoChannels() #refresh info channel
 
 #on somebody is banned from server run ban counter
 @bot.event
@@ -247,12 +246,12 @@ async def on_member_ban(guild, user):
     await baninfo(ctx, user)
 
 #when somebody changes something to themselves
-@bot.event
-async def on_member_update(before, after):
-
-    #when somebody goes online or offline.
-    if before.status == discord.Status.offline or after.status == discord.Status.offline:
-        await RefreshInfoChannels() #refresh info channel
+#@bot.event
+#async def on_member_update(before, after):
+#
+#    #when somebody goes online or offline.
+#    if before.status == discord.Status.offline or after.status == discord.Status.offline:
+#        await RefreshInfoChannels() #refresh info channel
 
 #on something changes on bots vc
 @bot.event
