@@ -84,7 +84,7 @@ global hellos
 hellos = [14, 'mp3/yo.mp3', 'mp3VoiceLines/czesc.mp3', 'mp3VoiceLines/eloeloelo.mp3', 'mp3VoiceLines/hello_there.mp3', 'mp3VoiceLines/owitam.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/siema.mp3', 'mp3VoiceLines/siemkaa.mp3', 'mp3VoiceLines/yczesc.mp3', 'mp3VoiceLines/witajx3.mp3', 'mp3VoiceLines/szmitekhalo.mp3', 'mp3VoiceLines/dziendobrykochamcie.mp3', 'jołsap', 'cześć', 'witam', 'dzień dobry'] #greetings list, first element is the last mp3
 
 global goodbyes
-goodbyes = [13, 'mp3/yo.mp3', 'mp3VoiceLines/czesc.mp3', 'mp3VoiceLines/eloeloelo.mp3', 'mp3VoiceLines/naura.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLinesradczesc.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/siema.mp3', 'mp3VoiceLines/siemkaa.mp3', 'mp3VoiceLines/yczesc.mp3', 'mp3VoiceLines/adios.mp3','mp3VoiceLines/gnight_girl_no_earrape.mp3', 'mp3VoiceLines/ja_spierdalam.mp3', 'joł', 'cześć', 'nara', 'do widzenia'] #goodbyes list, first element is the last mp3
+goodbyes = [13, 'mp3/yo.mp3', 'mp3VoiceLines/czesc.mp3', 'mp3VoiceLines/eloeloelo.mp3', 'mp3VoiceLines/naura.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/radczesc.mp3', 'mp3VoiceLines/siema.mp3', 'mp3VoiceLines/siemkaa.mp3', 'mp3VoiceLines/yczesc.mp3', 'mp3VoiceLines/adios.mp3','mp3VoiceLines/gnight_girl_no_earrape.mp3', 'mp3VoiceLines/ja_spierdalam.mp3', 'joł', 'cześć', 'nara', 'do widzenia'] #goodbyes list, first element is the last mp3
 
 #Play sound from array
 def PlaySound(channel : discord.VoiceChannel, array, member:str=None):
@@ -110,42 +110,47 @@ def PlaySound(channel : discord.VoiceChannel, array, member:str=None):
 
 #Channel editing--------------------------------------------------------------------------------
 async def RefreshInfoChannels():
-    for guild in bot.guilds:
-        if(guild.id == 495666208939573248): #boberschlesien
-           channel = discord.utils.get(guild.voice_channels, id=817042848490586152) #get info channel
-        
-           #Calculate online/all members
-           online = 0
-           for user in guild.members:
-               if user.status != discord.Status.offline:
-                   online += 1
-           
-           total = guild.member_count
-        
-           if(channel != None):
-               await channel.edit(name='🟢Online: ' + str(online) + '/' + str(total))  
-        if(guild.id == 536251306994827285): #scamelot
-            channelOnline = discord.utils.get(guild.voice_channels, id=817057203970113546) #get info channel
-            channelOffline = discord.utils.get(guild.voice_channels, id=817060370425315328) #get info channel
-            channelTotal = discord.utils.get(guild.voice_channels, id=817060448649084952) #get info channel
 
-            #Calculate online/all members
-            online = 0
-            for user in guild.members:
+    #boberschlesien
+    bbsch = bot.get_guild(495666208939573248)  
+    if(bbsch != None):  
+        bbschStatsChannel = discord.utils.get(bbsch.voice_channels, id=817042848490586152) #get info channel
+
+        #Calculate online/all members 
+        if(bbschStatsChannel != None):
+            bbschOnline = 0
+
+            for user in bbsch.members:
                 if user.status != discord.Status.offline:
-                    online += 1
+                    bbschOnline += 1
 
-            total = guild.member_count
+            bbschTotal = bbsch.member_count
+        
+            await bbschStatsChannel.edit(name='🟢Online: ' + str(bbschOnline) + '/' + str(bbschTotal))  
 
-            offline = total - online
+    #spamelot
+    spam = bot.get_guild(536251306994827285)   
+    if(spam != None): 
+        spamChannelOnline = discord.utils.get(spam.voice_channels, id=817057203970113546) #get info channel
+        spamChannelOffline = discord.utils.get(spam.voice_channels, id=817060370425315328) #get info channel
+        spamChannelTotal = discord.utils.get(spam.voice_channels, id=817060448649084952) #get info channel
 
-            if(channelOnline != None):
-                await channelOnline.edit(name='Online: ' + str(online))
-            if(channelOffline != None):
-                await channelOffline.edit(name='Offline: ' + str(offline))
-            if(channelTotal != None):    
-                await channelTotal.edit(name='Total: ' + str(total))
+        #Calculate online/all members
+        spamOnline = 0
+        for user in spam.members:
+            if user.status != discord.Status.offline:
+                spamOnline += 1
 
+        spamTotal = spam.member_count
+
+        spamOffline = spamTotal - spamOnline
+
+        if(spamChannelOnline != None):
+            await spamChannelOnline.edit(name='Online: ' + str(spamOnline))
+        if(spamChannelOffline != None):
+            await spamChannelOffline.edit(name='Offline: ' + str(spamOffline))
+        if(spamChannelTotal != None):    
+            await spamChannelTotal.edit(name='Total: ' + str(spamTotal))
 
 #bot events------------------------------------------------
 #on bot start show this in console
@@ -161,7 +166,7 @@ async def on_ready():
     #Listening to: "yo help" rich presence
     await bot.change_presence(activity = discord.Activity(type = discord.ActivityType.listening, name = 'yo help'))
 
-    print('\n Connected to:')
+    print('\nConnected to:')
     for guild in bot.guilds:
         print(guild.name)
 
@@ -175,6 +180,14 @@ async def on_ready():
 
         elif(guild.id == 536251306994827285): #scamelot
             channel = discord.utils.get(guild.voice_channels, id=788503046685458502) #get voice channel
+
+            if(channel != None):
+                await channel.connect() #connect to channel
+
+                PlaySound(channel, hellos) #play hello sound
+
+        elif(guild.id == 775284221701783582): #wojtini
+            channel = discord.utils.get(guild.voice_channels, id=775284221701783586) #get voice channel
 
             if(channel != None):
                 await channel.connect() #connect to channel
@@ -223,7 +236,7 @@ async def on_member_join(member):
         if(rank != None):
             await member.add_roles(rank) #add role
 
-    #await RefreshInfoChannels() #refresh info channel
+    await RefreshInfoChannels() #refresh info channel
 
 #on somebody is kicked from server run kick counter
 @bot.event
@@ -234,7 +247,7 @@ async def on_member_remove(member):
 
     await kickinfo(ctx, member)
 
-    #await RefreshInfoChannels() #refresh info channel
+    await RefreshInfoChannels() #refresh info channel
 
 #on somebody is banned from server run ban counter
 @bot.event
@@ -246,12 +259,12 @@ async def on_member_ban(guild, user):
     await baninfo(ctx, user)
 
 #when somebody changes something to themselves
-#@bot.event
-#async def on_member_update(before, after):
-#
-#    #when somebody goes online or offline.
-#    if before.status == discord.Status.offline or after.status == discord.Status.offline:
-#        await RefreshInfoChannels() #refresh info channel
+@bot.event
+async def on_member_update(before, after):
+
+    #when somebody goes online or offline.
+    if before.status == discord.Status.offline or after.status == discord.Status.offline:
+        await RefreshInfoChannels() #refresh info channel
 
 #on something changes on bots vc
 @bot.event
