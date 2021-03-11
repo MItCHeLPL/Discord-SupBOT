@@ -113,31 +113,21 @@ def PlaySound(channel : discord.VoiceChannel, array, member:str=None):
 
 #Channel editing--------------------------------------------------------------------------------
 async def RefreshInfoChannels():
-
     #boberschlesien
-    bbsch = bot.get_guild(495666208939573248)  
-    if(bbsch != None):  
-        bbschStatsChannel = discord.utils.get(bbsch.voice_channels, id=817042848490586152) #get info channel
+    #Calculate online/all members 
+    if(bbschStatsChannel != None):
+        bbschOnline = 0
 
-        #Calculate online/all members 
-        if(bbschStatsChannel != None):
-            bbschOnline = 0
+        for user in bbsch.members:
+            if user.status != discord.Status.offline:
+                bbschOnline += 1
 
-            for user in bbsch.members:
-                if user.status != discord.Status.offline:
-                    bbschOnline += 1
-
-            bbschTotal = bbsch.member_count
-        
-            await bbschStatsChannel.edit(name='🟢Online: ' + str(bbschOnline) + '/' + str(bbschTotal))  
+        bbschTotal = bbsch.member_count
+    
+        await bbschStatsChannel.edit(name='🟢Online: ' + str(bbschOnline) + '/' + str(bbschTotal))  
 
     #spamelot
-    spam = bot.get_guild(536251306994827285)   
-    if(spam != None): 
-        spamChannelOnline = discord.utils.get(spam.voice_channels, id=817057203970113546) #get info channel
-        spamChannelOffline = discord.utils.get(spam.voice_channels, id=817060370425315328) #get info channel
-        spamChannelTotal = discord.utils.get(spam.voice_channels, id=817060448649084952) #get info channel
-
+    if(spamChannelOnline != None): 
         #Calculate online/all members
         spamOnline = 0
         for user in spam.members:
@@ -148,8 +138,7 @@ async def RefreshInfoChannels():
 
         spamOffline = spamTotal - spamOnline
 
-        if(spamChannelOnline != None):
-            await spamChannelOnline.edit(name='Online: ' + str(spamOnline))
+        await spamChannelOnline.edit(name='Online: ' + str(spamOnline))
         if(spamChannelOffline != None):
             await spamChannelOffline.edit(name='Offline: ' + str(spamOffline))
         if(spamChannelTotal != None):    
@@ -174,6 +163,12 @@ async def on_ready():
         print(guild.name)
 
         if(guild.id == 495666208939573248): #boberschlesien
+            global bbsch
+            bbsch = guild #get global guild
+
+            global bbschStatsChannel
+            bbschStatsChannel = discord.utils.get(guild.voice_channels, id=817042848490586152) #get info channel
+
             channel = discord.utils.get(guild.voice_channels, id=615196854082207755) #get voice channel
             
             if(channel != None):
@@ -182,6 +177,17 @@ async def on_ready():
                 PlaySound(channel, hellos) #play hello sound
 
         elif(guild.id == 536251306994827285): #scamelot
+            global spam
+            spam = guild #get global guild
+            
+            #get global stat channels
+            global spamChannelOnline
+            global spamChannelOffline
+            global spamChannelTotal
+            spamChannelOnline = discord.utils.get(guild.voice_channels, id=817057203970113546) #get info channel
+            spamChannelOffline = discord.utils.get(guild.voice_channels, id=817060370425315328) #get info channel
+            spamChannelTotal = discord.utils.get(guild.voice_channels, id=817060448649084952) #get info channel
+            
             channel = discord.utils.get(guild.voice_channels, id=788503046685458502) #get voice channel
 
             if(channel != None):
@@ -197,7 +203,7 @@ async def on_ready():
 
                 PlaySound(channel, hellos) #play hello sound
 
-    #await RefreshInfoChannels() #refresh info channel
+    await RefreshInfoChannels() #refresh info channel
 
 
 #on messages with 'yo'
@@ -265,10 +271,8 @@ async def on_member_ban(guild, user):
 @bot.event
 async def on_member_update(before, after):
     #when somebody goes online or offline.
-    #if before.status == discord.Status.offline or after.status == discord.Status.offline:
-    #    await RefreshInfoChannels() #refresh info channel
-
-    await RefreshInfoChannels() #refresh info channel
+    if before.status == discord.Status.offline or after.status == discord.Status.offline:
+        await RefreshInfoChannels() #refresh info channel
 
 #on something changes on bots vc
 @bot.event
