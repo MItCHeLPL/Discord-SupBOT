@@ -98,11 +98,14 @@ def PlaySound(channel : discord.VoiceChannel, array, member:str=None):
             #play yo audio
             if vc.is_playing() == False:
 
-                if voiceLineId > array[0] and member != None: #if use tts   
+                if voiceLineId > array[0] and member != None: #if use tts with name
                     message = gtts(array[voiceLineId] + " " + str(member), lang = 'pl', tld='pl')
                     message.save('mp3/tts.mp3')
                     vc.play(discord.FFmpegPCMAudio('mp3/tts.mp3'), after=lambda e: print('Player error: %s' % e) if e else None)
-
+                elif voiceLineId > array[0]: #use tts without name
+                    message = gtts(array[voiceLineId], lang = 'pl', tld='pl')
+                    message.save('mp3/tts.mp3')
+                    vc.play(discord.FFmpegPCMAudio('mp3/tts.mp3'), after=lambda e: print('Player error: %s' % e) if e else None)
                 else:#play normal bind
                     vc.play(discord.FFmpegPCMAudio(array[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else None)
 
@@ -261,10 +264,11 @@ async def on_member_ban(guild, user):
 #when somebody changes something to themselves
 @bot.event
 async def on_member_update(before, after):
-
     #when somebody goes online or offline.
-    if before.status == discord.Status.offline or after.status == discord.Status.offline:
-        await RefreshInfoChannels() #refresh info channel
+    #if before.status == discord.Status.offline or after.status == discord.Status.offline:
+    #    await RefreshInfoChannels() #refresh info channel
+
+    await RefreshInfoChannels() #refresh info channel
 
 #on something changes on bots vc
 @bot.event
@@ -563,7 +567,10 @@ async def stats(ctx):
     #bot
     output += "\n\n__**Statystyki bota:**__"
     output += "\n**➤Ilość serwerów na których jestem: **" + str(len(ctx.bot.guilds))
-    output += "\n**➤Ping: **" + str(round(ctx.bot.latency * 100, 2)) + "ms"
+    for guild in ctx.bot.guilds:
+        output += "\n" + str(guild.name)
+
+    output += "\n\n**➤Ping: **" + str(round(ctx.bot.latency * 100, 2)) + "ms"
     
     #user
     output += "\n\n__**Statystyki " + str(ctx.message.author.mention) + ":**__"
