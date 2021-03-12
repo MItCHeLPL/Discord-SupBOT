@@ -113,36 +113,44 @@ def PlaySound(channel : discord.VoiceChannel, array, member:str=None):
 
 #Channel editing--------------------------------------------------------------------------------
 async def RefreshInfoChannels():
-    #boberschlesien
-    #Calculate online/all members 
-    if(bbschStatsChannel != None):
-        bbschOnline = 0
+    await bot.wait_until_ready()
+    try:
+        await asyncio.sleep(30)  # Start-up Time
+        while True:
+            #boberschlesien
+            #Calculate online/all members 
+            if(bbschStatsChannel != None):
+                bbschOnline = 0
 
-        for user in bbsch.members:
-            if user.status != discord.Status.offline:
-                bbschOnline += 1
+                for user in bbsch.members:
+                    if user.status != discord.Status.offline:
+                        bbschOnline += 1
 
-        bbschTotal = bbsch.member_count
-    
-        await bbschStatsChannel.edit(name='🟢Online: ' + str(bbschOnline) + '/' + str(bbschTotal))  
+                bbschTotal = bbsch.member_count
+            
+                await bbschStatsChannel.edit(name='🟢Online: ' + str(bbschOnline) + '/' + str(bbschTotal))  
 
-    #spamelot
-    if(spamChannelOnline != None): 
-        #Calculate online/all members
-        spamOnline = 0
-        for user in spam.members:
-            if user.status != discord.Status.offline:
-                spamOnline += 1
+            #spamelot
+            if(spamChannelOnline != None): 
+                #Calculate online/all members
+                spamOnline = 0
+                for user in spam.members:
+                    if user.status != discord.Status.offline:
+                        spamOnline += 1
 
-        spamTotal = spam.member_count
+                spamTotal = spam.member_count
 
-        spamOffline = spamTotal - spamOnline
+                spamOffline = spamTotal - spamOnline
 
-        await spamChannelOnline.edit(name='Online: ' + str(spamOnline))
-        if(spamChannelOffline != None):
-            await spamChannelOffline.edit(name='Offline: ' + str(spamOffline))
-        if(spamChannelTotal != None):    
-            await spamChannelTotal.edit(name='Total: ' + str(spamTotal))
+                await spamChannelOnline.edit(name='Online: ' + str(spamOnline))
+                if(spamChannelOffline != None):
+                    await spamChannelOffline.edit(name='Offline: ' + str(spamOffline))
+                if(spamChannelTotal != None):    
+                    await spamChannelTotal.edit(name='Total: ' + str(spamTotal))
+
+            await asyncio.sleep(60)  # task runs every minute
+    except asyncio.CancelledError:
+        pass        
 
 #bot events------------------------------------------------
 #on bot start show this in console
@@ -203,7 +211,7 @@ async def on_ready():
 
                 PlaySound(channel, hellos) #play hello sound
 
-    await RefreshInfoChannels() #refresh info channel
+    await RefreshInfoChannels() #start refreshing info channels
 
 
 #on messages with 'yo'
@@ -245,8 +253,6 @@ async def on_member_join(member):
         if(rank != None):
             await member.add_roles(rank) #add role
 
-    await RefreshInfoChannels() #refresh info channel
-
 #on somebody is kicked from server run kick counter
 @bot.event
 async def on_member_remove(member):
@@ -256,8 +262,6 @@ async def on_member_remove(member):
 
     await kickinfo(ctx, member)
 
-    await RefreshInfoChannels() #refresh info channel
-
 #on somebody is banned from server run ban counter
 @bot.event
 async def on_member_ban(guild, user):
@@ -266,13 +270,6 @@ async def on_member_ban(guild, user):
     await ctx.send(str(user.name) + ' został zbanowany z serwera.')
 
     await baninfo(ctx, user)
-
-#when somebody changes something to themselves
-@bot.event
-async def on_member_update(before, after):
-    #when somebody goes online or offline.
-    if before.status == discord.Status.offline or after.status == discord.Status.offline:
-        await RefreshInfoChannels() #refresh info channel
 
 #on something changes on bots vc
 @bot.event
