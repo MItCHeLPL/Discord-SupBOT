@@ -119,26 +119,43 @@ async def RefreshInfoChannels():
         while True:
             #boberschlesien
             #Calculate online/all members 
-            if(bbschStatsChannel != None):
+            if(bbschOnlineChannel != None):
                 bbschOnline = 0
+                bbschBot = 0
+                bbschOnChannel = 0
 
                 for user in bbsch.members:
-                    if user.status != discord.Status.offline:
+                    if user.status != discord.Status.offline and user.bot == False:
                         bbschOnline += 1
+                    if user.bot:
+                        bbschBot += 1
 
-                bbschTotal = bbsch.member_count
+                bbschTotal = bbsch.member_count - bbschBot
+
+                voice_channel_list = bbsch.voice_channels
+                for vc in voice_channel_list:
+                    bbschOnChannel += len(vc.members)
             
-                await bbschStatsChannel.edit(name='🟢Online: ' + str(bbschOnline) + '/' + str(bbschTotal))  
+                await bbschOnlineChannel.edit(name='🟢Online: ' + str(bbschOnline) + '/' + str(bbschTotal)) 
+                if(bbschOnChannelChannel != None):
+                    await bbschOnChannelChannel.edit(name='🎤Na kanałach: ' + str(bbschOnChannel))   
+                if(bbschBotChannel != None):
+                    await bbschBotChannel.edit(name='🤖Bot: ' + str(bbschBot))  
+                
 
             #spamelot
             if(spamChannelOnline != None): 
                 #Calculate online/all members
                 spamOnline = 0
-                for user in spam.members:
-                    if user.status != discord.Status.offline:
-                        spamOnline += 1
+                spamBot = 0
 
-                spamTotal = spam.member_count
+                for user in spam.members:
+                    if user.status != discord.Status.offline and user.bot == False:
+                        spamOnline += 1
+                    if user.bot:
+                        spamBot += 1
+
+                spamTotal = spam.member_count - spamBot
 
                 spamOffline = spamTotal - spamOnline
 
@@ -147,6 +164,8 @@ async def RefreshInfoChannels():
                     await spamChannelOffline.edit(name='Offline: ' + str(spamOffline))
                 if(spamChannelTotal != None):    
                     await spamChannelTotal.edit(name='Total: ' + str(spamTotal))
+                #if(spamBotChannel != None):
+                #    await spamBotChannel.edit(name='Bot: ' + str(spamBot))
 
             await asyncio.sleep(60)  # task runs every minute
     except asyncio.CancelledError:
@@ -174,8 +193,12 @@ async def on_ready():
             global bbsch
             bbsch = guild #get global guild
 
-            global bbschStatsChannel
-            bbschStatsChannel = discord.utils.get(guild.voice_channels, id=817042848490586152) #get info channel
+            global bbschOnlineChannel
+            bbschOnlineChannel = discord.utils.get(guild.voice_channels, id=817042848490586152) #get info channel
+            global bbschBotChannel
+            bbschBotChannel = discord.utils.get(guild.voice_channels, id=820023875165356082) #get info channel
+            global bbschOnChannelChannel
+            bbschOnChannelChannel = discord.utils.get(guild.voice_channels, id=820026840487821312) #get info channel
 
             channel = discord.utils.get(guild.voice_channels, id=615196854082207755) #get voice channel
             
@@ -192,9 +215,11 @@ async def on_ready():
             global spamChannelOnline
             global spamChannelOffline
             global spamChannelTotal
+            #global spamBotChannel
             spamChannelOnline = discord.utils.get(guild.voice_channels, id=817057203970113546) #get info channel
             spamChannelOffline = discord.utils.get(guild.voice_channels, id=817060370425315328) #get info channel
             spamChannelTotal = discord.utils.get(guild.voice_channels, id=817060448649084952) #get info channel
+            #spamBotChannel = discord.utils.get(guild.voice_channels, id=) #get info channel
             
             channel = discord.utils.get(guild.voice_channels, id=788503046685458502) #get voice channel
 
@@ -220,7 +245,7 @@ async def on_message(message):
     if (message.content == "yo" and message.author.bot == False):
         await message.reply("yo") #if somebody says yo
 
-    if (message.content.startswith('yo') and message.author.bot == False):
+    if (message.content.startswith('yo ') and message.author.bot == False):
         await message.add_reaction('✅') #if message starts with yo
 
     await bot.process_commands(message) #else
@@ -742,7 +767,7 @@ async def stop(ctx):
 #TTS
 @bot.command(aliases=["TTS", "tss", "TSS"])
 async def tts(ctx, userText : str, *args):
-    """Bot powtórzy co do niego napiszesz"""
+    """Bot powtórzy co do niego napiszesz (yo tts [tekst] [lang=(język)](opcjonalne))"""
 
     #get text after space
     spaceText = ""
@@ -751,8 +776,21 @@ async def tts(ctx, userText : str, *args):
 
     txt = (userText + spaceText)
 
+    if txt.rfind('lang=') != -1:
+        language = txt[txt.rfind('lang=') + 5:]
+
+        if language == 'en':
+            topLevelDomain = 'com'
+        else:
+            topLevelDomain = language
+
+        txt = txt[0:txt.rfind('lang=')]
+    else:
+        language = 'pl'
+        topLevelDomain = 'pl'
+
     #generate tts
-    message = gtts(txt, lang = 'pl', tld='pl')
+    message = gtts(txt, lang = language, tld=topLevelDomain)
     message.save('mp3/tts.mp3')
 
     #play tts
@@ -764,10 +802,31 @@ async def tts(ctx, userText : str, *args):
 #async def playyt(ctx, youtubeLink):
 #
 #    #download vid
-#    youtube_dl.YoutubeDL({'format': 'bestaudio/best','outtmpl': 'mp3/yt.%(ext)s', 'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec':'mp3', #'preferredquality': '192'}]}).download([youtubeLink])
+#    ytdlopts = {
+#        'format': 'bestaudio/best',
+#        'outtmpl': 'mp3/yt.%(ext)s',
+#        'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec':'mp3', 'preferredquality': '192'}],
+#        'restrictfilenames': True,
+#        'noplaylist': True,
+#        'nocheckcertificate': True,
+#        'ignoreerrors': False,
+#        'logtostderr': False,
+#        'quiet': True,
+#        'no_warnings': True,
+#        'default_search': 'auto',
+#        'source_address': '0.0.0.0'  # ipv6 addresses cause issues sometimes
+#    }
+#    with youtube_dl.YoutubeDL(ytdlopts) as ytdl:
+#        meta = ytdl.extract_info(youtubeLink, download=False)
+#        if meta['duration'] < 60:
+#            ytdl.download([youtubeLink])
 #
-#    #play yt vid
-#    await playbind(ctx, "yt")
+#            #play yt vid
+#            await playbind(ctx, "yt")
+#        
+#        else:
+#            await ctx.send("Yo, film jest za długi.")
+    
 
 
 #universal play
@@ -778,7 +837,7 @@ async def play(ctx, txt):
     #Disabled because it's too much load for Raspberry Pi Zero W
     #if link play yt
     #if str(txt)[0:3] == "http":
-    #    await playyt(ctx, "yt")
+    #    await playyt(ctx, txt)
 #
     ##else play bind   
     #else:
