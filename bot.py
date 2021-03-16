@@ -164,8 +164,8 @@ async def RefreshInfoChannels():
                     await spamChannelOffline.edit(name='Offline: ' + str(spamOffline))
                 if(spamChannelTotal != None):    
                     await spamChannelTotal.edit(name='Total: ' + str(spamTotal))
-                #if(spamBotChannel != None):
-                #    await spamBotChannel.edit(name='Bot: ' + str(spamBot))
+                if(spamBotChannel != None):
+                    await spamBotChannel.edit(name='BOTS: ' + str(spamBot))
 
             await asyncio.sleep(60)  # task runs every minute
     except asyncio.CancelledError:
@@ -215,11 +215,11 @@ async def on_ready():
             global spamChannelOnline
             global spamChannelOffline
             global spamChannelTotal
-            #global spamBotChannel
+            global spamBotChannel
             spamChannelOnline = discord.utils.get(guild.voice_channels, id=817057203970113546) #get info channel
             spamChannelOffline = discord.utils.get(guild.voice_channels, id=817060370425315328) #get info channel
             spamChannelTotal = discord.utils.get(guild.voice_channels, id=817060448649084952) #get info channel
-            #spamBotChannel = discord.utils.get(guild.voice_channels, id=) #get info channel
+            spamBotChannel = discord.utils.get(guild.voice_channels, id=820635636175601684) #get info channel
             
             channel = discord.utils.get(guild.voice_channels, id=788503046685458502) #get voice channel
 
