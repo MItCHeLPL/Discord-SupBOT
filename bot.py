@@ -429,6 +429,11 @@ async def votekick(ctx, user : discord.Member):
 
     usercount = len(member_ids) #how many users are in the voice channel
 
+    #if bot on channel subtract from usercount
+    for member_id in member_ids:
+        if(member_id == bot.user.id):
+            usercount = len(member_ids) - 1
+
     if(ctx.message.author.voice.channel.id == user.voice.channel.id):#if user and target are on the same channel
         if(user not in kickArray):#initial user add
             kickArray[user] = {}
