@@ -123,3 +123,18 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# ignore audio files
+audio/
+
+# ignore vscode
+.vscode
+*.code-workspace
+
+#ignore legacy code
+botLegacy.py
+
+#ignore linux service files
+service/
+*.sh
