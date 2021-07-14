@@ -9,7 +9,7 @@ Type=simple
 User=pi
 Group=pi
 WorkingDirectory=/home/pi/SupBOT
-ExecStart=/usr/bin/python3 /home/pi/SupBOT/bot.py
+ExecStart=/usr/bin/bash StartSupBOT.sh
 Restart=always
 Environment=USER=pi HOME=/home/pi
 
