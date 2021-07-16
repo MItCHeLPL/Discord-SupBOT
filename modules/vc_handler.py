@@ -9,8 +9,6 @@ load_dotenv() #load .env
 class VCHandler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-    
-        await self.AutoJoinDefaultVC() #join vc
 
 
     @commands.command(name = 'join', aliases = ['j', 'joi', 'dolacz', 'dołącz', 'connect', 'enter'])
@@ -50,11 +48,12 @@ class VCHandler(commands.Cog):
                         same_channel = True
                         vc = voice_channel
                         
-                        self.PlaySound(vc, self.bot.data["audio"]["farewells"]) #play farewell voice line
+                        if vc.is_playing() == False:
+                            self.PlaySound(vc, self.bot.data["audio"]["farewells"]) #play farewell voice line
 
                         #leave
                         while vc.is_playing(): #Checks if voice is playing
-                            await stop(ctx)
+                            await self._stop(ctx)
                             await server.disconnect() #leave
 
                         break
@@ -98,6 +97,7 @@ class VCHandler(commands.Cog):
                 break 
 
 
+    #TODO PUT this in task loop to auto join, and reconnect after discornnected for some time           
     async def AutoJoinDefaultVC(self):
         for guild in self.bot.guilds:
 

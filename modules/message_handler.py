@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord.ext.commands import CommandNotFound
 
 class MessageHandler(commands.Cog):
     def __init__(self, bot):
