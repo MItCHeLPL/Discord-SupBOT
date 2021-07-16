@@ -54,18 +54,19 @@ class Reddit(commands.Cog):
         embed.colour = random.randint(0, 0xffffff) #random color
         embed.set_image(url=submission.url) #set image
         embed.title = submission.title #set title
-
-        embed.description = "http://reddit.com" + submission.permalink #set link to post
+        embed.url= "http://reddit.com" + submission.permalink
+        embed.description = "[u/"+submission.author.name+"](http://reddit.com/u/"+submission.author.name+")"
 
         embed.timestamp = datetime.datetime.utcnow() #set time
 
-        embed.set_author(name=ctx.author.display_name, url=ctx.author.avatar_url, icon_url=ctx.author.avatar_url)
+        embed.set_author(name="r/+"+reddit.subreddit(sub).display_name, url="http://reddit.com/r/"+sub, icon_url=reddit.subreddit(sub).icon_img)
         
         #disable nsfw posts if channel is not set to nsfw
         if((submission.over_18 and allowNSFW == False) or (ctx.channel.is_nsfw() == False and submission.over_18)):
-            embed.set_image(url="")
+            embed=discord.Embed()
             embed.title = "Nie mogę tego tu wysłać"
-            embed.description = "Posty NSFW tylko na kanałach NSFW."
+            embed.description = "`Posty NSFW tylko na kanałach NSFW`"
+            embed.timestamp = datetime.datetime.utcnow() #set time
 
         return embed
 
