@@ -22,7 +22,7 @@ class GlobalCounter(commands.Cog):
         with open('global_counter.json', 'w') as outfile:
             json.dump(data, outfile)
 
-        await ctx.reply(f'Licznik wynosi: {counter}')
+        await ctx.reply(f'Licznik wynosi: `{counter}`')
 
 
 def setup(bot):

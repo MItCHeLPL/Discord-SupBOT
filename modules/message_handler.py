@@ -20,7 +20,7 @@ class MessageHandler(commands.Cog):
     async def on_command_error(self, ctx, error):
         if isinstance(error, CommandNotFound):
             await ctx.message.add_reaction('❌') #add emoji
-            await ctx.reply('Yo, nie rozumiem,\nWpisz "**yo help**" i przestań mi bota prześladować') #error message
+            await ctx.reply('Yo, nie rozumiem,\nWpisz `yo help` i przestań mi bota prześladować', delete_after=10) #error message
 
     #command success
     @commands.Cog.listener()

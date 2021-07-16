@@ -32,19 +32,22 @@ class VCVoteKick(commands.Cog):
                 if(usercount != self.kickArray[user]["usercount"] and self.kickArray[user]["usercount"] != None): #clears array of user when number of people changes
                     self.kickArray.clear()
                     canceled = True
-                    await ctx.send("Yo, Zmieniła się liczba użytkowników na kanale, rozpoczęto nowe głosowanie.")
+                    await ctx.send("Zmieniła się liczba użytkowników na kanale, rozpoczęto nowe głosowanie.", delete_after=10)
                     await self._votekick(ctx, user) #add first vote
                 else: #add vote
                     if(ctx.message.author not in self.kickArray[user]['callers']):#adds new caller
                         self.kickArray[user]['votes'] += 1 
                         self.kickArray[user]['callers'].append(ctx.message.author)
 
-        #output text
-        text = "Votekick: " + str(user.mention) + " " + str(self.kickArray[user]['votes']) + "/"
-        if((usercount/2) % 2 == 0 or usercount == 2): #if 2 users or 4,6...
-            text += str(math.ceil(usercount/2) + 1)
         else:
-            text += str(math.ceil(usercount/2)) #if 3,5... users
+            await ctx.send("Nie ma takiego użytkownika na twoim kanale głosowym", delete_after=10)
+
+        #output text
+        text = "Głosowanie na wyrzucenie: " + str(user.mention) + " `" + str(self.kickArray[user]['votes']) + "/"
+        if((usercount/2) % 2 == 0 or usercount == 2): #if 2 users or 4,6...
+            text += str(math.ceil(usercount/2) + 1)+'`'
+        else:
+            text += str(math.ceil(usercount/2))+'`' #if 3,5... users
 
         #successful vote
         if(self.kickArray[user]['votes'] > usercount/2): #if more than 50% users on vc voted

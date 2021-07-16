@@ -16,12 +16,15 @@ class TTS(commands.Cog):
         txt = (userText + spaceText) #combine text
 
         #generate tts
-        message = gtts(txt, lang = self.bot.data["ttsLang"], tld=self.bot.data["ttsTld"])
-        message.save(self.bot.data['ttsAudioPath'] + 'tts.mp3')
+        if(len(txt) > 0 and txt != ' '):
+            message = gtts(txt, lang = self.bot.data["ttsLang"], tld=self.bot.data["ttsTld"])
+            message.save(self.bot.data['ttsAudioPath'] + 'tts.mp3')
 
-        vc = await self.Join(ctx) #join vc
+            vc = await self.Join(ctx) #join vc
 
-        await self.PlaySound(ctx, vc) #play tts
+            await self.PlaySound(ctx, vc) #play tts
+
+            await ctx.reply("Odtwarzam TTS: `" + txt + "`", delete_after=5)
 
     
     async def Join(self, ctx):
@@ -39,9 +42,11 @@ class TTS(commands.Cog):
 
                 if same_channel == False: #User is on the same server's vc, but not the same channel
                     return await voice_channel.connect()
+                    await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
 
             else:
                 return await voice_channel.connect() #connect to the requested channel, bot isn't connected to any of the server's vc
+                await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
 
 
     def PlaySound(self, channel : discord.VoiceChannel):
