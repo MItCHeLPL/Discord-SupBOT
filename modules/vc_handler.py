@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands
+from discord.ext import tasks, commands
 import random
 import os
 from dotenv import load_dotenv
@@ -9,6 +9,8 @@ load_dotenv() #load .env
 class VCHandler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+        self.AutoJoinDefaultVC.start() #start joining loop
 
 
     @commands.command(name = 'join', aliases = ['j', 'joi', 'dolacz', 'dołącz', 'connect', 'enter'])
@@ -23,14 +25,23 @@ class VCHandler(commands.Cog):
                 for server in self.bot.voice_clients: #cycle through all servers
                     if(server.channel == voice_channel): #bot is already on the same vc
                         same_channel = True
+
+                        ctx.reply("Jestem już na tym kanale", delete_after=5)
+
                         break
 
                 if same_channel == False: #User is on the same server's vc, but not the same channel
                     vc = await voice_channel.connect()
+
+                    await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
+
                     await self.PlaySound(vc, self.bot.data["audio"]["greetings"])
 
             else:
                 vc = await voice_channel.connect() #connect to the requested channel, bot isn't connected to any of the server's vc
+
+                await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
+
                 await self.PlaySound(vc, self.bot.data["audio"]["greetings"])
 
 
@@ -56,13 +67,15 @@ class VCHandler(commands.Cog):
                             await self._stop(ctx)
                             await server.disconnect() #leave
 
+                            await ctx.reply("Wychodzę z kanału`" + str(voice_channel.name) + "`", delete_after=5)
+
                         break
 
                 if same_channel == False: #User is on the same server's vc, but not the same channel
-                    await ctx.reply('Nie jesteśmy na tym samym kanale głosowym')
+                    await ctx.reply('Nie jesteśmy na tym samym kanale głosowym', delete_after=5)
 
             else:
-                await ctx.reply('Nie jestem na żadnym kanale głosowym') #bot isn't connected to any of the server's vc
+                await ctx.reply('Nie jestem na żadnym kanale głosowym', delete_after=5) #bot isn't connected to any of the server's vc
 
 
     #TODO CREATE Add source detection (bind -> spotify -> yt -> tts)
@@ -81,6 +94,7 @@ class VCHandler(commands.Cog):
             #if playing stop
             if vc.is_playing() == True:
                 vc.stop()
+                await ctx.reply("Zatrzymałem odtwarzanie.", delete_after=5)
 
 
     def PlaySound(self, channel : discord.VoiceChannel, array):
@@ -97,33 +111,52 @@ class VCHandler(commands.Cog):
                 break 
 
 
-    #TODO PUT this in task loop to auto join, and reconnect after discornnected for some time           
+    #auto join vc, and reconnect after discornnected for some time and bot isn't in other vs on same server
+    @tasks.loop(seconds=3600.0)        
     async def AutoJoinDefaultVC(self):
         for guild in self.bot.guilds:
 
             #Boberschlesien
             if(guild.id == os.getenv('DISCORD_ID_BOBERSCHLESIEN')):
-                channel = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_BBSCH_DEFAULT_VC')) #get default voice channel
-                
-                if(channel != None):
-                    await channel.connect() #connect to channel
-                    await self.PlaySound(channel, self.bot.data["audio"]["greetings"]) #play greeting voice line
+
+                vc = discord.utils.get(self.bot.voice_clients, guild=guild) #vc that bot is connected to
+
+                if vc is None: #if bot isn't on any vc on this server
+                    channel = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_BBSCH_DEFAULT_VC')) #get default voice channel
+                    
+                    if(channel != None):
+                        await channel.connect() #connect to channel
+                        await self.PlaySound(channel, self.bot.data["audio"]["greetings"]) #play greeting voice line
 
             #Scamelot
             elif(guild.id == os.getenv('DISCORD_ID_SCAMELOT')):     
-                channel = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_SCAMELOT_DEFAULT_VC')) #get default voice channel
 
-                if(channel != None):
-                    await channel.connect() #connect to channel
-                    await self.PlaySound(channel, self.bot.data["audio"]["greetings"])#play greeting voice line
+                vc = discord.utils.get(self.bot.voice_clients, guild=guild) #vc that bot is connected to
+
+                if vc is None: #if bot isn't on any vc on this server
+                    channel = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_SCAMELOT_DEFAULT_VC')) #get default voice channel
+
+                    if(channel != None):
+                        await channel.connect() #connect to channel
+                        await self.PlaySound(channel, self.bot.data["audio"]["greetings"])#play greeting voice line
 
             #Wojtini Industries
             elif(guild.id == os.getenv('DISCORD_ID_WOJTINI')): 
-                channel = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_WOJTINI_DEFAULT_VC')) #get default voice channel
 
-                if(channel != None):
-                    await channel.connect() #connect to channel
-                    await self.PlaySound(channel, self.bot.data["audio"]["greetings"])#play greeting voice line
+                vc = discord.utils.get(self.bot.voice_clients, guild=guild) #vc that bot is connected to
+
+                if vc is None: #if bot isn't on any vc on this server
+                    channel = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_WOJTINI_DEFAULT_VC')) #get default voice channel
+
+                    if(channel != None):
+                        await channel.connect() #connect to channel
+                        await self.PlaySound(channel, self.bot.data["audio"]["greetings"])#play greeting voice line
+
+
+    #wait before joining until bot is ready
+    @AutoJoinDefaultVC.before_loop
+    async def before_printer(self):
+        await self.bot.wait_until_ready()
 
 
 def setup(bot):

@@ -1,8 +1,23 @@
 {
     "modules": [
-        "vc_doorman", "global_counter", "reddit", "custom_help", "poll", "other", "ai", "message_handler", "vc_votekick", "tts", "vc_handler", "info_channels_updater", "info", "role_assigner"
+        "vc_doorman", "global_counter", "reddit", "custom_help", "poll", "other", "ai", "message_handler", "vc_votekick", "tts", "vc_handler", "info_channels_updater", "info", "role_assigner", "soundboard"
     ],
     "modulePath": "modules.",
+    //TODO ADD Settings
+    "setting": { 
+        "vc_doorman": {
+            "setting1": true, //TEMP
+            "setting2": false //TEMP
+        },
+        "global_counter": {
+            "setting1": true, //TEMP
+            "setting2": false //TEMP
+        },
+        "reddit": {
+            "setting1": true, //TEMP
+            "setting2": false //TEMP
+        }
+    },
     "logfile": "log.json",
     "audio": {
         "greetings": [

@@ -3,6 +3,7 @@ from discord.ext import commands
 import os
 from dotenv import load_dotenv
 import random
+import datetime
 
 load_dotenv()
 
@@ -21,7 +22,19 @@ class Other(commands.Cog):
     @commands.command(name = 'wiek')
     async def _wiek(self, ctx, wiek:int):
         wynik = (wiek/2) + 7
-        await ctx.reply("Yo, " + str(wynik) + " i rzucasz kartę byniu.")
+        await ctx.reply("Yo, `" + str(wynik) + "` i rzucasz kartę byniu.")
+
+    @commands.command(name = 'pogoda', aliases=['burza', 'weather', 'piorun', 'mapa', 'map', 'blitz', 'lightning', 'lighting', 'lightingmap', 'lightningmap', 'thunder'])
+    async def _weathermap(self, ctx):
+        embed=discord.Embed() #create new embed
+        embed.colour = random.randint(0, 0xffffff) #random color
+        embed.set_image(url=f"http://images.blitzortung.org/Images/image_b_pl.png?mapId={int(datetime.now().timestamp() * 1000)}") #set image
+        embed.title = "Aktualna mapa burzowa w Polsce" #set title
+        embed.url= "https://www.blitzortung.org/pl/live_lightning_maps.php?map=17"
+
+        embed.timestamp = datetime.datetime.utcnow() #set time
+
+        await ctx.reply(embed=embed)
 
     #send dm to user
     @commands.command(name = 'dmuser', aliases=['dm', 'pm', 'priv'])
