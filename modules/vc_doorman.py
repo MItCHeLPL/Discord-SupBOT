@@ -34,7 +34,7 @@ class VCDoorman(commands.Cog):
                         self.PlaySound(before.channel, self.bot.data["audio"]["farewells"], str(member.display_name))
     
 
-    def PlaySound(self, channel : discord.VoiceChannel, array, member:str=None):
+    async def PlaySound(self, channel : discord.VoiceChannel, array, member:str=None):
         for server in self.bot.voice_clients: #cycle through all servers
             if(server.channel == channel): #find current voice channel
                 vc = server #get voice channel
@@ -45,8 +45,8 @@ class VCDoorman(commands.Cog):
                 if vc.is_playing() == False: #if not saying something
                     if array[voiceLineId].find('tts') != -1 and member != None: #add member name at the end of voice line, becouse file has tts in name and there is passed member string
                         #generate tts with member name
-                        message = gtts(array[voiceLineId] + " " + str(member), lang = self.bot.data["ttsLang"], tld=bot.data["ttsTld"])
-                        message.save(f'{self.bot.data['ttsAudioPath']}tts_member_name.mp3')
+                        message = gtts(array[voiceLineId] + " " + str(member), lang = self.bot.data["ttsLang"], tld=self.bot.data["ttsTld"])
+                        message.save(self.bot.data['ttsAudioPath'] + 'tts_member_name.mp3')
 
                         vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + array[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else None) #play voice line on channel
 
@@ -54,7 +54,7 @@ class VCDoorman(commands.Cog):
                         while vc.is_playing(): #Checks if voice is playing
                             await asyncio.sleep(0.25) #While it's playing it sleeps for .25 of a second
                         
-                        vc.play(discord.FFmpegPCMAudio(f'{self.bot.data['ttsAudioPath']}tts_member_name.mp3'), after=lambda e: print('Player error: %s' % e) if e else None) #play member name on channel
+                        vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'tts_member_name.mp3'), after=lambda e: print('Player error: %s' % e) if e else None) #play member name on channel
 
                     else:#play normal bind
                         vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + array[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else None) #play voice line on channel
