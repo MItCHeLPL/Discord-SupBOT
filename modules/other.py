@@ -54,7 +54,7 @@ class Other(commands.Cog):
             await self._dmuser(ctx, user, text)
 
     #picks random person from voicechannel you are in
-    @commands.command(name = 'impostor', aliases=['imposter', 'amogus', 'amongus'])
+    @commands.command(name = 'impostor', aliases=['imposter', 'amogus', 'amongus', 'sus'])
     async def _impostor(self, ctx):
         channel = discord.utils.get(ctx.guild.voice_channels,  name=ctx.message.author.voice.channel.name) #get voice channel that caller is in
 
