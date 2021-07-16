@@ -16,8 +16,8 @@ class TTS(commands.Cog):
         txt = (userText + spaceText) #combine text
 
         #generate tts
-        message = gtts(txt, lang = self.bot.data["ttsLang"], tld=bot.data["ttsTld"])
-        message.save(f'{self.bot.data['ttsAudioPath']}tts.mp3')
+        message = gtts(txt, lang = self.bot.data["ttsLang"], tld=self.bot.data["ttsTld"])
+        message.save(self.bot.data['ttsAudioPath'] + 'tts.mp3')
 
         vc = await self.Join(ctx) #join vc
 
@@ -50,7 +50,7 @@ class TTS(commands.Cog):
                 vc = server #get voice channel
 
                 if vc.is_playing() == False: #if not saying something
-                        vc.play(discord.FFmpegPCMAudio(f'{self.bot.data['ttsAudioPath']}tts.mp3'), after=lambda e: print('Player error: %s' % e) if e else None) #play sound on vc
+                        vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'tts.mp3'), after=lambda e: print('Player error: %s' % e) if e else None) #play sound on vc
 
                 break 
 

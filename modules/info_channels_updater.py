@@ -82,7 +82,7 @@ class InfoChannelsUpdater(commands.Cog):
 
             await self.scamelot_online.edit(name='Online: ' + str(scamelot_online_count))
             if(self.scamelot_offline != None):
-                await scamelot_offline.edit(name='Offline: ' + str(scamelot_offline_count))
+                await self.scamelot_offline.edit(name='Offline: ' + str(scamelot_offline_count))
             if(self.scamelot_total != None):    
                 await self.scamelot_total.edit(name='Total: ' + str(scamelot_total_count))
             if(self.scamelot_bot != None):

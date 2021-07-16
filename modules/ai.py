@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord.ext.commands import CommandNotFound
 import os
 from dotenv import load_dotenv
 
@@ -23,7 +24,7 @@ class Ai(commands.Cog):
             await self._send_dm_to_ai(ctx, ctx.message) #send ai response
 
     #send dm to ai bot
-    @commands.command(name = 'ai' aliases=['si'])
+    @commands.command(name = 'ai', aliases=['si'])
     async def _send_dm_to_ai(self, ctx, text : str, *args):
         #get text after space
         spaceText = ""
@@ -36,4 +37,4 @@ class Ai(commands.Cog):
 
     
 def setup(bot):
-    bot.add_cog(AI(bot))
+    bot.add_cog(Ai(bot))
