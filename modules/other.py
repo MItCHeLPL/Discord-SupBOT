@@ -10,6 +10,8 @@ load_dotenv()
 class Other(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        
+        self.user_id_szary = os.getenv('DISCORD_ID_SZARY')
 
     @commands.command(name = 'sup')
     async def _sup(self, ctx):
@@ -49,7 +51,7 @@ class Other(commands.Cog):
 
     @commands.command(name = 'dmszary', aliases=['szary', 'pmszary', 'privszary'])
     async def _dmszary(self, ctx, text : str, *args):
-        user = self.bot.get_user(os.getenv('DISCORD_ID_SZARY')) #Szary ID
+        user = self.bot.get_user(self.user_id_szary) #Szary ID
         if(user != None):
             await self._dmuser(ctx, user, text)
 
