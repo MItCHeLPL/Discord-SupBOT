@@ -20,9 +20,11 @@ class Soundboard(commands.Cog):
             await self.PlaySound(ctx, vc, voiceline) #play tts
 
             ctx.reply('Odtwarzam binda `' + name + '`', delete_after=5)
+            return True
 
         else:
             ctx.reply('Nie znaleziono binda `' + name + '`', delete_after=5)
+            return False
 
 
     @commands.command(name = 'bindlist', aliases = ['bindy', 'listabindów', 'listbind', 'bindslist', 'listbinds'])
@@ -47,14 +49,14 @@ class Soundboard(commands.Cog):
             #new message
             if(i == 25):
                 #send embed
-                await ctx.send(embed=embed)
+                await ctx.author.send(embed=embed) #dm
 
                 j += 1 #add to message counter
 
                 #create new embed
                 embed=discord.Embed() 
                 embed.colour = color
-                embed.title = "Yo, Dostępne bindy: (" + str(j) + "/" + str(math.ceil(len(list)/25)) + ")" #set title
+                embed.title = "Dostępne bindy: (" + str(j) + "/" + str(math.ceil(len(list)/25)) + ")" #set title
                 embed.timestamp = datetime.datetime.utcnow() #timestamp
 
                 i = 0 #reset line counter
@@ -63,7 +65,8 @@ class Soundboard(commands.Cog):
             embed.add_field(name=str(val)[0:-4], value="`yo playbind " + str(val)[0:-4] + "`", inline=True) #add field without .mp3
             i += 1 #add to line counter
 
-        await ctx.send(embed=embed) #send last message
+        await ctx.author.send(embed=embed) #send last message in dm
+        await ctx.reply("Wysłałem DM z listą bindów do " + str(ctx.author.mention), delete_after=5)
 
     
     async def Join(self, ctx):

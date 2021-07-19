@@ -2,6 +2,7 @@ import discord
 from discord.ext import tasks, commands
 import random
 import os
+import re
 from dotenv import load_dotenv
 
 load_dotenv() #load .env
@@ -9,6 +10,16 @@ load_dotenv() #load .env
 class VCHandler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+        #dotenv storing
+        self.guild_id_bbsch = os.getenv('DISCORD_ID_BOBERSCHLESIEN')
+        self.defvc_id_bbsch = os.getenv('DISCORD_ID_BBSCH_DEFAULT_VC')
+
+        self.guild_id_scamelot = os.getenv('DISCORD_ID_SCAMELOT')
+        self.defvc_id_scamelot = os.getenv('DISCORD_ID_SCAMELOT_DEFAULT_VC')
+
+        self.guild_id_wojtini = os.getenv('DISCORD_ID_WOJTINI')
+        self.defvc_id_wojtini = os.getenv('DISCORD_ID_WOJTINI_DEFAULT_VC')
 
         self.AutoJoinDefaultVC.start() #start joining loop
 
@@ -78,11 +89,43 @@ class VCHandler(commands.Cog):
                 await ctx.reply('Nie jestem na żadnym kanale głosowym', delete_after=5) #bot isn't connected to any of the server's vc
 
 
-    #TODO CREATE Add source detection (bind -> spotify -> yt -> tts)
+    #universal play command with source detection (yt -> spotify -> bind -> tts)
     @commands.command(name = 'play', aliases = ['p', 'pla', 'odtwórz', 'odtworz', 'graj', 'start'])
-    async def _play(self, ctx):
-        return #TEMP
+    async def _play(self, ctx, text : str, *args):
+        soundboard_result = False
+        spotify_result = False
+        yt_result = False
 
+        youtube_regex = r'(https?://)?(www\.)?youtube\.(com|nl)/watch\?v=([-\w]+)'
+        spotify_regex = r'/^(?:spotify:|(?:https?:\/\/(?:open|play)\.spotify\.com\/))(?:embed)?\/?(album|track)(?::|\/)((?:[0-9a-zA-Z]){22})/'
+
+        #get text after space
+        spaceText = ""
+        for txt in args:
+            spaceText += (" " + str(txt))
+        text = (text + spaceText) #combine text
+
+
+        if re.match(youtube_regex, text):
+            yt = self.bot.get_cog('youtube')
+            if yt is not None:
+                yt_result = await yt._play(ctx, text)
+        
+        if re.match(spotify_regex, text) and yt_result == False:
+            spotify = self.bot.get_cog('spotify')
+            if spotify is not None:
+                spotify_result = await spotify._play(ctx, text)
+
+        if yt_result == False and spotify_result == False:
+            soundboard = self.bot.get_cog('soundboard')
+            if soundboard is not None:
+                bind = await soundboard._bind(ctx, text)
+
+        if yt_result == False and spotify_result == False and soundboard_result == False:
+            tts = self.bot.get_cog('tts')
+            if tts is not None:
+                await tts._tts(ctx, text)
+  
 
     @commands.command(name = 'stop', aliases = ['s', 'sto', 'zatrzymaj', 'wstrzymaj', 'cancel', 'pause'])
     async def _stop(self, ctx):
@@ -117,36 +160,36 @@ class VCHandler(commands.Cog):
         for guild in self.bot.guilds:
 
             #Boberschlesien
-            if(guild.id == os.getenv('DISCORD_ID_BOBERSCHLESIEN')):
+            if(guild.id == self.guild_id_bbsch):
 
                 vc = discord.utils.get(self.bot.voice_clients, guild=guild) #vc that bot is connected to
 
                 if vc is None: #if bot isn't on any vc on this server
-                    channel = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_BBSCH_DEFAULT_VC')) #get default voice channel
+                    channel = discord.utils.get(guild.voice_channels, id=self.defvc_id_bbsch) #get default voice channel
                     
                     if(channel != None):
                         await channel.connect() #connect to channel
                         await self.PlaySound(channel, self.bot.data["audio"]["greetings"]) #play greeting voice line
 
             #Scamelot
-            elif(guild.id == os.getenv('DISCORD_ID_SCAMELOT')):     
+            elif(guild.id == self.guild_id_scamelot):     
 
                 vc = discord.utils.get(self.bot.voice_clients, guild=guild) #vc that bot is connected to
 
                 if vc is None: #if bot isn't on any vc on this server
-                    channel = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_SCAMELOT_DEFAULT_VC')) #get default voice channel
+                    channel = discord.utils.get(guild.voice_channels, id=self.defvc_id_scamelot) #get default voice channel
 
                     if(channel != None):
                         await channel.connect() #connect to channel
                         await self.PlaySound(channel, self.bot.data["audio"]["greetings"])#play greeting voice line
 
             #Wojtini Industries
-            elif(guild.id == os.getenv('DISCORD_ID_WOJTINI')): 
+            elif(guild.id == self.guild_id_wojtini): 
 
                 vc = discord.utils.get(self.bot.voice_clients, guild=guild) #vc that bot is connected to
 
                 if vc is None: #if bot isn't on any vc on this server
-                    channel = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_WOJTINI_DEFAULT_VC')) #get default voice channel
+                    channel = discord.utils.get(guild.voice_channels, id=self.defvc_id_wojtini) #get default voice channel
 
                     if(channel != None):
                         await channel.connect() #connect to channel
