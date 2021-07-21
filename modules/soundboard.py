@@ -52,7 +52,10 @@ class Soundboard(commands.Cog):
             #new message
             if(i == 25):
                 #send embed
-                await ctx.author.send(embed=embed) #dm
+                if self.bot.data["setting"]["soundboard"]["send_bindlist_in_dm"]:  
+                    await ctx.author.send(embed=embed) #dm
+                else:
+                    await ctx.reply(embed=embed)
 
                 j += 1 #add to message counter
 
@@ -68,8 +71,11 @@ class Soundboard(commands.Cog):
             embed.add_field(name=str(val)[0:-4], value="`yo playbind " + str(val)[0:-4] + "`", inline=True) #add field without .mp3
             i += 1 #add to line counter
 
-        await ctx.author.send(embed=embed) #send last message in dm
-        await ctx.reply("Wysłałem DM z listą bindów do " + str(ctx.author.mention), delete_after=5)
+        if self.bot.data["setting"]["soundboard"]["send_bindlist_in_dm"]:   
+            await ctx.author.send(embed=embed) #send last message in dm
+            await ctx.reply("Wysłałem DM z listą bindów do " + str(ctx.author.mention), delete_after=5)
+        else:
+            await ctx.reply(embed=embed)
 
     
     async def Join(self, ctx):

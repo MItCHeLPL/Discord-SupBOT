@@ -18,10 +18,10 @@ class Reddit(commands.Cog):
     
     #Post submission from reddit
     def PostFromReddit(self, sub : str, ctx):
-        post_to_pick = 2 #start post to pick
-        isRandom = self.bot.data["reddit"]["pickRandom"] #true -> select random post, false -> sort from top hot
-        limit = self.bot.data["reddit"]["postToPickLimit"] #select this amount of posts from hot
-        allowNSFW = self.bot.data["reddit"]["allowNSFW"] #true -> can show nsfw posts if channel is set to nsfw, false -> doesn't show nsfw posts at all
+        post_to_pick = 2 #start post to pick     
+        isRandom = self.bot.data["setting"]["reddit"]["pickRandom"] #true -> select random post, false -> sort from top hot
+        limit = self.bot.data["setting"]["reddit"]["postToPickLimit"] #select this amount of posts from hot
+        allowNSFW = self.bot.data["setting"]["reddit"]["allowNSFW"] #true -> can show nsfw posts if channel is set to nsfw, false -> doesn't show nsfw posts at all
 
         submissions = reddit.subreddit(sub).hot(limit=limit) #fetch posts
 

@@ -15,10 +15,11 @@ with open('settings.json') as file:
 #bot is ready
 @bot.event
 async def on_ready():
-    print(f'Logged in as {bot.user.name} (ID: {bot.user.id})')
-    print('\nConnected to:')
-    for guild in bot.guilds:
-        print(guild.name)
+    if bot.data["debug"]["main"]:
+        print(f'Logged in as {bot.user.name} (ID: {bot.user.id})')
+        print('\nConnected to:')
+        for guild in bot.guilds:
+            print(guild.name)
 
 #load modules
 for module in bot.data["modules"]:

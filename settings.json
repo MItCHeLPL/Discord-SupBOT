@@ -1,24 +1,130 @@
 {
     "modules": [
-        "vc_doorman", "global_counter", "reddit", "custom_help", "poll", "other", "ai", "message_handler", "vc_votekick", "tts", "vc_handler", "info_channels_updater", "info", "role_assigner", "soundboard"
+        "vc_doorman", "global_counter", "reddit", "custom_help", "poll", "other", "ai", "message_handler", "vc_votekick", "tts", "vc_handler", "info_channels_updater", "info", "role_assigner", "soundboard", "admin"//, "youtube"
     ],
-    "modulePath": "modules.",
-    //TODO ADD Settings
     "setting": { 
         "vc_doorman": {
-            "setting1": true, //TEMP
-            "setting2": false //TEMP
+            "default":{
+                "enable_greeting": true,
+                "enable_farewell": true
+            },
+            "enable_member_tts": true
         },
         "global_counter": {
-            "setting1": true, //TEMP
-            "setting2": false //TEMP
+            "add_value": 1
         },
         "reddit": {
-            "setting1": true, //TEMP
-            "setting2": false //TEMP
+            "pickRandom": true,
+            "postToPickLimit": 50,
+            "allowNSFW": true
+        },
+        "custom_help": {
+            
+        },
+        "poll": {
+            
+        },
+        "other": {
+            "enable_dmszary": true
+        },
+        "ai": {
+            "send_msg_to_ai_on_command_error": true,
+            "change_cat_visibility_for_aibot": true
+        },
+        "message_handler": {
+            "reply_yo": true,
+            "reply_error_message": true
+        },
+        "vc_votekick": {
+
+        },
+        "tts": {
+
+        },
+        "vc_handler": {
+            "536251306994827285": { //Scamelot
+                "enable_auto_join" : false //TEMP False
+            },
+            "775284221701783582": { //Wojtini
+                "enable_auto_join" : false //TEMP False
+            },
+            "495666208939573248": { //Boberschlesien
+                "enable_auto_join" : false //TEMP False
+            },
+            "default":{
+                "enable_auto_join" : true
+            },
+            "enable_yt_play": false,
+            "enable_soundboard_play": true,
+            "enable_tts_play": true
+        },
+        "info_channels_updater": {
+            "495666208939573248": { //Boberschlesien
+                "update_channels": true
+            },
+            "536251306994827285": { //Scamelot
+                "update_channels": true
+            },
+            "default":{
+                "update_channels": false
+            }
+        },
+        "info": {
+            "495666208939573248": { //Boberschlesien
+                "show_info_on_join": true,
+                "show_info_on_leave": true
+            },
+            "775284221701783582": { //Wojtini
+                "show_info_on_join": true,
+                "show_info_on_leave": true
+            },
+            "default":{
+                "show_info_on_join": false,
+                "show_info_on_leave": false
+            },
+            "show_bot_author_info": true
+        },
+        "role_assigner": {
+            "495666208939573248": { //Boberschlesien
+                "assign_roles": true
+            },
+            "536251306994827285": { //Scamelot
+                "assign_roles": true
+            },
+            "default":{
+                "assign_roles": false
+            }
+        },
+        "soundboard": {
+            "send_bindlist_in_dm": true
+        },
+        "youtube": {
+            "max_duration": 60
+        },
+        "admin": {
+            "admin_ids": []
         }
     },
-    "logfile": "log.json",
+    "debug": { 
+        "main": true,
+        "vc_doorman": true,
+        "global_counter": true,
+        "reddit": true,
+        "custom_help": true,
+        "poll": true,
+        "other": true,
+        "ai": true,
+        "message_handler": true,
+        "vc_votekick": true,
+        "tts": true,
+        "vc_handler": true,
+        "info_channels_updater": true,
+        "info": true,
+        "role_assigner": true,
+        "soundboard": true,
+        "youtube": true,
+        "admin": true
+    },
     "audio": {
         "greetings": [
             "tts_yo.mp3", "czesc.mp3", "eloeloelo.mp3", "hello_there.mp3", "owitam.mp3", "radczesc.mp3", "radczesc.mp3", "radczesc.mp3", "siema.mp3", "siemkaa.mp3", "yczesc.mp3", "witajx3.mp3", "szmitekhalo.mp3", "dziendobrykochamcie.mp3", "tts_jolsap.mp3", "tts_czesc.mp3", "tts_witam.mp3", "tts_dzien_dobry.mp3", "tts_jol.mp3"
@@ -30,13 +136,10 @@
             "alecizajebiekurwa.mp3", "azjatyckimkraju.mp3", "bezkappy.mp3", "billieeilish.mp3", "billieeilish2.mp3", "chrobareeeeeeee.mp3", "chrobarsmiech.mp3", "chybaprzywale.mp3", "chłop.mp3", "cicho.mp3", "daj.mp3", "Daj_daj_daj.mp3", "dredy.mp3", "dudzikkurwa.mp3", "dziwkotaksuówo.mp3", "eloeloelo.mp3", "fajnybober.mp3", "hello_there.mp3", "jarobilemdobrze.mp3", "jazdakurwa.mp3", "katapulty.mp3", "kielbasa.mp3", "kurdystan.mp3", "kurwafirstblood.mp3", "lizaniedupylolxa.mp3", "mialmial.mp3", "misa.mp3", "mlecyk.mp3", "nakiblu.mp3", "nierobtego.mp3", "notaksrednio.mp3", "notykuro.mp3", "oja.mp3", "okurwaalebebol.mp3", "pacha.mp3", "parówa.mp3", "perolewas.mp3", "pogczamp.mp3", "pojemnik.mp3", "polskietango.mp3", "radczesc.mp3", "skurbobrze.mp3", "slazak.mp3", "smiechlolxa.mp3", "smiechlolxa2.mp3", "szmato.mp3", "takodupajakstodoła.mp3", "tuptasz.mp3", "tybobrze.mp3", "wojtekcos.mp3", "wojtekkurewko.mp3", "wojtekmałpalolxhaha.mp3", "wojtekswinia.mp3", "yo.mp3", "zniszczylbymswiat.mp3"
         ]
     },
+    //Paths and shared settings
+    "modulePath": "modules.",
     "audioPath": "audio/voice_lines/",
     "ttsAudioPath": "audio/tts/",
     "ttsLang": "pl",
-    "ttsTld": "pl",
-    "reddit": {
-        "pickRandom": true,
-        "postToPickLimit": 50,
-        "allowNSFW": true
-    }
+    "ttsTld": "pl"
 }

@@ -12,28 +12,30 @@ class Info(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
-        ctx = member.guild.system_channel
+        if (str(member.guild.id) in self.bot.data["setting"]["info"] and self.bot.data["setting"]["info"][str(member.guild.id)]["show_info_on_leave"]) or self.bot.data["setting"]["info"]["default"]["show_info_on_leave"]: 
+            ctx = member.guild.system_channel
 
-        embed = discord.Embed()
-        embed.set_author(name='👋Użytkownik opuścił serwer') #embed header
+            embed = discord.Embed()
+            embed.set_author(name='👋Użytkownik opuścił serwer') #embed header
 
-        if member.bot == True:
-            embed.description = '`🤖BOT`' #add bot tag
+            if member.bot == True:
+                embed.description = '`🤖BOT`' #add bot tag
 
-        await self._userinfo(ctx, member, embed)
+            await self._userinfo(ctx, member, embed)
 
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        ctx = member.guild.system_channel
+        if (str(member.guild.id) in self.bot.data["setting"]["info"] and self.bot.data["setting"]["info"][str(member.guild.id)]["show_info_on_join"]) or self.bot.data["setting"]["info"]["default"]["show_info_on_join"]:
+            ctx = member.guild.system_channel
 
-        embed = discord.Embed()
-        embed.set_author(name='👋Użytkownik dołączył na serwer') #embed header
+            embed = discord.Embed()
+            embed.set_author(name='👋Użytkownik dołączył na serwer') #embed header
 
-        if member.bot == True:
-            embed.description = '`🤖BOT`' #add bot tag
+            if member.bot == True:
+                embed.description = '`🤖BOT`' #add bot tag
 
-        await self._userinfo(ctx, member, embed)
+            await self._userinfo(ctx, member, embed)
 
 
     #combined info
@@ -220,25 +222,29 @@ class Info(commands.Cog):
     async def _botinfo(self, ctx):
         """Informacje o tym bocie"""
         embed=discord.Embed() 
-        embed.set_author(name='🛈 Informacje o użytkowniku:') #ebed header
+        embed.set_author(name='🛈 Informacje o bocie:') #embed header
 
-        embed.description = '**Twórca: [M!tCHeL](https://github.com/MItCHeLPL)**\n**Projekt: [GitHub](https://github.com/MItCHeLPL/Discord-SupBOT)**\n\n`🤖BOT`'
+        if self.bot.data["setting"]["info"]["show_bot_author_info"]:   
+            embed.description = '**Twórca: [M!tCHeL](https://github.com/MItCHeLPL)**\n**Projekt: [GitHub](https://github.com/MItCHeLPL/Discord-SupBOT)**\n\n`🤖BOT`'
 
-        buttons = [
-            create_button(
-                style=ButtonStyle.link,
-                label="GitHub",
-                url="https://github.com/MItCHeLPL"
-            ),
-            create_button(
-                style=ButtonStyle.link,
-                label="Repozytorium",
-                url="https://github.com/MItCHeLPL/Discord-SupBOT"
-            ),
-          ]
-        action_row = create_actionrow(*buttons)
+            buttons = [
+                create_button(
+                    style=ButtonStyle.link,
+                    label="GitHub",
+                    url="https://github.com/MItCHeLPL"
+                ),
+                create_button(
+                    style=ButtonStyle.link,
+                    label="Repozytorium",
+                    url="https://github.com/MItCHeLPL/Discord-SupBOT"
+                ),
+            ]
+            action_row = create_actionrow(*buttons)
 
-        await self._userinfo(ctx, ctx.bot, embed, action_row) #show user info about bot
+            await self._userinfo(ctx, ctx.bot, embed, action_row) #show user info about bot
+
+        else:
+            await self._userinfo(ctx, ctx.bot, embed) #show user info about bot
         
 
 def setup(bot):
