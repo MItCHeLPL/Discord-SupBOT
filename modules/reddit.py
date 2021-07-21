@@ -69,7 +69,11 @@ class Reddit(commands.Cog):
             embed.description = "`Posty NSFW tylko na kanałach NSFW`"
             embed.timestamp = datetime.datetime.utcnow() #set time
 
+        if self.bot.data["debug"]["reddit"]:
+            print(f'[reddit][PostFromReddit]Generated post from reddit: {sub}\n')
+
         return embed
+
 
     @commands.command(name = 'subreddit', aliases = ['sub'])
     async def _sub(self, ctx, sub : str):

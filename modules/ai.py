@@ -21,17 +21,26 @@ class Ai(commands.Cog):
 
         self.lastMessageChannel = None
 
+
     #if got response from ai bot in dm's post it to last message channel
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.guild == None and message.author == self.aiBot:
             await self.lastMessageChannel.send(message)
 
+            if self.bot.data["debug"]["ai"]:
+                print(f'[ai][on_message]Got response from AIBOT: {message}. And sent it back to text channel\n')
+
+
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, CommandNotFound):
             if self.bot.data["setting"]["ai"]["send_msg_to_ai_on_command_error"]:
                 await self._send_dm_to_ai(ctx, ctx.message) #send ai response
+
+                if self.bot.data["debug"]["ai"]:
+                    print(f'[ai][on_command_error]Sent {ctx.message} on command error in dm to AIBOT')
+
 
     @commands.Cog.listener()
     @has_permissions(manage_roles=True, manage_channels=True)
@@ -43,6 +52,10 @@ class Ai(commands.Cog):
                     await self.ai_category.set_permissions(self.bbsch_everyone_role, view_channel = True, read_messages = True, send_messages = False)
                 if member == self.aiBot and member.status == discord.Status.offline:
                     await self.ai_category.set_permissions(self.bbsch_everyone_role, view_channel = False, read_messages = False, send_messages = False)
+
+                if self.bot.data["debug"]["ai"]:
+                    print(f'[ai][on_voice_state_update]Updated AIBOT category visibility\n')
+
 
     #send dm to ai bot
     @commands.command(name = 'ai', aliases=['si'])
@@ -56,6 +69,9 @@ class Ai(commands.Cog):
         if(self.aiBot != None):
             await self.aiBot.send('yoai ' + text + spaceText)
             self.lastMessageChannel = ctx.channel
+
+            if self.bot.data["debug"]["ai"]:
+                print(f'[ai][_send_dm_to_ai]Sent {text + spaceText} in dm to AIBOT\n')
 
     
 def setup(bot):

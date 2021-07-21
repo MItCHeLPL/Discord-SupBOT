@@ -42,6 +42,9 @@ class RoleAssigner(commands.Cog):
                 if(self.scamelot_rank_scam != None):
                     await member.add_roles(self.scamelot_rank_scam) #add role
 
+            if self.bot.data["debug"]["role_assigner"]:
+                print(f'[role_assigner][on_member_join]Assigned roles to {member.mention}\n')
+
     
 def setup(bot):
     bot.add_cog(RoleAssigner(bot))
