@@ -22,10 +22,18 @@ class Soundboard(commands.Cog):
             await self.PlaySound(ctx, vc, voiceline) #play tts
 
             ctx.reply('Odtwarzam binda `' + name + '`', delete_after=5)
+
+            if self.bot.data["debug"]["soundboard"]:
+                print(f'[soundboard][_bind]Playing bind: {name}\n')
+
             return True
 
         else:
             ctx.reply('Nie znaleziono binda `' + name + '`', delete_after=5)
+
+            if self.bot.data["debug"]["soundboard"]:
+                print(f'[soundboard][_bind]Sound not found\n')
+
             return False
 
 
@@ -74,8 +82,15 @@ class Soundboard(commands.Cog):
         if self.bot.data["setting"]["soundboard"]["send_bindlist_in_dm"]:   
             await ctx.author.send(embed=embed) #send last message in dm
             await ctx.reply("Wysłałem DM z listą bindów do " + str(ctx.author.mention), delete_after=5)
+
+            if self.bot.data["debug"]["soundboard"]:
+                print(f'[soundboard][_bindList]Sent bindlist in DM to {ctx.author.mention}\n')
+
         else:
             await ctx.reply(embed=embed)
+
+            if self.bot.data["debug"]["soundboard"]:
+                print(f'[soundboard][_bindList]Sent bindlist to text channel\n')
 
     
     async def Join(self, ctx):
@@ -89,16 +104,28 @@ class Soundboard(commands.Cog):
                 for server in self.bot.voice_clients: #cycle through all servers
                     if(server.channel == voice_channel): #bot is already on the same vc
                         same_channel = True
+
+                        if self.bot.data["debug"]["soundboard"]:
+                            print(f'[soundboard][Join]Bot is in the same vc')
+
                         break
 
                 if same_channel == False: #User is on the same server's vc, but not the same channel
-                    await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
+                    #await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
+
+                    if self.bot.data["debug"]["soundboard"]:
+                        print(f'[soundboard][Join]Bot joined vc')
+
                     return await voice_channel.connect()
-
+                    
             else:
-                await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
-                return await voice_channel.connect() #connect to the requested channel, bot isn't connected to any of the server's vc
+                #await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
 
+                if self.bot.data["debug"]["soundboard"]:
+                    print(f'[soundboard][Join]Bot joined vc')
+
+                return await voice_channel.connect() #connect to the requested channel, bot isn't connected to any of the server's vc
+                
 
     def PlaySound(self, channel : discord.VoiceChannel, voiceline):
         for server in self.bot.voice_clients: #cycle through all servers
@@ -106,7 +133,10 @@ class Soundboard(commands.Cog):
                 vc = server #get voice channel
 
                 if vc.is_playing() == False: #if not saying something
-                        vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + voiceline), after=lambda e: print('Player error: %s' % e) if e else None) #play sound on vc
+                    vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + voiceline), after=lambda e: print('Player error: %s' % e) if e else None) #play sound on vc
+
+                if self.bot.data["debug"]["soundboard"]:
+                    print(f'[soundboard][PlaySound]Played sound')
 
                 break 
 

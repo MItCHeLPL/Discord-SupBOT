@@ -14,6 +14,9 @@ class MessageHandler(commands.Cog):
             if ((message.content == 'yo' or message.content == 'Yo') and message.author.bot == False):
                 await message.reply('yo') 
 
+                if self.bot.data["debug"]["message_handler"]:
+                    print(f'[message_handler][on_message]Sent yo\n')
+
         await self.bot.process_commands(message) #else
 
     #command error
@@ -23,6 +26,9 @@ class MessageHandler(commands.Cog):
             await ctx.message.add_reaction('❌') #add emoji
             if self.bot.data["setting"]["message_handler"]["reply_error_message"]:   
                 await ctx.reply('Yo, nie rozumiem,\nWpisz `yo help` i przestań mi bota prześladować', delete_after=10) #error message
+
+            if self.bot.data["debug"]["message_handler"]:
+                print(f'[message_handler][on_command_error]Command error\n')
 
     #command success
     @commands.Cog.listener()

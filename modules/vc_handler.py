@@ -41,6 +41,9 @@ class VCHandler(commands.Cog):
 
                         ctx.reply("Jestem już na tym kanale", delete_after=5)
 
+                        if self.bot.data["debug"]["vc_handler"]:
+                            print(f'[vc_handler][_join]Bot is in the same vc\n')
+
                         break
 
                 if same_channel == False: #User is on the same server's vc, but not the same channel
@@ -48,12 +51,18 @@ class VCHandler(commands.Cog):
 
                     await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
 
+                    if self.bot.data["debug"]["vc_handler"]:
+                        print(f'[vc_handler][_join]Bot joined vc\n')
+
                     await self.PlaySound(vc, self.bot.data["audio"]["greetings"])
 
             else:
                 vc = await voice_channel.connect() #connect to the requested channel, bot isn't connected to any of the server's vc
 
                 await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
+
+                if self.bot.data["debug"]["vc_handler"]:
+                    print(f'[vc_handler][_join]Bot joined vc\n')
 
                 await self.PlaySound(vc, self.bot.data["audio"]["greetings"])
 
@@ -83,13 +92,22 @@ class VCHandler(commands.Cog):
 
                             await ctx.reply("Wychodzę z kanału`" + str(voice_channel.name) + "`", delete_after=5)
 
+                            if self.bot.data["debug"]["vc_handler"]:
+                                print(f'[vc_handler][_leave]Bot left vc\n')
+
                         break
 
                 if same_channel == False: #User is on the same server's vc, but not the same channel
                     await ctx.reply('Nie jesteśmy na tym samym kanale głosowym', delete_after=5)
 
+                    if self.bot.data["debug"]["vc_handler"]:
+                        print(f'[vc_handler][_leave]Bot and user arent in the same vc\n')
+
             else:
                 await ctx.reply('Nie jestem na żadnym kanale głosowym', delete_after=5) #bot isn't connected to any of the server's vc
+
+                if self.bot.data["debug"]["vc_handler"]:
+                    print(f'[vc_handler][_leave]Bot isnt on any vc\n')
 
 
     #universal play command with source detection (yt -> spotify -> bind -> tts)
@@ -113,15 +131,24 @@ class VCHandler(commands.Cog):
             if yt is not None:
                 yt_result = await yt._playyt(ctx, text)
 
+                if self.bot.data["debug"]["vc_handler"]:
+                    print(f'[vc_handler][_play]Choose yt')
+
         if yt_result == False and self.bot.data["setting"]["vc_handler"]["enable_soundboard_play"]:
             soundboard = self.bot.get_cog('soundboard')
             if soundboard is not None:
                 bind = await soundboard._bind(ctx, text)
 
+                if self.bot.data["debug"]["vc_handler"]:
+                    print(f'[vc_handler][_play]Choose soundboard')
+
         if yt_result == False and soundboard_result == False and self.bot.data["setting"]["vc_handler"]["enable_tts_play"]:
             tts = self.bot.get_cog('tts')
             if tts is not None:
                 await tts._tts(ctx, text)
+
+                if self.bot.data["debug"]["vc_handler"]:
+                    print(f'[vc_handler][_play]Choose tts')
   
 
     @commands.command(name = 'stop', aliases = ['s', 'sto', 'zatrzymaj', 'wstrzymaj', 'cancel', 'pause'])
@@ -143,13 +170,22 @@ class VCHandler(commands.Cog):
                             vc.stop() #stop playing
                             await ctx.reply("Zatrzymałem odtwarzanie.", delete_after=5)
 
+                            if self.bot.data["debug"]["vc_handler"]:
+                                print(f'[vc_handler][_stop]Stopped playing\n')
+
                         break
 
                 if same_channel == False: #User is on the same server's vc, but not the same channel
                     await ctx.reply('Nie jesteśmy na tym samym kanale głosowym', delete_after=5)
 
+                    if self.bot.data["debug"]["vc_handler"]:
+                        print(f'[vc_handler][_stop]Bot and user arent in the same vc\n')
+
             else:
                 await ctx.reply('Nie jestem na żadnym kanale głosowym', delete_after=5) #bot isn't connected to any of the server's vc
+
+                if self.bot.data["debug"]["vc_handler"]:
+                    print(f'[vc_handler][_stop]Bot isnt on any vc\n')
 
 
     def PlaySound(self, channel : discord.VoiceChannel, array):
@@ -162,6 +198,9 @@ class VCHandler(commands.Cog):
                 #play voice line 
                 if vc.is_playing() == False: #if not saying something
                     vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + array[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else None) #play voice line on channel
+
+                if self.bot.data["debug"]["vc_handler"]:
+                    print(f'[vc_handler][PlaySound]Played audio')
 
                 break 
 
@@ -185,6 +224,9 @@ class VCHandler(commands.Cog):
                             await channel.connect() #connect to channel
                             await self.PlaySound(channel, self.bot.data["audio"]["greetings"]) #play greeting voice line
 
+                            if self.bot.data["debug"]["vc_handler"]:
+                                print(f'[vc_handler][AutoJoinDefaultVC]Auto-joined on {guild.name}\n')
+
             #Scamelot
             elif(guild.id == self.guild_id_scamelot):     
 
@@ -199,6 +241,9 @@ class VCHandler(commands.Cog):
                             await channel.connect() #connect to channel
                             await self.PlaySound(channel, self.bot.data["audio"]["greetings"])#play greeting voice line
 
+                            if self.bot.data["debug"]["vc_handler"]:
+                                print(f'[vc_handler][AutoJoinDefaultVC]Auto-joined on {guild.name}\n')
+
             #Wojtini Industries
             elif(guild.id == self.guild_id_wojtini): 
 
@@ -212,6 +257,9 @@ class VCHandler(commands.Cog):
                         if(channel != None):
                             await channel.connect() #connect to channel
                             await self.PlaySound(channel, self.bot.data["audio"]["greetings"])#play greeting voice line
+
+                            if self.bot.data["debug"]["vc_handler"]:
+                                print(f'[vc_handler][AutoJoinDefaultVC]Auto-joined on {guild.name}\n')
 
 
     #wait before joining until bot is ready

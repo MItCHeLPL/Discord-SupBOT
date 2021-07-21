@@ -66,6 +66,9 @@ class InfoChannelsUpdater(commands.Cog):
                 await self.bbsch_in_vc.edit(name='🎤Na kanałach: ' + str(bbsch_invc_count))   
             if(self.bbsch_bot != None):
                 await self.bbsch_bot.edit(name='🤖Bot: ' + str(bbsch_bot_count))  
+
+            if self.bot.data["debug"]["info_channels_updater"]:
+                print(f'[info_channels_updater][_updater]Updated Boberschlesien channels\n')
             
 
         #scamelot
@@ -91,6 +94,13 @@ class InfoChannelsUpdater(commands.Cog):
                 await self.scamelot_total.edit(name='Total: ' + str(scamelot_total_count))
             if(self.scamelot_bot != None):
                 await self.scamelot_bot.edit(name='BOTS: ' + str(scamelot_bot_count))
+            
+            if self.bot.data["debug"]["info_channels_updater"]:
+                print(f'[info_channels_updater][_updater]Updated Scamelot channels\n')
+
+
+        if self.bot.data["debug"]["info_channels_updater"]:
+            print(f'[info_channels_updater][_updater]Finished updating info channels\n')
 
 
     #wait until bot is ready

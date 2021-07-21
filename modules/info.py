@@ -24,6 +24,9 @@ class Info(commands.Cog):
 
             await self._userinfo(ctx, member, embed)
 
+            if self.bot.data["debug"]["info"]:
+                print(f'[info][on_member_remove]{member.mention} left {member.guild.name}. Requested user info')
+
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
@@ -38,6 +41,9 @@ class Info(commands.Cog):
 
             await self._userinfo(ctx, member, embed)
 
+            if self.bot.data["debug"]["info"]:
+                print(f'[info][on_member_join]{member.mention} joined {member.guild.name}. Requested user info')
+
 
     #combined info
     @commands.command(name = 'info', aliases = ['stats'])
@@ -46,6 +52,9 @@ class Info(commands.Cog):
         await self._userinfo(ctx, ctx.author)
         await self._serverinfo(ctx)
         await self._botinfo(ctx)
+
+        if self.bot.data["debug"]["info"]:
+            print(f'[info][_info]Requested full info')
 
 
     #user info
@@ -121,6 +130,9 @@ class Info(commands.Cog):
             await ctx.send(embed=embed)
         else:
             await ctx.send(embed=embed, components=[action_row])
+
+        if self.bot.data["debug"]["info"]:
+            print(f'[info][_userinfo]Sent info about {member.mention}\n')
 
 
     #server info
@@ -218,6 +230,9 @@ class Info(commands.Cog):
 
         await ctx.send(embed=embed, components=[action_row])
 
+        if self.bot.data["debug"]["info"]:
+            print(f'[info][_serverinfo]Sent info about {ctx.guild.name}\n')
+
 
     #bot info
     @commands.command(name = 'botinfo', aliases = ['infobot', 'bot', 'infosupbot', 'supbotinfo', 'about', 'aboutbot', 'github', 'project'])
@@ -247,6 +262,9 @@ class Info(commands.Cog):
 
         else:
             await self._userinfo(ctx, ctx.bot, embed) #show user info about bot
+
+        if self.bot.data["debug"]["info"]:
+            print(f'[info][_botinfo]Requested info about SupBOT')
         
 
 def setup(bot):

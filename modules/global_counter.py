@@ -26,6 +26,9 @@ class GlobalCounter(commands.Cog):
 
         await ctx.reply(f'Licznik wynosi: `{counter}`')
 
+        if self.bot.data["debug"]["global_counter"]:
+            print(f'[global_counter][_add]Added {self.bot.data["setting"]["global_counter"]["add_value"]} to global counter value, now it equals: {counter} \n')
+
 
 def setup(bot):
     bot.add_cog(GlobalCounter(bot))
