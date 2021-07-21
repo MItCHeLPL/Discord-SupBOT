@@ -22,11 +22,17 @@ class TTS(commands.Cog):
             message = gtts(txt, lang = self.bot.data["ttsLang"], tld=self.bot.data["ttsTld"])
             message.save(self.bot.data['ttsAudioPath'] + 'tts.mp3')
 
+            if self.bot.data["debug"]["tts"]:
+                print(f'[tts][_tts]Generated TTS: {txt}')
+
             vc = await self.Join(ctx) #join vc
 
             await self.PlaySound(ctx, vc) #play tts
 
             await ctx.reply("Odtwarzam TTS: `" + txt + "`", delete_after=5)
+
+            if self.bot.data["debug"]["tts"]:
+                print(f'[tts][_tts]Playing TTS\n')
 
     
     async def Join(self, ctx):
@@ -40,14 +46,26 @@ class TTS(commands.Cog):
                 for server in self.bot.voice_clients: #cycle through all servers
                     if(server.channel == voice_channel): #bot is already on the same vc
                         same_channel = True
+
+                        if self.bot.data["debug"]["tts"]:
+                            print(f'[tts][Join]Bot is in the same vc')
+
                         break
 
                 if same_channel == False: #User is on the same server's vc, but not the same channel
-                    await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
+                    #await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
+
+                    if self.bot.data["debug"]["tts"]:
+                        print(f'[tts][Join]Bot joined vc')
+
                     return await voice_channel.connect()
 
             else:
-                await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
+                #await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
+
+                if self.bot.data["debug"]["tts"]:
+                    print(f'[tts][Join]Bot joined vc')
+
                 return await voice_channel.connect() #connect to the requested channel, bot isn't connected to any of the server's vc
 
 
@@ -58,6 +76,9 @@ class TTS(commands.Cog):
 
                 if vc.is_playing() == False: #if not saying something
                         vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'tts.mp3'), after=lambda e: print('Player error: %s' % e) if e else None) #play sound on vc
+
+                if self.bot.data["debug"]["tts"]:
+                    print(f'[tts][PlaySound]Played sound')
 
                 break 
 

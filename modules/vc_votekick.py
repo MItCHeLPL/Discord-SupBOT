@@ -36,13 +36,23 @@ class VCVoteKick(commands.Cog):
                     canceled = True
                     await ctx.send("Zmieniła się liczba użytkowników na kanale, rozpoczęto nowe głosowanie.", delete_after=10)
                     await self._votekick(ctx, user) #add first vote
+
+                    if self.bot.data["debug"]["vc_votekick"]:
+                        print(f'[vc_votekick][_votekick]New vote on {user.mention}\n')
+
                 else: #add vote
                     if(ctx.message.author not in self.kickArray[user]['callers']):#adds new caller
                         self.kickArray[user]['votes'] += 1 
                         self.kickArray[user]['callers'].append(ctx.message.author)
 
+                        if self.bot.data["debug"]["vc_votekick"]:
+                            print(f'[vc_votekick][_votekick]{ctx.author.mention} voted on {user.mention}\n')
+
         else:
             await ctx.send("Nie ma takiego użytkownika na twoim kanale głosowym", delete_after=10)
+
+            if self.bot.data["debug"]["vc_votekick"]:
+                print(f'[vc_votekick][_votekick]No such user on vc\n')
 
         #output text
         text = "Głosowanie na wyrzucenie: " + str(user.mention) + " `" + str(self.kickArray[user]['votes']) + "/"
@@ -57,8 +67,14 @@ class VCVoteKick(commands.Cog):
             self.kickArray.clear()
             await user.edit(voice_channel=None) #kick user from vc
 
+            if self.bot.data["debug"]["vc_votekick"]:
+                print(f'[vc_votekick][_votekick]Kicked {user.mention} from vc\n')
+
         if(canceled == False):#avoid double message
             await ctx.reply(text) #send output
+
+            if self.bot.data["debug"]["vc_votekick"]:
+                print(f'[vc_votekick][_votekick]Canceled vote on {user.mention}\n')
 
 def setup(bot):
     bot.add_cog(VCVoteKick(bot))

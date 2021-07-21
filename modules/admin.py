@@ -28,6 +28,8 @@ class Admin(commands.Cog):
         text = (userText + spaceText) #combine text
 
         await channel.send(text)
+        if self.bot.data["debug"]["admin"]:
+            print(f'[admin][_say]Admin ({str(ctx.message.author.mention)}) sent {text} on channel {channel.name}\n')
 
 
     @_say.error
