@@ -5,13 +5,15 @@ import random
 import math
 
 class Soundboard(commands.Cog):
+    """Bindy"""
     def __init__(self, bot):
         self.bot = bot
     
 
     @commands.command(name = 'playbind', aliases = ['bind', 'soundboard', 'pb', 'ps', 'sound', 'playsound'])
     async def _bind(self, ctx, name : str):
-
+        """Odtwarza binda (yo playbind [nazwa]) 
+        Lista bindów dostępna używając: (yo bindlist)"""
         voiceline = name + '.mp3'
 
         if voiceline in self.bot.data['binds']:
@@ -29,6 +31,7 @@ class Soundboard(commands.Cog):
 
     @commands.command(name = 'bindlist', aliases = ['bindy', 'listabindów', 'listbind', 'bindslist', 'listbinds'])
     async def _bindList(self, ctx):
+        """Wyświetla listę dostępnych bindów"""
         list = self.bot.data['binds'] #take all the available binds
         list = sorted(list, key=str.lower) #sort list alphabetically
 

@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 load_dotenv() #load .env
 
 class VCHandler(commands.Cog):
+    """Chat głosowy"""
     def __init__(self, bot):
         self.bot = bot
 
@@ -26,6 +27,7 @@ class VCHandler(commands.Cog):
 
     @commands.command(name = 'join', aliases = ['j', 'joi', 'dolacz', 'dołącz', 'connect', 'enter'])
     async def _join(self, ctx):
+        """Dołączna na twój kanał głosowy"""
         user=ctx.message.author #get user
         voice_channel=user.voice.channel #get user's vc
 
@@ -58,6 +60,7 @@ class VCHandler(commands.Cog):
 
     @commands.command(name = 'leave', aliases = ['l', 'leav', 'wyjdz', 'wyjdź', 'disconnect'])
     async def _leave(self, ctx):
+        """Wychodzi z twojego kanału głosowego"""
         user=ctx.message.author #get user
         voice_channel=user.voice.channel #get user's vc
 
@@ -92,6 +95,7 @@ class VCHandler(commands.Cog):
     #universal play command with source detection (yt -> spotify -> bind -> tts)
     @commands.command(name = 'play', aliases = ['p', 'pla', 'odtwórz', 'odtworz', 'graj', 'start'])
     async def _play(self, ctx, text : str, *args):
+        """Odtwarza link/bind/tts na twoim kanale (yo play [url/nazwa_binda/tekst])"""
         soundboard_result = False
         spotify_result = False
         yt_result = False
@@ -129,6 +133,7 @@ class VCHandler(commands.Cog):
 
     @commands.command(name = 'stop', aliases = ['s', 'sto', 'zatrzymaj', 'wstrzymaj', 'cancel', 'pause'])
     async def _stop(self, ctx):
+        """Zatrzymuje odtwarzanie"""
         server = ctx.message.guild.voice_client #get server
 
         if(server != None):

@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 load_dotenv() #load .env
 
 class InfoChannelsUpdater(commands.Cog):
+    """Aktualizator kanałów statystycznych"""
     def __init__(self, bot):
         self.bot = bot
 

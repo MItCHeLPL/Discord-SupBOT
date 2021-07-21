@@ -5,6 +5,7 @@ from discord_slash.utils.manage_components import create_button, create_actionro
 from discord_slash.model import ButtonStyle
 
 class Info(commands.Cog):
+    """Inforamcje i statystyki"""
     def __init__(self, bot):
         self.bot = bot
 
@@ -38,6 +39,7 @@ class Info(commands.Cog):
     #combined info
     @commands.command(name = 'info', aliases = ['stats'])
     async def _info(self, ctx):
+        """Wszystkie informacje"""
         await self._userinfo(ctx, ctx.author)
         await self._serverinfo(ctx)
         await self._botinfo(ctx)
@@ -46,7 +48,7 @@ class Info(commands.Cog):
     #user info
     @commands.command(name = 'userinfo', aliases = ['user', 'infouser', 'counter', 'baninfo', 'kickinfo', 'userstats'])
     async def _userinfo(self, ctx, member:discord.Member, embed:discord.Embed=None, action_row=None):
-        
+        """Informacje o użytkowniku (yo userinfo [@użytkownik])"""
         #Calculate total kick amount
         kick_count = 0
         async for x in ctx.guild.audit_logs(before=None, after=None, oldest_first=None, action=discord.AuditLogAction.kick):
@@ -121,7 +123,7 @@ class Info(commands.Cog):
     #server info
     @commands.command(name = 'serverinfo', aliases = ['server', 'infoserver', 'serwer', 'infoserwer', 'serwerinfo', 'serverstats'])
     async def _serverinfo(self, ctx):
-        
+        """Informacje o serwerze"""
         #Calculate online/offline members
         online_count = 0
         bot_count = 0
@@ -216,7 +218,7 @@ class Info(commands.Cog):
     #bot info
     @commands.command(name = 'botinfo', aliases = ['infobot', 'bot', 'infosupbot', 'supbotinfo', 'about', 'aboutbot', 'github', 'project'])
     async def _botinfo(self, ctx):
-        
+        """Informacje o tym bocie"""
         embed=discord.Embed() 
         embed.set_author(name='🛈 Informacje o użytkowniku:') #ebed header
 
