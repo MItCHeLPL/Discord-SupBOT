@@ -3,12 +3,14 @@ from discord.ext import commands
 import math
 
 class VCVoteKick(commands.Cog):
+    """Wyrzuć z kanału głosowego"""
     def __init__(self, bot):
         self.bot = bot
         self.kickArray = {} #array of users to kick from vc
 
     @commands.command(name = 'votekick', aliases = ['wyrzuc', 'wyrzuć'])
     async def _votekick(self, ctx, user : discord.Member):
+        """Zagłosuj na wyrzucenie użytkownika z kanału głosowego (yo votekick [@użytkownik])"""
         canceled = False
 
         channel = discord.utils.get(ctx.guild.voice_channels,  name=ctx.message.author.voice.channel.name) #get voice channel that caller is in

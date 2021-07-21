@@ -3,6 +3,7 @@ from discord.ext import commands
 from pretty_help import DefaultMenu, PrettyHelp
 
 class CustomHelp(commands.Cog):
+    """Pomoc"""
     def __init__(self, bot):
         self.bot = bot
 
