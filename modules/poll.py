@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord.ext.commands import has_permissions
 #from discord_slash.utils.manage_components import create_button, create_actionrow, wait_for_component
 #from discord_slash.model import ButtonStyle
 import random
@@ -50,6 +51,7 @@ class Poll(commands.Cog):
 
     #update poll
     @commands.Cog.listener()
+    @has_permissions(manage_messages=True)
     async def on_reaction_add(self, reaction, user):
         message = reaction.message
         emoji_id = self.get_emoji_id(reaction.emoji)

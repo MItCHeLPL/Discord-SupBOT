@@ -127,15 +127,29 @@ class VCHandler(commands.Cog):
     @commands.command(name = 'stop', aliases = ['s', 'sto', 'zatrzymaj', 'wstrzymaj', 'cancel', 'pause'])
     async def _stop(self, ctx):
         """Zatrzymuje odtwarzanie"""
-        server = ctx.message.guild.voice_client #get server
+        user=ctx.message.author #get user
+        voice_channel=user.voice.channel #get user's vc
 
-        if(server != None):
-            vc = server #get voice channel
+        same_channel = False
 
-            #if playing stop
-            if vc.is_playing() == True:
-                vc.stop()
-                await ctx.reply("Zatrzymałem odtwarzanie.", delete_after=5)
+        if voice_channel != None: #user has to be in the vc
+            if(self.bot.voice_clients != []): #if bot is on any server's vc
+                for server in self.bot.voice_clients: #cycle through all servers
+                    if(server.channel == voice_channel): #bot is already on the same vc
+                        same_channel = True
+                        vc = voice_channel
+                        
+                        if vc.is_playing() == True:
+                            vc.stop() #stop playing
+                            await ctx.reply("Zatrzymałem odtwarzanie.", delete_after=5)
+
+                        break
+
+                if same_channel == False: #User is on the same server's vc, but not the same channel
+                    await ctx.reply('Nie jesteśmy na tym samym kanale głosowym', delete_after=5)
+
+            else:
+                await ctx.reply('Nie jestem na żadnym kanale głosowym', delete_after=5) #bot isn't connected to any of the server's vc
 
 
     def PlaySound(self, channel : discord.VoiceChannel, array):

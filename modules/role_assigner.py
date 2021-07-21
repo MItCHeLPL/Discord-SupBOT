@@ -1,6 +1,7 @@
  
 import discord
 from discord.ext import commands
+from discord.ext.commands import has_permissions
 import os
 from dotenv import load_dotenv
 
@@ -25,6 +26,7 @@ class RoleAssigner(commands.Cog):
 
 
     @commands.Cog.listener()
+    @has_permissions(manage_roles=True)
     async def on_member_join(self, member):
         if (str(member.guild.id) in self.bot.data["setting"]["role_assigner"] and self.bot.data["setting"]["role_assigner"][str(member.guild.id)]["assign_roles"]) or self.bot.data["setting"]["role_assigner"]["default"]["assign_roles"]:
             #boberschlesien
