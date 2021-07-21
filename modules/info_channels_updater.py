@@ -12,22 +12,23 @@ class InfoChannelsUpdater(commands.Cog):
 
         #assign info channels
         for guild in bot.guilds:
-            if(guild.id == os.getenv('DISCORD_ID_BOBERSCHLESIEN')): #boberschlesien
-                self.bbsch = guild #get guild
+            if (str(guild.id) in self.bot.data["setting"]["info_channels_updater"] and self.bot.data["setting"]["info_channels_updater"][str(guild.id)]["update_channels"]) or self.bot.data["setting"]["info_channels_updater"]["default"]["update_channels"]:
+                if(guild.id == os.getenv('DISCORD_ID_BOBERSCHLESIEN')): #boberschlesien
+                    self.bbsch = guild #get guild
 
-                #get info channels
-                self.bbsch_online = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_BBSCH_ONLINE'))
-                self.bbsch_bot = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_BBSCH_BOT'))
-                self.bbsch_in_vc = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_BBSCH_INVC'))
+                    #get info channels
+                    self.bbsch_online = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_BBSCH_ONLINE'))
+                    self.bbsch_bot = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_BBSCH_BOT'))
+                    self.bbsch_in_vc = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_BBSCH_INVC'))
 
-            elif(guild.id == os.getenv('DISCORD_ID_SCAMELOT')): #scamelot
-                self.scamelot = guild #get guild
-                
-                #get info channels
-                self.scamelot_online = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_SCAMELOT_ONLINE'))
-                self.scamelot_offline = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_SCAMELOT_OFFLINE'))
-                self.scamelot_total = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_SCAMELOT_TOTAL'))
-                self.scamelot_bot = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_SCAMELOT_BOT'))
+                elif(guild.id == os.getenv('DISCORD_ID_SCAMELOT')): #scamelot
+                    self.scamelot = guild #get guild
+                    
+                    #get info channels
+                    self.scamelot_online = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_SCAMELOT_ONLINE'))
+                    self.scamelot_offline = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_SCAMELOT_OFFLINE'))
+                    self.scamelot_total = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_SCAMELOT_TOTAL'))
+                    self.scamelot_bot = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_SCAMELOT_BOT'))
 
         self._updater.start()
 

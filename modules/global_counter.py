@@ -13,7 +13,7 @@ class GlobalCounter(commands.Cog):
         with open('global_counter.json') as file: #read json file
             counter = int(json.loads(file)['counter']) #get current value
 
-        counter += 1 #add one to current value
+        counter += self.bot.data["setting"]["global_counter"]["add_value"] #add to current value
 
         #prepare json scheme with current counter value
         data = {
