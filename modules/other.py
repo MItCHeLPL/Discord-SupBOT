@@ -58,9 +58,10 @@ class Other(commands.Cog):
     @commands.command(name = 'dmszary', aliases=['szary', 'pmszary', 'privszary'])
     async def _dmszary(self, ctx, text : str, *args):
         """Wysyła dm do Szarego (yo dmszary [tekst])"""
-        user = self.bot.get_user(self.user_id_szary) #Szary ID
-        if(user != None):
-            await self._dmuser(ctx, user, text)
+        if self.bot.data["setting"]["other"]["enable_dmszary"]:   
+            user = self.bot.get_user(self.user_id_szary) #Szary ID
+            if(user != None):
+                await self._dmuser(ctx, user, text)
 
     #picks random person from voicechannel you are in
     @commands.command(name = 'impostor', aliases=['imposter', 'amogus', 'amongus', 'sus'])

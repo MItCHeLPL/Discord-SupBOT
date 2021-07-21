@@ -97,11 +97,9 @@ class VCHandler(commands.Cog):
     async def _play(self, ctx, text : str, *args):
         """Odtwarza link/bind/tts na twoim kanale (yo play [url/nazwa_binda/tekst])"""
         soundboard_result = False
-        spotify_result = False
         yt_result = False
 
         youtube_regex = r'(https?://)?(www\.)?youtube\.(com|nl)/watch\?v=([-\w]+)'
-        spotify_regex = r'/^(?:spotify:|(?:https?:\/\/(?:open|play)\.spotify\.com\/))(?:embed)?\/?(album|track)(?::|\/)((?:[0-9a-zA-Z]){22})/'
 
         #get text after space
         spaceText = ""
@@ -110,22 +108,17 @@ class VCHandler(commands.Cog):
         text = (text + spaceText) #combine text
 
 
-        if re.match(youtube_regex, text):
+        if re.match(youtube_regex, text) and self.bot.data["setting"]["vc_handler"]["enable_yt_play"]:
             yt = self.bot.get_cog('youtube')
             if yt is not None:
-                yt_result = await yt._play(ctx, text)
-        
-        if re.match(spotify_regex, text) and yt_result == False:
-            spotify = self.bot.get_cog('spotify')
-            if spotify is not None:
-                spotify_result = await spotify._play(ctx, text)
+                yt_result = await yt._playyt(ctx, text)
 
-        if yt_result == False and spotify_result == False:
+        if yt_result == False and self.bot.data["setting"]["vc_handler"]["enable_soundboard_play"]:
             soundboard = self.bot.get_cog('soundboard')
             if soundboard is not None:
                 bind = await soundboard._bind(ctx, text)
 
-        if yt_result == False and spotify_result == False and soundboard_result == False:
+        if yt_result == False and soundboard_result == False and self.bot.data["setting"]["vc_handler"]["enable_tts_play"]:
             tts = self.bot.get_cog('tts')
             if tts is not None:
                 await tts._tts(ctx, text)
@@ -167,38 +160,44 @@ class VCHandler(commands.Cog):
             #Boberschlesien
             if(guild.id == self.guild_id_bbsch):
 
-                vc = discord.utils.get(self.bot.voice_clients, guild=guild) #vc that bot is connected to
+                if (str(guild.id) in self.bot.data["setting"]["vc_handler"] and self.bot.data["setting"]["vc_handler"][str(guild.id)]["enable_auto_join"]) or self.bot.data["setting"]["vc_handler"]["default"]["enable_auto_join"]:
 
-                if vc is None: #if bot isn't on any vc on this server
-                    channel = discord.utils.get(guild.voice_channels, id=self.defvc_id_bbsch) #get default voice channel
-                    
-                    if(channel != None):
-                        await channel.connect() #connect to channel
-                        await self.PlaySound(channel, self.bot.data["audio"]["greetings"]) #play greeting voice line
+                    vc = discord.utils.get(self.bot.voice_clients, guild=guild) #vc that bot is connected to
+
+                    if vc is None: #if bot isn't on any vc on this server
+                        channel = discord.utils.get(guild.voice_channels, id=self.defvc_id_bbsch) #get default voice channel
+                        
+                        if(channel != None):
+                            await channel.connect() #connect to channel
+                            await self.PlaySound(channel, self.bot.data["audio"]["greetings"]) #play greeting voice line
 
             #Scamelot
             elif(guild.id == self.guild_id_scamelot):     
 
-                vc = discord.utils.get(self.bot.voice_clients, guild=guild) #vc that bot is connected to
+                if (str(guild.id) in self.bot.data["setting"]["vc_handler"] and self.bot.data["setting"]["vc_handler"][str(guild.id)]["enable_auto_join"]) or self.bot.data["setting"]["vc_handler"]["default"]["enable_auto_join"]:
 
-                if vc is None: #if bot isn't on any vc on this server
-                    channel = discord.utils.get(guild.voice_channels, id=self.defvc_id_scamelot) #get default voice channel
+                    vc = discord.utils.get(self.bot.voice_clients, guild=guild) #vc that bot is connected to
 
-                    if(channel != None):
-                        await channel.connect() #connect to channel
-                        await self.PlaySound(channel, self.bot.data["audio"]["greetings"])#play greeting voice line
+                    if vc is None: #if bot isn't on any vc on this server
+                        channel = discord.utils.get(guild.voice_channels, id=self.defvc_id_scamelot) #get default voice channel
+
+                        if(channel != None):
+                            await channel.connect() #connect to channel
+                            await self.PlaySound(channel, self.bot.data["audio"]["greetings"])#play greeting voice line
 
             #Wojtini Industries
             elif(guild.id == self.guild_id_wojtini): 
 
-                vc = discord.utils.get(self.bot.voice_clients, guild=guild) #vc that bot is connected to
+                if (str(guild.id) in self.bot.data["setting"]["vc_handler"] and self.bot.data["setting"]["vc_handler"][str(guild.id)]["enable_auto_join"]) or self.bot.data["setting"]["vc_handler"]["default"]["enable_auto_join"]:
 
-                if vc is None: #if bot isn't on any vc on this server
-                    channel = discord.utils.get(guild.voice_channels, id=self.defvc_id_wojtini) #get default voice channel
+                    vc = discord.utils.get(self.bot.voice_clients, guild=guild) #vc that bot is connected to
 
-                    if(channel != None):
-                        await channel.connect() #connect to channel
-                        await self.PlaySound(channel, self.bot.data["audio"]["greetings"])#play greeting voice line
+                    if vc is None: #if bot isn't on any vc on this server
+                        channel = discord.utils.get(guild.voice_channels, id=self.defvc_id_wojtini) #get default voice channel
+
+                        if(channel != None):
+                            await channel.connect() #connect to channel
+                            await self.PlaySound(channel, self.bot.data["audio"]["greetings"])#play greeting voice line
 
 
     #wait before joining until bot is ready

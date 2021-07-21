@@ -28,11 +28,13 @@ class VCDoorman(commands.Cog):
             #somebody leaved/entered voice channel
             else:
                 for server in self.bot.voice_clients: #cycle through all servers
-                    if(server.channel == after.channel): #someone connects
-                        self.PlaySound(after.channel, self.bot.data["audio"]["greetings"], str(member.display_name))
+                    if (str(server.guild.id) in self.bot.data["setting"]["vc_doorman"] and self.bot.data["setting"]["vc_doorman"][str(server.guild.id)]["enable_greeting"]) or self.bot.data["setting"]["vc_doorman"]["default"]["enable_greeting"]:
+                        if(server.channel == after.channel): #someone connects
+                            await self.PlaySound(after.channel, self.bot.data["audio"]["greetings"], str(member.display_name))
 
-                    elif(server.channel == before.channel): #someone disconnects
-                        self.PlaySound(before.channel, self.bot.data["audio"]["farewells"], str(member.display_name))
+                    if (str(server.guild.id) in self.bot.data["setting"]["vc_doorman"] and self.bot.data["setting"]["vc_doorman"][str(server.guild.id)]["enable_farewell"]) or self.bot.data["setting"]["vc_doorman"]["default"]["enable_farewell"]:
+                        if(server.channel == before.channel): #someone disconnects
+                            await self.PlaySound(before.channel, self.bot.data["audio"]["farewells"], str(member.display_name))
     
 
     async def PlaySound(self, channel : discord.VoiceChannel, array, member:str=None):
@@ -44,7 +46,7 @@ class VCDoorman(commands.Cog):
 
                 #play voice line 
                 if vc.is_playing() == False: #if not saying something
-                    if array[voiceLineId].find('tts') != -1 and member != None: #add member name at the end of voice line, becouse file has tts in name and there is passed member string
+                    if array[voiceLineId].find('tts') != -1 and member != None and self.bot.data["setting"]["vc_doorman"]["enable_member_tts"]: #add member name at the end of voice line, becouse file has tts in name and there is passed member string
                         #generate tts with member name
                         message = gtts(array[voiceLineId] + " " + str(member), lang = self.bot.data["ttsLang"], tld=self.bot.data["ttsTld"])
                         message.save(self.bot.data['ttsAudioPath'] + 'tts_member_name.mp3')

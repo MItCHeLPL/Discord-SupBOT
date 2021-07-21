@@ -43,12 +43,12 @@ class TTS(commands.Cog):
                         break
 
                 if same_channel == False: #User is on the same server's vc, but not the same channel
-                    return await voice_channel.connect()
                     await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
+                    return await voice_channel.connect()
 
             else:
-                return await voice_channel.connect() #connect to the requested channel, bot isn't connected to any of the server's vc
                 await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
+                return await voice_channel.connect() #connect to the requested channel, bot isn't connected to any of the server's vc
 
 
     def PlaySound(self, channel : discord.VoiceChannel):

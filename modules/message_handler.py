@@ -9,9 +9,10 @@ class MessageHandler(commands.Cog):
     #any message
     @commands.Cog.listener()
     async def on_message(self, message):
-        #reply 'yo', if someone says yo
-        if ((message.content == 'yo' or message.content == 'Yo') and message.author.bot == False):
-            await message.reply('yo') 
+        if self.bot.data["setting"]["message_handler"]["reply_yo"]:   
+            #reply 'yo', if someone says yo
+            if ((message.content == 'yo' or message.content == 'Yo') and message.author.bot == False):
+                await message.reply('yo') 
 
         await self.bot.process_commands(message) #else
 
@@ -20,7 +21,8 @@ class MessageHandler(commands.Cog):
     async def on_command_error(self, ctx, error):
         if isinstance(error, CommandNotFound):
             await ctx.message.add_reaction('❌') #add emoji
-            await ctx.reply('Yo, nie rozumiem,\nWpisz `yo help` i przestań mi bota prześladować', delete_after=10) #error message
+            if self.bot.data["setting"]["message_handler"]["reply_error_message"]:   
+                await ctx.reply('Yo, nie rozumiem,\nWpisz `yo help` i przestań mi bota prześladować', delete_after=10) #error message
 
     #command success
     @commands.Cog.listener()
