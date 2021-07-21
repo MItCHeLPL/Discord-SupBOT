@@ -6,12 +6,14 @@ import random
 import datetime
 
 class Poll(commands.Cog):
+    """Ankieta"""
     def __init__(self, bot):
         self.bot = bot
 
     #old system for making polls based on reactions and limited to 10 fields
     @commands.command(name='ankieta', aliases=['poll', 'glosowanie', 'głosowanie'])
     async def _pollLegacy(self, ctx, option1 : str, *args):
+        """Tworzy ankietę (max 10 pól) (yo ankieta [opcja1] [opcja2] ...)"""
 
         emojis = ['0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣']
 
@@ -92,7 +94,7 @@ class Poll(commands.Cog):
 #    #New system based on components, limited to 25 fileds, can't limit to one interaction per user
 #    @commands.command(name='ankieta', aliases=['poll', 'glosowanie', 'głosowanie'])
 #    async def _poll(self, ctx, option1 : str, *args):
-#
+#        """Tworzy ankietę (max 25 pól) (yo ankieta [opcja1] [opcja2] ...)"""
 #        #create options tables
 #        options = []
 #        options.append(option1)

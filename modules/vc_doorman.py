@@ -5,6 +5,7 @@ from gtts import gTTS as gtts
 import asyncio
 
 class VCDoorman(commands.Cog):
+    """Odźwierny"""
     def __init__(self, bot):
         self.bot = bot
 

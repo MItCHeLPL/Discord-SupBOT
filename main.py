@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv() #load .env
 
-bot = commands.Bot(command_prefix='yo ', intents=discord.Intents().all(), case_insensitive=True, strip_after_prefix=True, owner_id=os.getenv('DISCORD_BOT_OWNER_ID')) #set up bot
+bot = commands.Bot(command_prefix='yo ', description='''yo [komenda] [atrybut1] [atrybut2]...''', intents=discord.Intents().all(), case_insensitive=True, strip_after_prefix=True, owner_id=os.getenv('DISCORD_BOT_OWNER_ID')) #set up bot
 
 #load settings
 with open('settings.json') as file:

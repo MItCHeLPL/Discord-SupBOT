@@ -12,6 +12,7 @@ reddit = praw.Reddit(client_id=os.getenv('PRAW_CLIENT_ID'), client_secret=os.get
 
 
 class Reddit(commands.Cog):
+    """Posty z reddita"""
     def __init__(self, bot):
         self.bot = bot
     
@@ -72,24 +73,28 @@ class Reddit(commands.Cog):
 
     @commands.command(name = 'subreddit', aliases = ['sub'])
     async def _sub(self, ctx, sub : str):
+        """Wysyła losowy post z danego subreddita. (yo reddit [subreddit])"""
         embed = self.PostFromReddit(sub, ctx) #create embed
 
         await ctx.reply(embed=embed) #reply to user
 
     @commands.command(name = 'beaver', aliases = ['beavers'])
     async def _beaver(self, ctx):
+        """Wysyła losowy post z r/beavers."""
         embed = self.PostFromReddit('beavers', ctx)
 
         await ctx.reply(embed=embed)
 
     @commands.command(name = 'meme', aliases = ['memes'])
     async def _meme(self, ctx):
+        """Wysyła losowego mema z r/memes."""
         embed = self.PostFromReddit('memes', ctx)
 
         await ctx.reply(embed=embed)
 
     @commands.command(name = 'dankmeme', aliases = ['dankmemes', 'makemyday'])
     async def _sub(self, ctx):
+        """Wysyła losowego mema z r/dankmemes."""
         embed = self.PostFromReddit('dankmemes', ctx)
 
         await ctx.reply(embed=embed)

@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 load_dotenv() #load .env
 
 class RoleAssigner(commands.Cog):
+    """Przypisywanie ról"""
     def __init__(self, bot):
         self.bot = bot
 

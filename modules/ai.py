@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Ai(commands.Cog):
+    """Komunikacja ze sztuczną inteligencją"""
     def __init__(self, bot):
         self.bot = bot
 
@@ -40,6 +41,7 @@ class Ai(commands.Cog):
     #send dm to ai bot
     @commands.command(name = 'ai', aliases=['si'])
     async def _send_dm_to_ai(self, ctx, text : str, *args):
+        """Zapytaj o coś sztuczną inteligencję (yo ai [tekst])"""
         #get text after space
         spaceText = ""
         for txt in args:

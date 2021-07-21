@@ -3,11 +3,13 @@ from discord.ext import commands
 from gtts import gTTS as gtts
 
 class TTS(commands.Cog):
+    """Text to Speech"""
     def __init__(self, bot):
         self.bot = bot
     
     @commands.command(name = 'tts', aliases = ['texttospeech', 'tss', 'ts', 'ttts'])
     async def _tts(self, ctx, userText : str, *args):
+        """Odtwarza dźwięk wpisany przez użytkownika (yo tts [tekst])"""
         #get text after space
         spaceText = ""
         for txt in args:
