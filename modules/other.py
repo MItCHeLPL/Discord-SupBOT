@@ -52,8 +52,11 @@ class Other(commands.Cog):
         for txt in args:
             spaceText += (" " + str(txt))
 
-        await user.send('\nYo,\n' + text + spaceText)
-        await ctx.reply("Yo, wysłano dm do " + str(user.mention) + ".", delete_after=10)
+        if(user != None):
+            await user.send('\nYo,\n' + text + spaceText)
+            await ctx.reply("Wysłano dm do " + str(user.mention) + ".", delete_after=10)
+        else:
+            await ctx.reply("Nie znaleziono użytkownika", delete_after=5)
 
     @commands.command(name = 'dmszary', aliases=['szary', 'pmszary', 'privszary'])
     async def _dmszary(self, ctx, text : str, *args):
@@ -69,13 +72,17 @@ class Other(commands.Cog):
         """Kto z kanału głosowego jest impostorem"""
         channel = discord.utils.get(ctx.guild.voice_channels,  name=ctx.message.author.voice.channel.name) #get voice channel that caller is in
 
-        member_ids = list(channel.voice_states.keys()) #list of user ids
+        if(channel != None):
+            member_ids = list(channel.voice_states.keys()) #list of user ids
 
-        pickedUserId = random.randint(0, len(member_ids)-1) #random user from list
+            pickedUserId = random.randint(0, len(member_ids)-1) #random user from list
 
-        user = await self.bot.fetch_user(member_ids[pickedUserId]) #id to user
-        
-        await ctx.reply("Yo, " + str(user.mention) + " jest impostorem.")
+            user = await self.bot.fetch_user(member_ids[pickedUserId]) #id to user
+            
+            await ctx.reply("Yo, " + str(user.mention) + " jest impostorem.")
+
+        else:
+            await ctx.reply("Nie znaleziono kanału, na którym jesteś", delete_after=5)
     
 def setup(bot):
     bot.add_cog(Other(bot))

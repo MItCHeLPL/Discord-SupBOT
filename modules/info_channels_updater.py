@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands, tasks
+from discord.ext.commands import has_permissions
 import os
 from dotenv import load_dotenv
 
@@ -38,6 +39,7 @@ class InfoChannelsUpdater(commands.Cog):
 
     #updater
     @tasks.loop(seconds=60.0)
+    @has_permissions(manage_channels=True)
     async def _updater(self):
         #boberschlesien
         if(self.bbsch_online != None):

@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord.ext.commands import has_permissions
 import datetime
 from discord_slash.utils.manage_components import create_button, create_actionrow
 from discord_slash.model import ButtonStyle
@@ -124,6 +125,7 @@ class Info(commands.Cog):
 
     #server info
     @commands.command(name = 'serverinfo', aliases = ['server', 'infoserver', 'serwer', 'infoserwer', 'serwerinfo', 'serverstats'])
+    @has_permissions(view_audit_log=True)
     async def _serverinfo(self, ctx):
         """Informacje o serwerze"""
         #Calculate online/offline members

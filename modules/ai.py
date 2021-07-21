@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from discord.ext.commands import CommandNotFound
+from discord.ext.commands import CommandNotFound, has_permissions
 import os
 from dotenv import load_dotenv
 
@@ -17,7 +17,7 @@ class Ai(commands.Cog):
 
                 if self.bot.data["setting"]["ai"]["change_cat_visibility_for_aibot"]:
                     self.ai_category = discord.utils.get(guild.categories, id=(os.getenv('DISCORD_ID_AI_CATEGORY')))
-                    self.bbsch_everyone_role = discord.utils.get(guild.roles, id=(os.getenv('DISCORD_ROLE_BBSCH_EVERYONE')) )
+                    self.bbsch_everyone_role = discord.utils.get(guild.roles, id=(os.getenv('DISCORD_ROLE_BBSCH_EVERYONE')))
 
         self.lastMessageChannel = None
 
@@ -34,13 +34,15 @@ class Ai(commands.Cog):
                 await self._send_dm_to_ai(ctx, ctx.message) #send ai response
 
     @commands.Cog.listener()
+    @has_permissions(manage_roles=True, manage_channels=True)
     async def on_voice_state_update(self, member, before, after):      
-        if self.bot.data["setting"]["ai"]["change_cat_visibility_for_aibot"]:          
-            #show/hide AI category
-            if member == self.aiBot and member.status == discord.Status.online:
-                await self.ai_category.set_permissions(self.bbsch_everyone_role, view_channel = True, read_messages = True, send_messages = False)
-            if member == self.aiBot and member.status == discord.Status.offline:
-                await self.ai_category.set_permissions(self.bbsch_everyone_role, view_channel = False, read_messages = False, send_messages = False)
+        if self.bot.data["setting"]["ai"]["change_cat_visibility_for_aibot"]:   
+            if self.ai_category is not None and self.bbsch_everyone_role is not None:
+                #show/hide AI category
+                if member == self.aiBot and member.status == discord.Status.online:
+                    await self.ai_category.set_permissions(self.bbsch_everyone_role, view_channel = True, read_messages = True, send_messages = False)
+                if member == self.aiBot and member.status == discord.Status.offline:
+                    await self.ai_category.set_permissions(self.bbsch_everyone_role, view_channel = False, read_messages = False, send_messages = False)
 
     #send dm to ai bot
     @commands.command(name = 'ai', aliases=['si'])
