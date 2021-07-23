@@ -134,11 +134,13 @@ class Soundboard(commands.Cog):
     async def PlaySound(self, channel : discord.VoiceChannel, voiceline):
         for vc in self.bot.voice_clients: #cycle through all servers
             if(vc == channel): #find current voice channel
-                if vc.is_playing() == False: #if not saying something
-                    vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + voiceline), after=lambda e: print('Player error: %s' % e) if e else None) #play sound on vc
+                if vc.is_playing() == True:
+                        vc.stop() #stop playing
 
-                    if self.bot.data["debug"]["soundboard"]:
-                        print(f'[soundboard][PlaySound]Played sound')
+                vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + voiceline), after=lambda e: print('Player error: %s' % e) if e else None) #play sound on vc
+
+                if self.bot.data["debug"]["soundboard"]:
+                    print(f'[soundboard][PlaySound]Played sound')
 
                 break 
 

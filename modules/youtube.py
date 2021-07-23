@@ -43,12 +43,14 @@ class YouTube(commands.Cog):
 
                     vc = await self.Join(ctx) #join vc
 
-                    await self.PlaySound(ctx, vc) #play yt mp3
+                    await self.PlaySound(vc) #play yt mp3
 
                     await ctx.reply("Odtwarzam film z YouTube", delete_after=5)
 
                     if self.bot.data["debug"]["youtube"]:
                         print(f'[youtube][_playyt]Playing {youtubeLink}\n')
+
+                    return True
 
                 else:
                     await ctx.reply("Film jest za długi.", delete_after=5)
@@ -56,48 +58,51 @@ class YouTube(commands.Cog):
                     if self.bot.data["debug"]["youtube"]:
                         print(f'[youtube][_playyt]{youtubeLink} is too long\n')
 
+                    return False
+
 
     async def Join(self, ctx):
-        user=ctx.message.author #get user
-        voice_channel=user.voice.channel #get user's vc
+        user_vc=ctx.message.author.voice.channel #get user's vc
 
         same_channel = False
 
-        if voice_channel != None: #user has to be in the vc
+        if user_vc != None: #user has to be in the vc
             if(self.bot.voice_clients != []): #if bot is on any server's vc
-                for server in self.bot.voice_clients: #cycle through all servers
-                    if(server.channel == voice_channel): #bot is already on the same vc
+                for vc in self.bot.voice_clients: #cycle through all servers
+                    if(vc.channel == user_vc): #bot is already on the same vc
                         same_channel = True
 
                         if self.bot.data["debug"]["youtube"]:
                             print(f'[youtube][Join]Bot is in the same vc')
 
-                        break
+                        return vc
 
                 if same_channel == False: #User is on the same server's vc, but not the same channel
                     #await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
 
                     if self.bot.data["debug"]["youtube"]:
-                        print(f'[youtube][Join]Bot joined vc')
+                        print(f'[youtube][Join]Bot joined vc (bot was on the other channel)')
 
-                    return await voice_channel.connect()
+                    await vc.disconnect() #disconnect from old channel
+
+                    return await user_vc.connect() #join user channel
 
             else:
                 #await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
 
                 if self.bot.data["debug"]["youtube"]:
-                    print(f'[youtube][Join]Bot joined vc')
+                    print(f'[youtube][Join]Bot joined vc (bot wasnt connected)')
 
-                return await voice_channel.connect() #connect to the requested channel, bot isn't connected to any of the server's vc
+                return await user_vc.connect() #connect to the requested channel, bot isn't connected to any of the server's vc
 
 
     def PlaySound(self, channel : discord.VoiceChannel):
-        for server in self.bot.voice_clients: #cycle through all servers
-            if(server.channel == channel): #find current voice channel
-                vc = server #get voice channel
+        for vc in self.bot.voice_clients: #cycle through all servers
+            if(vc == channel): #find current voice channel
+                if vc.is_playing() == True:
+                    vc.stop() #stop playing
 
-                if vc.is_playing() == False: #if not saying something
-                    vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'yt.mp3'), after=lambda e: print('Player error: %s' % e) if e else None) #play sound on vc
+                vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'yt.mp3'), after=lambda e: print('Player error: %s' % e) if e else None) #play sound on vc
 
                 if self.bot.data["debug"]["youtube"]:
                     print(f'[youtube][PlaySound]Played sound')

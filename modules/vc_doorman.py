@@ -48,10 +48,8 @@ class VCDoorman(commands.Cog):
     
 
     async def PlaySound(self, channel : discord.VoiceChannel, array, member:str=None):
-        for server in self.bot.voice_clients: #cycle through all servers
-            if(server.channel == channel): #find current voice channel
-                vc = server #get voice channel
-
+        for vc in self.bot.voice_clients: #cycle through all servers
+            if(vc.channel == channel): #find current voice channel
                 voiceLineId = random.randint(0, (len(array)-1)) #pick random voice line
 
                 #play voice line 
@@ -65,15 +63,18 @@ class VCDoorman(commands.Cog):
 
                         #cooldown before saying member name
                         while vc.is_playing(): #Checks if voice is playing
-                            await asyncio.sleep(0.25) #While it's playing it sleeps for .25 of a second
+                            await asyncio.sleep(0.1) #While it's playing it sleeps for .1 of a second
                         
                         vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'tts_member_name.mp3'), after=lambda e: print('Player error: %s' % e) if e else None) #play member name on channel
+
+                        if self.bot.data["debug"]["vc_doorman"]:
+                            print(f'[vc_doorman][PlaySound]Played voiceline and TTS')
 
                     else:#play normal bind
                         vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + array[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else None) #play voice line on channel
 
-                    if self.bot.data["debug"]["vc_doorman"]:
-                        print(f'[vc_doorman][PlaySound]Played sound')
+                        if self.bot.data["debug"]["vc_doorman"]:
+                            print(f'[vc_doorman][PlaySound]Played voiceline')
 
                 break 
 
