@@ -11,6 +11,9 @@ class Poll(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+        if self.bot.data["debug"]["poll"]:
+            print(f"[poll]Loaded")
+
     #old system for making polls based on reactions and limited to 10 fields
     @commands.command(name='ankieta', aliases=['poll', 'glosowanie', 'głosowanie'])
     async def _pollLegacy(self, ctx, option1 : str, *args):
@@ -62,27 +65,52 @@ class Poll(commands.Cog):
         message = reaction.message
         emoji_id = self.get_emoji_id(reaction.emoji)
 
-        if message.embeds[0].title == "Ankieta" and user != self.bot.user: #detect that user reacted to poll
+        if message.embeds != []:
+            if message.embeds[0].title == "Ankieta" and user != self.bot.user and emoji_id != -1: #detect that user reacted to poll
 
-            new_embed = discord.Embed() #create new embed
-            new_embed.title = "Ankieta" #set title
+                new_embed = discord.Embed() #create new embed
+                new_embed.title = "Ankieta" #set title
 
-            for emb in message.embeds:
-                new_embed.timestamp = emb.timestamp #set time
-                new_embed.colour = emb.colour #set color
+                for emb in message.embeds:
+                    new_embed.timestamp = emb.timestamp #set time
+                    new_embed.colour = emb.colour #set color
 
-                i = 0 #opiton id
-                for field in emb.fields:
-                    if emoji_id == i:
-                        new_embed.add_field(name=field.name, value='`'+(int(field.value[1:-1]) + 1)+'`', inline=True) #add +1 to option corresponing to selected reaction
-                    else:
-                        new_embed.add_field(name=field.name, value=field.value, inline=True) #rest of options
-                    i+=1
+                    i = 0 #opiton id
+                    for field in emb.fields:
+                        if emoji_id == i:
+                            new_embed.add_field(name=field.name, value='`'+str(int(field.value[1:-1]) + 1)+'`', inline=True) #add +1 to option corresponing to selected reaction
+                        else:
+                            new_embed.add_field(name=field.name, value=field.value, inline=True) #rest of options
+                        i+=1
 
-            await message.edit(embed=new_embed) #update message
+                await message.edit(embed=new_embed) #update message
 
-            if self.bot.data["debug"]["poll"]:
-                print(f'[poll][on_reaction_add]Updated poll with vote')
+                if self.bot.data["debug"]["poll"]:
+                    print(f'[poll][on_reaction_add]Updated poll with vote\n')
+
+
+    @commands.Cog.listener()
+    @has_permissions(manage_messages=True)
+    async def on_reaction_remove(self, reaction, user):
+        message = reaction.message
+        emoji_id = self.get_emoji_id(reaction.emoji)
+        if message.embeds != []:
+            if message.embeds[0].title == "Ankieta" and user != self.bot.user and emoji_id != -1: #detect that user reacted to poll
+                new_embed = discord.Embed() #create new embed
+                new_embed.title = "Ankieta" #set title
+                for emb in message.embeds:
+                    new_embed.timestamp = emb.timestamp #set time
+                    new_embed.colour = emb.colour #set color
+                    i = 0 #opiton id
+                    for field in emb.fields:
+                        if emoji_id == i:
+                            new_embed.add_field(name=field.name, value='`'+str(int(field.value[1:-1]) - 1)+'`', inline=True) #add +1 to option corresponing to selected reaction
+                        else:
+                            new_embed.add_field(name=field.name, value=field.value, inline=True) #rest of options
+                        i+=1
+                await message.edit(embed=new_embed) #update message
+                if self.bot.data["debug"]["poll"]:
+                    print(f'[poll][on_reaction_add]Updated poll with vote\n')
 
 
     #convert emoji to opiton id
@@ -168,7 +196,7 @@ class Poll(commands.Cog):
 #            i = 1 #opiton id
 #            for field in emb.fields:
 #                if pressed_button == i:
-#                    new_embed.add_field(name=field.name, value='`'+(int(field.value[1:-1]) + 1)+'`', inline=True) #add +1 to option corresponing to selected button
+#                    new_embed.add_field(name=field.name, value='`'+str(int(field.value[1:-1]) + 1)+'`', inline=True) #add +1 to option corresponing to selected button
 #                else:
 #                    new_embed.add_field(name=field.name, value=field.value, inline=True) #rest of options
 #                i+=1

@@ -8,6 +8,9 @@ class YouTube(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
+        if self.bot.data["debug"]["youtube"]:
+            print(f"[youtube]Loaded")
+
 
     @commands.command(name = 'playyt', aliases=['playt', 'yt', 'youtube'])
     async def _playyt(self, ctx, youtubeLink):

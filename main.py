@@ -15,12 +15,15 @@ with open('settings.json') as file:
 #bot is ready
 @bot.event
 async def on_ready():
+    await bot.change_presence(activity = discord.Activity(type = discord.ActivityType.listening, name = 'yo help')) #set presence
+
     if bot.data["debug"]["main"]:
-        print(f'[main][on_ready]Logged in as {bot.user.name} (ID: {bot.user.id})')
-        print('\n[main][on_ready]Connected to:')
+        print(f'\n[main][on_ready]Logged in as {bot.user.name} (ID: {bot.user.id})')
+        print('[main][on_ready]Connected to:')
         for guild in bot.guilds:
-            print(guild.name)
-        print("[main][on_ready]Setup complete\n")
+            print("[main][on_ready]" + guild.name)
+
+        print("\n[main][on_ready]Setup complete\n")
 
 #load modules
 for module in bot.data["modules"]:
