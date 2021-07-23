@@ -1,0 +1,12 @@
+[main][on_ready]Logged in as SupBOT (ID: 773659361427849216)
+
+[main][on_ready]Connected to:
+[main][on_ready]Boberschlesien
+[main][on_ready]🔗#SCAMELOT
+[main][on_ready]Woytini 🔧 Industries
+[main][on_ready]Setup complete
+
+[info_channels_updater][_updater]Updated all info channels
+
+[message_handler][on_message]Sent yo
+

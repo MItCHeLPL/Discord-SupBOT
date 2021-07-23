@@ -11,7 +11,14 @@ class Other(commands.Cog):
     """Inne"""
     def __init__(self, bot):
         self.bot = bot
-        
+
+        self.user_id_szary = None
+
+        if self.bot.data["debug"]["other"]:
+            print(f"[other]Loaded")
+
+    @commands.Cog.listener()
+    async def on_ready(self):
         self.user_id_szary = os.getenv('DISCORD_ID_SZARY')
 
 
@@ -48,7 +55,7 @@ class Other(commands.Cog):
         """Wyświetla mapę burz"""
         embed=discord.Embed() #create new embed
         embed.colour = random.randint(0, 0xffffff) #random color
-        embed.set_image(url=f"http://images.blitzortung.org/Images/image_b_pl.png?mapId={int(datetime.now().timestamp() * 1000)}") #set image
+        embed.set_image(url=f"http://images.blitzortung.org/Images/image_b_pl.png") #set image
         embed.title = "Aktualna mapa burzowa w Polsce" #set title
         embed.url= "https://www.blitzortung.org/pl/live_lightning_maps.php?map=17"
 

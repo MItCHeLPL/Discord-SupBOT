@@ -12,8 +12,19 @@ class RoleAssigner(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+        self.bbsch = None
+        self.bbsch_rank_dj = None
+        self.scamelot = None
+        self.scamelot_rank_dj = None
+        self.scamelot_rank_scam = None
+        
+        if self.bot.data["debug"]["role_assigner"]:
+            print(f"[role_assigner]Loaded")
+
+    @commands.Cog.listener()
+    async def on_ready(self):    
         #assign guilds
-        for guild in bot.guilds:
+        for guild in self.bot.guilds:
             if (str(guild.id) in self.bot.data["setting"]["role_assigner"] and self.bot.data["setting"]["role_assigner"][str(guild.id)]["assign_roles"]) or self.bot.data["setting"]["role_assigner"]["default"]["assign_roles"]:
                 if(guild.id == os.getenv('DISCORD_ID_BOBERSCHLESIEN')): #boberschlesien
                     self.bbsch = guild #get guild
@@ -43,7 +54,7 @@ class RoleAssigner(commands.Cog):
                     await member.add_roles(self.scamelot_rank_scam) #add role
 
             if self.bot.data["debug"]["role_assigner"]:
-                print(f'[role_assigner][on_member_join]Assigned roles to {member.mention}\n')
+                print(f'[role_assigner][on_member_join]Assigned roles to {member.name}\n')
 
     
 def setup(bot):

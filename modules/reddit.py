@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-import praw
+import asyncpraw
 import random
 import os
 from dotenv import load_dotenv
@@ -8,28 +8,31 @@ import datetime
 
 load_dotenv()
 
-reddit = praw.Reddit(client_id=os.getenv('PRAW_CLIENT_ID'), client_secret=os.getenv('PRAW_CLIENT_SECRET'), user_agent=os.getenv('PRAW_USER_AGENT')) #initialize reddit
+reddit = asyncpraw.Reddit(client_id=os.getenv('PRAW_CLIENT_ID'), client_secret=os.getenv('PRAW_CLIENT_SECRET'), user_agent=os.getenv('PRAW_USER_AGENT')) #initialize reddit
 
 
 class Reddit(commands.Cog):
     """Posty z reddita"""
     def __init__(self, bot):
         self.bot = bot
+
+        if self.bot.data["debug"]["reddit"]:
+            print(f"[reddit]Loaded")
     
     #Post submission from reddit
-    def PostFromReddit(self, sub : str, ctx):
+    async def PostFromReddit(self, sub : str, ctx):
         post_to_pick = 2 #start post to pick     
         isRandom = self.bot.data["setting"]["reddit"]["pickRandom"] #true -> select random post, false -> sort from top hot
         limit = self.bot.data["setting"]["reddit"]["postToPickLimit"] #select this amount of posts from hot
         allowNSFW = self.bot.data["setting"]["reddit"]["allowNSFW"] #true -> can show nsfw posts if channel is set to nsfw, false -> doesn't show nsfw posts at all
 
-        submissions = reddit.subreddit(sub).hot(limit=limit) #fetch posts
+        subreddit = await reddit.subreddit(sub, fetch=True)
 
         if(isRandom):
             post_to_pick = random.randint(2, limit-1) #select random post number
 
         i=0 #post id
-        for post in submissions:
+        async for post in subreddit.hot(limit=limit):
             if(i == post_to_pick): #if this is the submission to post
                 if(post_to_pick == limit-1): #refresh post to pick if over limit
                     post_to_pick = 2
@@ -52,7 +55,7 @@ class Reddit(commands.Cog):
 
         #embed
         embed=discord.Embed() #create new embed
-        embed.colour = random.randint(0, 0xffffff) #random color
+        embed.colour = 0xfd4500 #reddit orange color
         embed.set_image(url=submission.url) #set image
         embed.title = submission.title #set title
         embed.url= "http://reddit.com" + submission.permalink
@@ -60,7 +63,7 @@ class Reddit(commands.Cog):
 
         embed.timestamp = datetime.datetime.utcnow() #set time
 
-        embed.set_author(name="r/+"+reddit.subreddit(sub).display_name, url="http://reddit.com/r/"+sub, icon_url=reddit.subreddit(sub).icon_img)
+        embed.set_author(name="r/"+subreddit.display_name, url="http://reddit.com/r/"+sub, icon_url=subreddit.icon_img)
         
         #disable nsfw posts if channel is not set to nsfw
         if((submission.over_18 and allowNSFW == False) or (ctx.channel.is_nsfw() == False and submission.over_18)):
@@ -75,31 +78,31 @@ class Reddit(commands.Cog):
         return embed
 
 
-    @commands.command(name = 'subreddit', aliases = ['sub'])
+    @commands.command(name = 'subreddit', aliases = ['sub', 'reddit'])
     async def _sub(self, ctx, sub : str):
-        """Wysyła losowy post z danego subreddita. (yo reddit [subreddit])"""
-        embed = self.PostFromReddit(sub, ctx) #create embed
+        """Wysyła losowy post z danego subreddita. (yo reddit subreddit)"""
+        embed = await self.PostFromReddit(sub, ctx)
 
-        await ctx.reply(embed=embed) #reply to user
+        await ctx.reply(embed=embed)    
 
     @commands.command(name = 'beaver', aliases = ['beavers'])
     async def _beaver(self, ctx):
         """Wysyła losowy post z r/beavers."""
-        embed = self.PostFromReddit('beavers', ctx)
+        embed = await self.PostFromReddit('beavers', ctx)
 
         await ctx.reply(embed=embed)
 
     @commands.command(name = 'meme', aliases = ['memes'])
     async def _meme(self, ctx):
         """Wysyła losowego mema z r/memes."""
-        embed = self.PostFromReddit('memes', ctx)
+        embed = await self.PostFromReddit('memes', ctx)
 
         await ctx.reply(embed=embed)
 
     @commands.command(name = 'dankmeme', aliases = ['dankmemes', 'makemyday'])
-    async def _sub(self, ctx):
+    async def _dankmeme(self, ctx):
         """Wysyła losowego mema z r/dankmemes."""
-        embed = self.PostFromReddit('dankmemes', ctx)
+        embed = await self.PostFromReddit('dankmemes', ctx)
 
         await ctx.reply(embed=embed)
 

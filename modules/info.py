@@ -10,6 +10,8 @@ class Info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+        if self.bot.data["debug"]["info"]:
+            print(f"[info]Loaded")
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
@@ -20,12 +22,12 @@ class Info(commands.Cog):
             embed.set_author(name='👋Użytkownik opuścił serwer') #embed header
 
             if member.bot == True:
-                embed.description = '`🤖BOT`' #add bot tag
+                embed.description = '`🤖BOT`\n ' #add bot tag
 
             await self._userinfo(ctx, member, embed)
 
             if self.bot.data["debug"]["info"]:
-                print(f'[info][on_member_remove]{member.mention} left {member.guild.name}. Requested user info')
+                print(f'[info][on_member_remove]{member.name} left {member.guild.name}. Requested user info')
 
 
     @commands.Cog.listener()
@@ -37,12 +39,12 @@ class Info(commands.Cog):
             embed.set_author(name='👋Użytkownik dołączył na serwer') #embed header
 
             if member.bot == True:
-                embed.description = '`🤖BOT`' #add bot tag
+                embed.description = '`🤖BOT`\n ' #add bot tag
 
             await self._userinfo(ctx, member, embed)
 
             if self.bot.data["debug"]["info"]:
-                print(f'[info][on_member_join]{member.mention} joined {member.guild.name}. Requested user info')
+                print(f'[info][on_member_join]{member.name} joined {member.guild.name}. Requested user info')
 
 
     #combined info
@@ -58,18 +60,21 @@ class Info(commands.Cog):
 
 
     #user info
-    @commands.command(name = 'userinfo', aliases = ['user', 'infouser', 'counter', 'baninfo', 'kickinfo', 'userstats'])
-    async def _userinfo(self, ctx, member:discord.Member, embed:discord.Embed=None, action_row=None):
+    @commands.command(name = 'userinfo', aliases = ['user', 'infouser', 'baninfo', 'kickinfo', 'userstats'])
+    async def _userinfo(self, ctx, member:discord.Member=None, embed:discord.Embed=None, action_row=None):
         """Informacje o użytkowniku (yo userinfo [@użytkownik])"""
+        if member == "":
+            member = ctx.author
+
         #Calculate total kick amount
         kick_count = 0
-        async for x in ctx.guild.audit_logs(before=None, after=None, oldest_first=None, action=discord.AuditLogAction.kick):
+        async for x in ctx.guild.audit_logs(limit=None, before=None, after=None, oldest_first=None, action=discord.AuditLogAction.kick):
             if(x.target == member):
                 kick_count += 1
 
         #Calculate total ban amount
         ban_count = 0
-        async for x in ctx.guild.audit_logs(before=None, after=None, oldest_first=None, action=discord.AuditLogAction.ban):
+        async for x in ctx.guild.audit_logs(limit=None, before=None, after=None, oldest_first=None, action=discord.AuditLogAction.ban):
             if(x.target == member):
                 ban_count += 1
         
@@ -80,7 +85,7 @@ class Info(commands.Cog):
             embed.set_author(name='🛈 Informacje o użytkowniku:')
 
             if member.bot == True:
-                embed.description = '`🤖BOT`' #add bot tag
+                embed.description = '`🤖BOT`\n ' #add bot tag
 
         embed.title = str(member.name)
         embed.colour = member.color
@@ -92,36 +97,35 @@ class Info(commands.Cog):
         embed.add_field(name="🚪Dołączono do serwera", value=('`'+str(member.joined_at)[0:-7]+'`'), inline=True)
         embed.add_field(name="🌟Utworzono konto", value=('`'+str(member.created_at)[0:-7]+'`'), inline=True)
 
-        embed.add_field(name=" ", value=" ", inline=False) #separator
+        embed.add_field(name="‌‌ ", value="‌‌ ", inline=False) #separator
 
         #ban/kick
         embed.add_field(name="🥾Kicki", value=('`'+str(kick_count)+'`'), inline=True)
         embed.add_field(name="🔒Bany", value=('`'+str(ban_count)+'`'), inline=True)
 
-
         #add bot fields
         if member.bot == True:
-            embed.add_field(name=" ", value=" ", inline=False) #separator
+
+            embed.add_field(name="‌‌ ", value="‌‌ ", inline=False) #separator
 
             #server count/ping
             embed.add_field(name="📊Ilość serwerów", value=('`'+str(len(ctx.bot.guilds))+'`'), inline=True)
             embed.add_field(name="📶Ping", value=('`'+str(round(ctx.bot.latency * 100, 2)) + "ms"+'`'), inline=True)
 
-            embed.add_field(name=" ", value=" ", inline=False) #separator
+            embed.add_field(name="‌‌ ", value="‌‌ ", inline=False) #separator
 
             #generate guild list
             guilds = ''
             for guild in ctx.bot.guilds:
-                guilds += '`➤' + str(guild.name) + '`'
+                guilds += '`➤' + str(guild.name) + '`\n'
 
             #guild list
-            embed.add_field(name="📊Serwery", value=guilds, inline=True)
+            embed.add_field(name="📊Serwery", value=guilds, inline=False)
 
-
-        embed.add_field(name=" ", value=" ", inline=False) #separator
+        embed.add_field(name="‌‌ ", value="‌‌ ", inline=False) #separator
 
         #roles
-        embed.add_field(name="📜Najwyższa rola", value=('`'+str(member.top_role)+'`'), inline=True)
+        embed.add_field(name="📜Najwyższa rola", value=('`'+str(member.top_role)+'`'), inline=False)
 
         #timestamp
         embed.timestamp = datetime.datetime.utcnow()
@@ -132,7 +136,8 @@ class Info(commands.Cog):
             await ctx.send(embed=embed, components=[action_row])
 
         if self.bot.data["debug"]["info"]:
-            print(f'[info][_userinfo]Sent info about {member.mention}\n')
+            print(f'[info][_userinfo]Sent info about {member.name}\n')
+
 
 
     #server info
@@ -159,12 +164,12 @@ class Info(commands.Cog):
 
         #Calculate total kick amount
         kick_count = 0
-        async for x in ctx.guild.audit_logs(before=None, after=None, oldest_first=None, action=discord.AuditLogAction.kick):
+        async for x in ctx.guild.audit_logs(limit=None, before=None, after=None, oldest_first=None, action=discord.AuditLogAction.kick):
             kick_count += 1
 
         #Calculate total ban amount
         ban_count = 0
-        async for x in ctx.guild.audit_logs(before=None, after=None, oldest_first=None, action=discord.AuditLogAction.ban):
+        async for x in ctx.guild.audit_logs(limit=None, before=None, after=None, oldest_first=None, action=discord.AuditLogAction.ban):
             ban_count += 1
 
         #Calculate current ban amount
@@ -178,7 +183,7 @@ class Info(commands.Cog):
         embed.title = str(ctx.guild.name)
         embed.colour = ctx.author.color #random color
 
-        embed.set_thumbnail(url=ctx.guild.banner_url) #server banner
+        embed.set_thumbnail(url=ctx.guild.icon_url) #server banner
 
         #info
         #created/owner/region
@@ -186,7 +191,7 @@ class Info(commands.Cog):
         embed.add_field(name="🌟Utworzono", value=('`'+str(ctx.guild.created_at)[0:-7]+'`'), inline=True)
         embed.add_field(name="🌎Region", value=('`'+str(ctx.guild.region)+'`'), inline=True)
 
-        embed.add_field(name=" ", value=" ", inline=False) #separator
+        embed.add_field(name="‌‌ ", value="‌‌ ", inline=False) #separator
 
         #online/offline/all/onchannel/bot
         embed.add_field(name="🟢Online", value=('`'+str(online_count) + '/' + str(offline_count)+'`'), inline=True)
@@ -194,21 +199,21 @@ class Info(commands.Cog):
         embed.add_field(name="🤖Botów", value=('`'+str(bot_count)+'`'), inline=True)
         embed.add_field(name="👤Razem", value=('`'+str(ctx.guild.member_count)+'`'), inline=True)
 
-        embed.add_field(name=" ", value=" ", inline=False) #separator
+        embed.add_field(name="‌‌ ", value="‌‌ ", inline=False) #separator
 
         #ban/kick
         embed.add_field(name="🥾Kicki", value=('`'+str(kick_count)+'`'), inline=True)
         embed.add_field(name="🔒Bany razem", value=('`'+str(ban_count)+'`'), inline=True)
-        embed.add_field(name="🔒Bany teraz", value=('`'+str(current_ban_count)+'`'), inline=True)
+        embed.add_field(name="🔒Bany teraz", value=('`'+str(len(current_ban_count))+'`'), inline=True)
 
-        embed.add_field(name=" ", value=" ", inline=False) #separator
+        embed.add_field(name="‌‌ ", value="‌‌ ", inline=False) #separator
 
         #voice/tex/all channels
         embed.add_field(name="🎤Kanały głosowe", value=('`'+str(len(ctx.guild.voice_channels))+'`'), inline=True)
         embed.add_field(name="💬Kanały tekstowe", value=('`'+str(len(ctx.guild.text_channels))+'`'), inline=True)
         embed.add_field(name="#️⃣Kanały razem", value=('`'+str(len(ctx.guild.channels))+'`'), inline=True)
 
-        embed.add_field(name=" ", value=" ", inline=False) #separator
+        embed.add_field(name="‌‌ ", value="‌‌ ", inline=False) #separator
 
         #roles
         embed.add_field(name="📜Ilość ról", value=('`'+str(len(ctx.guild.roles))+'`'), inline=True)
@@ -216,52 +221,25 @@ class Info(commands.Cog):
         #timestamp
         embed.timestamp = datetime.datetime.utcnow()
 
-
-        #create invite
-        invite_link = await ctx.channel.create_invite(max_age = 300)
-        buttons = [
-            create_button(
-                style=ButtonStyle.link,
-                label="Zaproszenie",
-                url=invite_link
-            ),
-          ]
-        action_row = create_actionrow(*buttons)
-
-        await ctx.send(embed=embed, components=[action_row])
+        await ctx.send(embed=embed)
 
         if self.bot.data["debug"]["info"]:
             print(f'[info][_serverinfo]Sent info about {ctx.guild.name}\n')
 
 
     #bot info
-    @commands.command(name = 'botinfo', aliases = ['infobot', 'bot', 'infosupbot', 'supbotinfo', 'about', 'aboutbot', 'github', 'project'])
+    @commands.command(name = 'botinfo', aliases = ['infobot', 'infosupbot', 'supbotinfo', 'about', 'aboutbot', 'github', 'project'])
     async def _botinfo(self, ctx):
         """Informacje o tym bocie"""
         embed=discord.Embed() 
         embed.set_author(name='🛈 Informacje o bocie:') #embed header
 
         if self.bot.data["setting"]["info"]["show_bot_author_info"]:   
-            embed.description = '**Twórca: [M!tCHeL](https://github.com/MItCHeLPL)**\n**Projekt: [GitHub](https://github.com/MItCHeLPL/Discord-SupBOT)**\n\n`🤖BOT`'
-
-            buttons = [
-                create_button(
-                    style=ButtonStyle.link,
-                    label="GitHub",
-                    url="https://github.com/MItCHeLPL"
-                ),
-                create_button(
-                    style=ButtonStyle.link,
-                    label="Repozytorium",
-                    url="https://github.com/MItCHeLPL/Discord-SupBOT"
-                ),
-            ]
-            action_row = create_actionrow(*buttons)
-
-            await self._userinfo(ctx, ctx.bot, embed, action_row) #show user info about bot
-
+            embed.description = '**Twórca: [M!tCHeL](https://github.com/MItCHeLPL)**\n**Projekt: [GitHub](https://github.com/MItCHeLPL/Discord-SupBOT)**\n\n`🤖BOT`\n '
         else:
-            await self._userinfo(ctx, ctx.bot, embed) #show user info about bot
+            embed.description = '`🤖BOT`\n '
+
+        await self._userinfo(ctx, ctx.me, embed) #show user info about bot
 
         if self.bot.data["debug"]["info"]:
             print(f'[info][_botinfo]Requested info about SupBOT')

@@ -8,6 +8,9 @@ class VCVoteKick(commands.Cog):
         self.bot = bot
         self.kickArray = {} #array of users to kick from vc
 
+        if self.bot.data["debug"]["vc_votekick"]:
+            print(f"[vc_votekick]Loaded")
+
     @commands.command(name = 'votekick', aliases = ['wyrzuc', 'wyrzuć'])
     async def _votekick(self, ctx, user : discord.Member):
         """Zagłosuj na wyrzucenie użytkownika z kanału głosowego (yo votekick [@użytkownik])"""
