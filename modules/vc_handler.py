@@ -13,29 +13,10 @@ class VCHandler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        self.guild_id_bbsch = None
-        self.defvc_id_bbsch = None
-        self.guild_id_scamelot = None
-        self.defvc_id_scamelot = None
-        self.guild_id_wojtini = None
-        self.defvc_id_wojtini = None
+        self.AutoJoinDefaultVC.start() #start joining loop
 
         if self.bot.data["debug"]["vc_handler"]:
             print(f"[vc_handler]Loaded")
-
-    @commands.Cog.listener()
-    async def on_ready(self):  
-        #dotenv storing
-        self.guild_id_bbsch = os.getenv('DISCORD_ID_BOBERSCHLESIEN')
-        self.defvc_id_bbsch = os.getenv('DISCORD_ID_BBSCH_DEFAULT_VC')
-
-        self.guild_id_scamelot = os.getenv('DISCORD_ID_SCAMELOT')
-        self.defvc_id_scamelot = os.getenv('DISCORD_ID_SCAMELOT_DEFAULT_VC')
-
-        self.guild_id_wojtini = os.getenv('DISCORD_ID_WOJTINI')
-        self.defvc_id_wojtini = os.getenv('DISCORD_ID_WOJTINI_DEFAULT_VC')
-
-        self.AutoJoinDefaultVC.start() #start joining loop
 
 
     @commands.command(name = 'join', aliases = ['j', 'joi', 'dolacz', 'dołącz', 'connect', 'enter'])
@@ -229,57 +210,19 @@ class VCHandler(commands.Cog):
     @tasks.loop(seconds=3600.0)        
     async def AutoJoinDefaultVC(self):
         for guild in self.bot.guilds:
+            if (str(guild.id) in self.bot.data["setting"]["vc_handler"] and self.bot.data["setting"]["vc_handler"][str(guild.id)]["enable_auto_join"]) or self.bot.data["setting"]["vc_handler"]["default"]["enable_auto_join"]:
 
-            #Boberschlesien
-            if(guild.id == self.guild_id_bbsch):
+                vc = discord.utils.get(self.bot.voice_clients, guild=guild) #vc that bot isconnected to
 
-                if (str(guild.id) in self.bot.data["setting"]["vc_handler"] and self.bot.data["setting"]["vc_handler"][str(guild.id)]["enable_auto_join"]) or self.bot.data["setting"]["vc_handler"]["default"]["enable_auto_join"]:
+                if vc is None: #if bot isn't on any vc on this server
+                    channel = discord.utils.get(guild.voice_channels, id=int(os.getenv(str(self.bot.data["setting"]["vc_handler"][str(guild.id)]["auto_join_vc"])))) #get default voice channel
+                    
+                    if(channel != None):
+                        channel = await channel.connect() #connect to channel
+                        await self.PlaySound(channel, self.bot.data["audio"]["greetings"]) #play greeting voice line
 
-                    vc = discord.utils.get(self.bot.voice_clients, guild=guild) #vc that bot is connected to
-
-                    if vc is None: #if bot isn't on any vc on this server
-                        channel = discord.utils.get(guild.voice_channels, id=self.defvc_id_bbsch) #get default voice channel
-                        
-                        if(channel != None):
-                            await channel.connect() #connect to channel
-                            await self.PlaySound(channel, self.bot.data["audio"]["greetings"]) #play greeting voice line
-
-                            if self.bot.data["debug"]["vc_handler"]:
-                                print(f'[vc_handler][AutoJoinDefaultVC]Auto-joined on {guild.name}\n')
-
-            #Scamelot
-            elif(guild.id == self.guild_id_scamelot):     
-
-                if (str(guild.id) in self.bot.data["setting"]["vc_handler"] and self.bot.data["setting"]["vc_handler"][str(guild.id)]["enable_auto_join"]) or self.bot.data["setting"]["vc_handler"]["default"]["enable_auto_join"]:
-
-                    vc = discord.utils.get(self.bot.voice_clients, guild=guild) #vc that bot is connected to
-
-                    if vc is None: #if bot isn't on any vc on this server
-                        channel = discord.utils.get(guild.voice_channels, id=self.defvc_id_scamelot) #get default voice channel
-
-                        if(channel != None):
-                            await channel.connect() #connect to channel
-                            await self.PlaySound(channel, self.bot.data["audio"]["greetings"])#play greeting voice line
-
-                            if self.bot.data["debug"]["vc_handler"]:
-                                print(f'[vc_handler][AutoJoinDefaultVC]Auto-joined on {guild.name}\n')
-
-            #Wojtini Industries
-            elif(guild.id == self.guild_id_wojtini): 
-
-                if (str(guild.id) in self.bot.data["setting"]["vc_handler"] and self.bot.data["setting"]["vc_handler"][str(guild.id)]["enable_auto_join"]) or self.bot.data["setting"]["vc_handler"]["default"]["enable_auto_join"]:
-
-                    vc = discord.utils.get(self.bot.voice_clients, guild=guild) #vc that bot is connected to
-
-                    if vc is None: #if bot isn't on any vc on this server
-                        channel = discord.utils.get(guild.voice_channels, id=self.defvc_id_wojtini) #get default voice channel
-
-                        if(channel != None):
-                            await channel.connect() #connect to channel
-                            await self.PlaySound(channel, self.bot.data["audio"]["greetings"])#play greeting voice line
-
-                            if self.bot.data["debug"]["vc_handler"]:
-                                print(f'[vc_handler][AutoJoinDefaultVC]Auto-joined on {guild.name}\n')
+                        if self.bot.data["debug"]["vc_handler"]:
+                            print(f'[vc_handler][AutoJoinDefaultVC]Auto-joined on {guild.name}\n')
 
 
     #wait before joining until bot is ready

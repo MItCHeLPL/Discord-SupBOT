@@ -42,16 +42,19 @@
         },
         "vc_handler": {
             "536251306994827285": { 
-                "enable_auto_join" : false
+                "enable_auto_join" : false,
+                "auto_join_vc": "DISCORD_ID_SCAMELOT_DEFAULT_VC"
             },
             "775284221701783582": { 
-                "enable_auto_join" : false
+                "enable_auto_join" : false,
+                "auto_join_vc": "DISCORD_ID_WOJTINI_DEFAULT_VC"
             },
             "495666208939573248": { 
-                "enable_auto_join" : false
+                "enable_auto_join" : true,
+                "auto_join_vc": "DISCORD_ID_BBSCH_DEFAULT_VC"
             },
             "default":{
-                "enable_auto_join" : true
+                "enable_auto_join" : false
             },
             "enable_yt_play": false,
             "enable_soundboard_play": true,
