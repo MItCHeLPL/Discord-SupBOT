@@ -10,7 +10,7 @@ class CustomHelp(commands.Cog):
         self.bot.remove_command('help') #remove default help command
 
         #Preety help menu configuration
-        menu = DefaultMenu(page_left="⬅️", page_right="➡️", remove="✖️", active_time=75) #temp comment
+        menu = DefaultMenu(page_left="⬅️", page_right="➡️", remove="✖️", active_time=120) #temp comment
 
         ending_note = f"Wpisz `yo help [komenda]` aby zobaczyć szczegóły dotyczące danej komendy"
 

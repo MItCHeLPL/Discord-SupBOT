@@ -42,13 +42,13 @@
         },
         "vc_handler": {
             "536251306994827285": { 
-                "enable_auto_join" : false 
+                "enable_auto_join" : false
             },
             "775284221701783582": { 
-                "enable_auto_join" : false 
+                "enable_auto_join" : false
             },
             "495666208939573248": { 
-                "enable_auto_join" : false 
+                "enable_auto_join" : false
             },
             "default":{
                 "enable_auto_join" : true
