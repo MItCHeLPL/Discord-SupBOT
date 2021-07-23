@@ -12,6 +12,18 @@ class VCHandler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+        self.guild_id_bbsch = None
+        self.defvc_id_bbsch = None
+        self.guild_id_scamelot = None
+        self.defvc_id_scamelot = None
+        self.guild_id_wojtini = None
+        self.defvc_id_wojtini = None
+
+        if self.bot.data["debug"]["vc_handler"]:
+            print(f"[vc_handler]Loaded")
+
+    @commands.Cog.listener()
+    async def on_ready(self):  
         #dotenv storing
         self.guild_id_bbsch = os.getenv('DISCORD_ID_BOBERSCHLESIEN')
         self.defvc_id_bbsch = os.getenv('DISCORD_ID_BBSCH_DEFAULT_VC')

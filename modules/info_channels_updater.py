@@ -11,28 +11,49 @@ class InfoChannelsUpdater(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+        self.bbsch = None
+
+        self.bbsch_online = None
+        self.bbsch_bot = None
+        self.bbsch_in_vc = None
+
+        self.scamelot = None
+                            
+        #get info channels
+        self.scamelot_online  = None
+        self.scamelot_offline = None
+        self.scamelot_total = None
+        self.scamelot_bot = None
+
+        if self.bot.data["debug"]["info_channels_updater"]:
+            print(f"[info_channels_updater]Loaded")
+
+
+    @commands.Cog.listener()
+    async def on_ready(self):
         #assign info channels
-        for guild in bot.guilds:
+        for guild in self.bot.guilds:
             if (str(guild.id) in self.bot.data["setting"]["info_channels_updater"] and self.bot.data["setting"]["info_channels_updater"][str(guild.id)]["update_channels"]) or self.bot.data["setting"]["info_channels_updater"]["default"]["update_channels"]:
-                if(guild.id == os.getenv('DISCORD_ID_BOBERSCHLESIEN')): #boberschlesien
+                if(guild.id == int(os.getenv('DISCORD_ID_BOBERSCHLESIEN'))): #boberschlesien
                     self.bbsch = guild #get guild
 
                     #get info channels
-                    self.bbsch_online = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_BBSCH_ONLINE'))
-                    self.bbsch_bot = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_BBSCH_BOT'))
-                    self.bbsch_in_vc = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_BBSCH_INVC'))
+                    self.bbsch_online = discord.utils.get(guild.voice_channels, id=int(os.getenv('DISCORD_ID_BBSCH_ONLINE')))
+                    self.bbsch_bot = discord.utils.get(guild.voice_channels, id=int(os.getenv('DISCORD_ID_BBSCH_BOT')))
+                    self.bbsch_in_vc = discord.utils.get(guild.voice_channels, id=int(os.getenv('DISCORD_ID_BBSCH_INVC')))
 
-                elif(guild.id == os.getenv('DISCORD_ID_SCAMELOT')): #scamelot
+                elif(guild.id == int(os.getenv('DISCORD_ID_SCAMELOT'))): #scamelot
                     self.scamelot = guild #get guild
                     
                     #get info channels
-                    self.scamelot_online = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_SCAMELOT_ONLINE'))
-                    self.scamelot_offline = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_SCAMELOT_OFFLINE'))
-                    self.scamelot_total = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_SCAMELOT_TOTAL'))
-                    self.scamelot_bot = discord.utils.get(guild.voice_channels, id=os.getenv('DISCORD_ID_SCAMELOT_BOT'))
+                    self.scamelot_online = discord.utils.get(guild.voice_channels, id=int(os.getenv('DISCORD_ID_SCAMELOT_ONLINE')))
+                    self.scamelot_offline = discord.utils.get(guild.voice_channels, id=int(os.getenv('DISCORD_ID_SCAMELOT_OFFLINE')))
+                    self.scamelot_total = discord.utils.get(guild.voice_channels, id=int(os.getenv('DISCORD_ID_SCAMELOT_TOTAL')))
+                    self.scamelot_bot = discord.utils.get(guild.voice_channels, id=int(os.getenv('DISCORD_ID_SCAMELOT_BOT')))
 
         self._updater.start()
 
+        
     def cog_unload(self):
         self._updater.cancel()
 
@@ -68,7 +89,7 @@ class InfoChannelsUpdater(commands.Cog):
                 await self.bbsch_bot.edit(name='🤖Bot: ' + str(bbsch_bot_count))  
 
             if self.bot.data["debug"]["info_channels_updater"]:
-                print(f'[info_channels_updater][_updater]Updated Boberschlesien channels\n')
+                print(f'[info_channels_updater][_updater]Updated Boberschlesien channels')
             
 
         #scamelot
@@ -96,16 +117,16 @@ class InfoChannelsUpdater(commands.Cog):
                 await self.scamelot_bot.edit(name='BOTS: ' + str(scamelot_bot_count))
             
             if self.bot.data["debug"]["info_channels_updater"]:
-                print(f'[info_channels_updater][_updater]Updated Scamelot channels\n')
+                print(f'[info_channels_updater][_updater]Updated Scamelot channels')
 
 
         if self.bot.data["debug"]["info_channels_updater"]:
-            print(f'[info_channels_updater][_updater]Finished updating info channels\n')
+            print(f'[info_channels_updater][_updater]Updated all info channels\n')
 
 
     #wait until bot is ready
     @_updater.before_loop
-    async def before_printer(self):
+    async def before_updater(self):
         await self.bot.wait_until_ready()
     
 def setup(bot):

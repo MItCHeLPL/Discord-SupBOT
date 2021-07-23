@@ -9,6 +9,10 @@ class VCDoorman(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+        if self.bot.data["debug"]["vc_doorman"]:
+            print(f"[vc_doorman]Loaded")
+
+
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
         if(self.bot.voice_clients != [] and member.id != self.bot.user.id): #if bot is in the same voice channel
@@ -33,14 +37,14 @@ class VCDoorman(commands.Cog):
                             await self.PlaySound(after.channel, self.bot.data["audio"]["greetings"], str(member.display_name))
 
                             if self.bot.data["debug"]["vc_doorman"]:
-                                print(f'[vc_doorman][on_voice_state_update]Greeted {member.mention}\n')
+                                print(f'[vc_doorman][on_voice_state_update]Greeted {member.name}\n')
 
                     if (str(server.guild.id) in self.bot.data["setting"]["vc_doorman"] and self.bot.data["setting"]["vc_doorman"][str(server.guild.id)]["enable_farewell"]) or self.bot.data["setting"]["vc_doorman"]["default"]["enable_farewell"]:
                         if(server.channel == before.channel): #someone disconnects
                             await self.PlaySound(before.channel, self.bot.data["audio"]["farewells"], str(member.display_name))
 
                             if self.bot.data["debug"]["vc_doorman"]:
-                                print(f'[vc_doorman][on_voice_state_update]Said goodbye to {member.mention}\n')
+                                print(f'[vc_doorman][on_voice_state_update]Said goodbye to {member.name}\n')
     
 
     async def PlaySound(self, channel : discord.VoiceChannel, array, member:str=None):
@@ -54,7 +58,7 @@ class VCDoorman(commands.Cog):
                 if vc.is_playing() == False: #if not saying something
                     if array[voiceLineId].find('tts') != -1 and member != None and self.bot.data["setting"]["vc_doorman"]["enable_member_tts"]: #add member name at the end of voice line, becouse file has tts in name and there is passed member string
                         #generate tts with member name
-                        message = gtts(array[voiceLineId] + " " + str(member), lang = self.bot.data["ttsLang"], tld=self.bot.data["ttsTld"])
+                        message = gtts(str(member), lang = self.bot.data["ttsLang"], tld=self.bot.data["ttsTld"])
                         message.save(self.bot.data['ttsAudioPath'] + 'tts_member_name.mp3')
 
                         vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + array[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else None) #play voice line on channel
