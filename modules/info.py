@@ -15,7 +15,8 @@ class Info(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
-        if (str(member.guild.id) in self.bot.data["setting"]["info"] and self.bot.data["setting"]["info"][str(member.guild.id)]["show_info_on_leave"]) or self.bot.data["setting"]["info"]["default"]["show_info_on_leave"]: 
+
+        if (str(member.guild.id) in self.bot.data["setting"]["info"] and self.bot.data["setting"]["info"][str(member.guild.id)]["show_info_on_leave"]) or (str(member.guild.id) not in self.bot.data["setting"]["info"] and self.bot.data["setting"]["info"]["default"]["show_info_on_leave"]):
             ctx = member.guild.system_channel
 
             embed = discord.Embed()
@@ -32,7 +33,8 @@ class Info(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        if (str(member.guild.id) in self.bot.data["setting"]["info"] and self.bot.data["setting"]["info"][str(member.guild.id)]["show_info_on_join"]) or self.bot.data["setting"]["info"]["default"]["show_info_on_join"]:
+
+        if (str(member.guild.id) in self.bot.data["setting"]["info"] and self.bot.data["setting"]["info"][str(member.guild.id)]["show_info_on_join"]) or (str(member.guild.id) not in self.bot.data["setting"]["info"] and self.bot.data["setting"]["info"]["default"]["show_info_on_join"]):
             ctx = member.guild.system_channel
 
             embed = discord.Embed()

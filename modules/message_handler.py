@@ -44,8 +44,9 @@ class MessageHandler(commands.Cog):
     #command success
     @commands.Cog.listener()
     async def on_command_completion(self, ctx):
-        await ctx.message.add_reaction('✅') #add emoji
-        await ctx.message.remove_reaction('⌛', self.bot.user) #processed
+        if ctx.message != None:
+            await ctx.message.add_reaction('✅') #add emoji
+            await ctx.message.remove_reaction('⌛', self.bot.user) #processed
 
 def setup(bot):
     bot.add_cog(MessageHandler(bot))

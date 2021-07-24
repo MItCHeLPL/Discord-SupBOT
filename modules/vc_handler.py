@@ -198,20 +198,17 @@ class VCHandler(commands.Cog):
 
                 #play voice line 
                 if vc.is_playing() == False: #if not saying something
-                    vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + array[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else None) #play voice line on channel
-
-                    if self.bot.data["debug"]["vc_handler"]:
-                        print(f'[vc_handler][PlaySound]Played sound')
+                    vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + array[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else (print(f'[vc_handler][PlaySound]Played sound') if self.bot.data["debug"]["vc_handler"] else None)) #play voice line on channel
 
                 break 
 
 
     #auto join vc, and reconnect after discornnected for some time and bot isn't in other vs on same server
-    @tasks.loop(seconds=3600.0)        
+    @tasks.loop(seconds=3600.0)       
     async def AutoJoinDefaultVC(self):
         for guild in self.bot.guilds:
-            if (str(guild.id) in self.bot.data["setting"]["vc_handler"] and self.bot.data["setting"]["vc_handler"][str(guild.id)]["enable_auto_join"]) or self.bot.data["setting"]["vc_handler"]["default"]["enable_auto_join"]:
 
+            if (str(guild.id) in self.bot.data["setting"]["vc_handler"] and self.bot.data["setting"]["vc_handler"][str(guild.id)]["enable_auto_join"]):
                 vc = discord.utils.get(self.bot.voice_clients, guild=guild) #vc that bot isconnected to
 
                 if vc is None: #if bot isn't on any vc on this server
@@ -222,7 +219,7 @@ class VCHandler(commands.Cog):
                         await self.PlaySound(channel, self.bot.data["audio"]["greetings"]) #play greeting voice line
 
                         if self.bot.data["debug"]["vc_handler"]:
-                            print(f'[vc_handler][AutoJoinDefaultVC]Auto-joined on {guild.name}\n')
+                            print(f'[vc_handler][AutoJoinDefaultVC]Auto-joined on {guild.name}')
 
 
     #wait before joining until bot is ready
