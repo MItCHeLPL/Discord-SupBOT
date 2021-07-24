@@ -41,20 +41,17 @@
 
         },
         "vc_handler": {
-            "536251306994827285": { 
-                "enable_auto_join" : false,
-                "auto_join_vc": "DISCORD_ID_SCAMELOT_DEFAULT_VC"
-            },
-            "775284221701783582": { 
-                "enable_auto_join" : false,
-                "auto_join_vc": "DISCORD_ID_WOJTINI_DEFAULT_VC"
-            },
             "495666208939573248": { 
                 "enable_auto_join" : true,
                 "auto_join_vc": "DISCORD_ID_BBSCH_DEFAULT_VC"
             },
-            "default":{
-                "enable_auto_join" : false
+            "536251306994827285": { 
+                "enable_auto_join" : true,
+                "auto_join_vc": "DISCORD_ID_SCAMELOT_DEFAULT_VC"
+            },
+            "775284221701783582": { 
+                "enable_auto_join" : true,
+                "auto_join_vc": "DISCORD_ID_WOJTINI_DEFAULT_VC"
             },
             "enable_yt_play": false,
             "enable_soundboard_play": true,
@@ -62,17 +59,28 @@
         },
         "info_channels_updater": {
             "495666208939573248": { 
-                "update_channels": true
+                "update_channels": true,
+                "channels": {
+                    "channel_online": "DISCORD_ID_BBSCH_ONLINE",
+                    "channel_in_vc": "DISCORD_ID_BBSCH_INVC",
+                    "channel_bot": "DISCORD_ID_BBSCH_BOT"
+                }
             },
             "536251306994827285": { 
-                "update_channels": true
-            },
-            "default":{
-                "update_channels": false
+                "update_channels": true,
+                "channels": {
+                    "channel_online": "DISCORD_ID_SCAMELOT_ONLINE",
+                    "channel_in_vc": "DISCORD_ID_SCAMELOT_INVC",
+                    "channel_bot": "DISCORD_ID_SCAMELOT_BOT"
+                }
             }
         },
         "info": {
             "495666208939573248": { 
+                "show_info_on_join": true,
+                "show_info_on_leave": true
+            },
+            "536251306994827285": { 
                 "show_info_on_join": true,
                 "show_info_on_leave": true
             },
@@ -88,13 +96,12 @@
         },
         "role_assigner": {
             "495666208939573248": { 
-                "assign_roles": true
+                "assign_roles": true,
+                "roles": ["DISCORD_ROLE_BBSCH_DJ"]
             },
             "536251306994827285": { 
-                "assign_roles": true
-            },
-            "default":{
-                "assign_roles": false
+                "assign_roles": true,
+                "roles": ["DISCORD_ROLE_SCAMELOT_DJ", "DISCORD_ROLE_SCAMELOT_SCAM"]
             }
         },
         "soundboard": {
@@ -120,7 +127,7 @@
         "vc_votekick": true,
         "tts": true,
         "vc_handler": true,
-        "info_channels_updater": true,
+        "info_channels_updater": false,
         "info": true,
         "role_assigner": true,
         "soundboard": true,

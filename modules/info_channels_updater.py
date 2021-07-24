@@ -11,47 +11,10 @@ class InfoChannelsUpdater(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        self.bbsch = None
-
-        self.bbsch_online = None
-        self.bbsch_bot = None
-        self.bbsch_in_vc = None
-
-        self.scamelot = None
-                            
-        #get info channels
-        self.scamelot_online  = None
-        self.scamelot_offline = None
-        self.scamelot_total = None
-        self.scamelot_bot = None
+        self._updater.start()
 
         if self.bot.data["debug"]["info_channels_updater"]:
             print(f"[info_channels_updater]Loaded")
-
-
-    @commands.Cog.listener()
-    async def on_ready(self):
-        #assign info channels
-        for guild in self.bot.guilds:
-            if (str(guild.id) in self.bot.data["setting"]["info_channels_updater"] and self.bot.data["setting"]["info_channels_updater"][str(guild.id)]["update_channels"]) or self.bot.data["setting"]["info_channels_updater"]["default"]["update_channels"]:
-                if(guild.id == int(os.getenv('DISCORD_ID_BOBERSCHLESIEN'))): #boberschlesien
-                    self.bbsch = guild #get guild
-
-                    #get info channels
-                    self.bbsch_online = discord.utils.get(guild.voice_channels, id=int(os.getenv('DISCORD_ID_BBSCH_ONLINE')))
-                    self.bbsch_bot = discord.utils.get(guild.voice_channels, id=int(os.getenv('DISCORD_ID_BBSCH_BOT')))
-                    self.bbsch_in_vc = discord.utils.get(guild.voice_channels, id=int(os.getenv('DISCORD_ID_BBSCH_INVC')))
-
-                elif(guild.id == int(os.getenv('DISCORD_ID_SCAMELOT'))): #scamelot
-                    self.scamelot = guild #get guild
-                    
-                    #get info channels
-                    self.scamelot_online = discord.utils.get(guild.voice_channels, id=int(os.getenv('DISCORD_ID_SCAMELOT_ONLINE')))
-                    self.scamelot_offline = discord.utils.get(guild.voice_channels, id=int(os.getenv('DISCORD_ID_SCAMELOT_OFFLINE')))
-                    self.scamelot_total = discord.utils.get(guild.voice_channels, id=int(os.getenv('DISCORD_ID_SCAMELOT_TOTAL')))
-                    self.scamelot_bot = discord.utils.get(guild.voice_channels, id=int(os.getenv('DISCORD_ID_SCAMELOT_BOT')))
-
-        self._updater.start()
 
         
     def cog_unload(self):
@@ -62,66 +25,39 @@ class InfoChannelsUpdater(commands.Cog):
     @tasks.loop(seconds=60.0)
     @has_permissions(manage_channels=True)
     async def _updater(self):
-        #boberschlesien
-        if(self.bbsch_online != None):
-            bbsch_online_count = 0
-            bbsch_bot_count = 0
-            bbsch_invc_count = 0
+        for guild in self.bot.guilds:
+            if (str(guild.id) in self.bot.data["setting"]["info_channels_updater"] and self.bot.data["setting"]["info_channels_updater"][str(guild.id)]["update_channels"]):
 
-            #count online/all members 
-            for user in self.bbsch.members:
-                if user.status != discord.Status.offline and user.bot == False:
-                    bbsch_online_count += 1
-                if user.bot:
-                    bbsch_bot_count += 1
+                channel_online = discord.utils.get(guild.voice_channels, id=int(os.getenv(str(self.bot.data["setting"]["info_channels_updater"][str(guild.id)]["channels"]["channel_online"]))))
+                channel_invc = discord.utils.get(guild.voice_channels, id=int(os.getenv(str(self.bot.data["setting"]["info_channels_updater"][str(guild.id)]["channels"]["channel_in_vc"]))))
+                channel_bot = discord.utils.get(guild.voice_channels, id=int(os.getenv(str(self.bot.data["setting"]["info_channels_updater"][str(guild.id)]["channels"]["channel_bot"]))))
 
-            bbsch_total_count = self.bbsch.member_count - bbsch_bot_count
+                if(channel_online != None and channel_invc != None and channel_bot != None):
+                    online_count = 0
+                    total_count = 0
+                    invc_count = 0
+                    bot_count = 0
 
-            voice_channel_list = self.bbsch.voice_channels
-            for vc in voice_channel_list:
-                bbsch_invc_count += len(vc.members)
-        
-            #edit channels
-            await self.bbsch_online.edit(name='🟢Online: ' + str(bbsch_online_count) + '/' + str(bbsch_total_count)) 
-            if(self.bbsch_in_vc != None):
-                await self.bbsch_in_vc.edit(name='🎤Na kanałach: ' + str(bbsch_invc_count))   
-            if(self.bbsch_bot != None):
-                await self.bbsch_bot.edit(name='🤖Bot: ' + str(bbsch_bot_count))  
+                    #count online/all/bot/invc members 
+                    for user in guild.members:
+                        if user.status != discord.Status.offline and user.bot == False:
+                            online_count += 1
+                        if user.bot:
+                            bot_count += 1
 
-            if self.bot.data["debug"]["info_channels_updater"]:
-                print(f'[info_channels_updater][_updater]Updated Boberschlesien channels')
-            
+                    total_count = guild.member_count - bot_count
 
-        #scamelot
-        if(self.scamelot_online != None): 
-            scamelot_online_count = 0
-            scamelot_bot_count = 0
+                    for vc in guild.voice_channels:
+                        invc_count += len(vc.members)
+                
 
-            #Calculate online/all members
-            for user in self.scamelot.members:
-                if user.status != discord.Status.offline and user.bot == False:
-                    scamelot_online_count += 1
-                if user.bot:
-                    scamelot_bot_count += 1
+                    #edit channels
+                    await channel_online.edit(name='🟢Online: ' + str(online_count) + '/' + str(total_count)) 
+                    await channel_invc.edit(name='🎤Na kanałach: ' + str(invc_count))   
+                    await channel_bot.edit(name='🤖Bot: ' + str(bot_count))  
 
-            scamelot_total_count = self.scamelot.member_count - scamelot_bot_count
-
-            scamelot_offline_count = scamelot_total_count - scamelot_online_count
-
-            await self.scamelot_online.edit(name='Online: ' + str(scamelot_online_count))
-            if(self.scamelot_offline != None):
-                await self.scamelot_offline.edit(name='Offline: ' + str(scamelot_offline_count))
-            if(self.scamelot_total != None):    
-                await self.scamelot_total.edit(name='Total: ' + str(scamelot_total_count))
-            if(self.scamelot_bot != None):
-                await self.scamelot_bot.edit(name='BOTS: ' + str(scamelot_bot_count))
-            
-            if self.bot.data["debug"]["info_channels_updater"]:
-                print(f'[info_channels_updater][_updater]Updated Scamelot channels')
-
-
-        if self.bot.data["debug"]["info_channels_updater"]:
-            print(f'[info_channels_updater][_updater]Updated all info channels\n')
+                    if self.bot.data["debug"]["info_channels_updater"]:
+                        print(f'[info_channels_updater][_updater]Updated {guild.name} info channels\n')
 
 
     #wait until bot is ready

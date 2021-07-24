@@ -102,10 +102,7 @@ class YouTube(commands.Cog):
                 if vc.is_playing() == True:
                     vc.stop() #stop playing
 
-                vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'yt.mp3'), after=lambda e: print('Player error: %s' % e) if e else None) #play sound on vc
-
-                if self.bot.data["debug"]["youtube"]:
-                    print(f'[youtube][PlaySound]Played sound')
+                vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'yt.mp3'), after=lambda e: print('Player error: %s' % e) if e else (print(f'[youtube][PlaySound]Played sound') if self.bot.data["debug"]["youtube"] else None)) #play sound on vc
 
                 break 
 

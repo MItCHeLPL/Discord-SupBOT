@@ -80,10 +80,7 @@ class TTS(commands.Cog):
                 if vc.is_playing() == True:
                     vc.stop() #stop playing
 
-                vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'tts.mp3'), after=lambda e: print('Player error: %s' % e) if e else None) #play sound on vc
-
-                if self.bot.data["debug"]["tts"]:
-                    print(f'[tts][PlaySound]Played sound')
+                vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'tts.mp3'), after=lambda e: print('Player error: %s' % e) if e else (print(f'[tts][PlaySound]Played tts') if self.bot.data["debug"]["tts"] else None)) #play sound on vc
 
                 break 
 

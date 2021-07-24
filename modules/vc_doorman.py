@@ -32,19 +32,20 @@ class VCDoorman(commands.Cog):
             #somebody leaved/entered voice channel
             else:
                 for server in self.bot.voice_clients: #cycle through all servers
-                    if (str(server.guild.id) in self.bot.data["setting"]["vc_doorman"] and self.bot.data["setting"]["vc_doorman"][str(server.guild.id)]["enable_greeting"]) or self.bot.data["setting"]["vc_doorman"]["default"]["enable_greeting"]:
+
+                    if (str(server.guild.id) in self.bot.data["setting"]["vc_doorman"] and self.bot.data["setting"]["vc_doorman"][str(member.guild.id)]["enable_greeting"]) or (str(server.guild.id) not in self.bot.data["setting"]["vc_doorman"] and self.bot.data["setting"]["vc_doorman"]["default"]["enable_greeting"]):
                         if(server.channel == after.channel): #someone connects
                             await self.PlaySound(after.channel, self.bot.data["audio"]["greetings"], str(member.display_name))
 
                             if self.bot.data["debug"]["vc_doorman"]:
-                                print(f'[vc_doorman][on_voice_state_update]Greeted {member.name}\n')
+                                print(f'[vc_doorman][on_voice_state_update]Greeted {member.name}')
 
-                    if (str(server.guild.id) in self.bot.data["setting"]["vc_doorman"] and self.bot.data["setting"]["vc_doorman"][str(server.guild.id)]["enable_farewell"]) or self.bot.data["setting"]["vc_doorman"]["default"]["enable_farewell"]:
+                    if (str(server.guild.id) in self.bot.data["setting"]["vc_doorman"] and self.bot.data["setting"]["vc_doorman"][str(member.guild.id)]["enable_farewell"]) or (str(server.guild.id) not in self.bot.data["setting"]["vc_doorman"] and self.bot.data["setting"]["vc_doorman"]["default"]["enable_farewell"]):
                         if(server.channel == before.channel): #someone disconnects
                             await self.PlaySound(before.channel, self.bot.data["audio"]["farewells"], str(member.display_name))
 
                             if self.bot.data["debug"]["vc_doorman"]:
-                                print(f'[vc_doorman][on_voice_state_update]Said goodbye to {member.name}\n')
+                                print(f'[vc_doorman][on_voice_state_update]Said goodbye to {member.name}')
     
 
     async def PlaySound(self, channel : discord.VoiceChannel, array, member:str=None):
@@ -59,22 +60,16 @@ class VCDoorman(commands.Cog):
                         message = gtts(str(member), lang = self.bot.data["ttsLang"], tld=self.bot.data["ttsTld"])
                         message.save(self.bot.data['ttsAudioPath'] + 'tts_member_name.mp3')
 
-                        vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + array[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else None) #play voice line on channel
+                        vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + array[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else (print(f'[vc_doorman][PlaySound]Played voiceline') if self.bot.data["debug"]["vc_doorman"] else None)) #play voice line on channel
 
                         #cooldown before saying member name
                         while vc.is_playing(): #Checks if voice is playing
                             await asyncio.sleep(0.1) #While it's playing it sleeps for .1 of a second
                         
-                        vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'tts_member_name.mp3'), after=lambda e: print('Player error: %s' % e) if e else None) #play member name on channel
-
-                        if self.bot.data["debug"]["vc_doorman"]:
-                            print(f'[vc_doorman][PlaySound]Played voiceline and TTS')
+                        vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'tts_member_name.mp3'), after=lambda e: print('Player error: %s' % e) if e else (print(f'[vc_doorman][PlaySound]Played TTS\n') if self.bot.data["debug"]["vc_doorman"] else None)) #play member name on channel
 
                     else:#play normal bind
-                        vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + array[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else None) #play voice line on channel
-
-                        if self.bot.data["debug"]["vc_doorman"]:
-                            print(f'[vc_doorman][PlaySound]Played voiceline')
+                        vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + array[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else (print(f'[vc_doorman][PlaySound]Played voiceline\n') if self.bot.data["debug"]["vc_doorman"] else None)) #play voice line on channel
 
                 break 
 
