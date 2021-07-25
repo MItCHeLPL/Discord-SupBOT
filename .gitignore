@@ -132,9 +132,10 @@ audio/
 .vscode
 *.code-workspace
 
-#ignore legacy code
-botLegacy.py
-
 #ignore linux service files
 service/
 *.sh
+
+#ignore log files
+log.txt
+*.log
