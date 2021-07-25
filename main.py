@@ -3,6 +3,7 @@ from discord.ext import commands
 import os
 import json
 from dotenv import load_dotenv
+import datetime
 
 load_dotenv() #load .env
 
@@ -12,6 +13,11 @@ bot = commands.Bot(command_prefix='yo ', description='''yo [komenda] [atrybut1] 
 with open('settings.json') as file:
     bot.data = json.load(file)
 
+if __name__ == "__main__":
+    if bot.data["debug"]["main"]:
+        print(f'\n\n[main][__main__]({datetime.datetime.utcnow()})')
+        print(f'[main][__main__]--------SETUP STARTED--------\n')
+
 #bot is ready
 @bot.event
 async def on_ready():
@@ -19,11 +25,11 @@ async def on_ready():
 
     if bot.data["debug"]["main"]:
         print(f'\n[main][on_ready]Logged in as {bot.user.name} (ID: {bot.user.id})')
-        print('[main][on_ready]Connected to:')
+        print(f'[main][on_ready]Connected to:')
         for guild in bot.guilds:
-            print("[main][on_ready]" + guild.name)
+            print(f"[main][on_ready]{guild.name}")
 
-        print("\n[main][on_ready]Setup complete\n")
+        print(f"\n[main][on_ready]--------SETUP COMPLETE--------\n\n")
 
 #load modules
 for module in bot.data["modules"]:

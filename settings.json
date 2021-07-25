@@ -19,7 +19,7 @@
             "allowNSFW": true
         },
         "custom_help": {
-            
+            "send_help_in_dm": false
         },
         "poll": {
             
@@ -38,7 +38,8 @@
 
         },
         "tts": {
-
+            "ttsLang": "pl",
+            "ttsTld": "pl"
         },
         "vc_handler": {
             "495666208939573248": { 
@@ -147,7 +148,5 @@
     },
     "modulePath": "modules.",
     "audioPath": "audio/voice_lines/",
-    "ttsAudioPath": "audio/tts/",
-    "ttsLang": "pl",
-    "ttsTld": "pl"
+    "ttsAudioPath": "audio/tts/"
 }

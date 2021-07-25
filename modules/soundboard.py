@@ -131,15 +131,12 @@ class Soundboard(commands.Cog):
                 return await user_vc.connect() #connect to the requested channel, bot isn't connected to any of the server's vc
                 
 
-    async def PlaySound(self, channel : discord.VoiceChannel, voiceline):
-        for vc in self.bot.voice_clients: #cycle through all servers
-            if(vc == channel): #find current voice channel
-                if vc.is_playing() == True:
-                        vc.stop() #stop playing
+    async def PlaySound(self, vc : discord.VoiceChannel, voiceline):
+        if vc.is_playing() == True:
+            vc.stop() #stop playing
 
-                vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + voiceline), after=lambda e: print('Player error: %s' % e) if e else (print(f'[soundboard][PlaySound]Played sound') if self.bot.data["debug"]["soundboard"] else None)) #play sound on vc
-                
-                break 
+        vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + voiceline), after=lambda e: print('Player error: %s' % e) if e else (print(f'[soundboard][PlaySound]Played bind on {vc.channel.name}') if self.bot.data["debug"]["soundboard"] else None)) #play sound on vc
+
 
 def setup(bot):
     bot.add_cog(Soundboard(bot))

@@ -96,15 +96,12 @@ class YouTube(commands.Cog):
                 return await user_vc.connect() #connect to the requested channel, bot isn't connected to any of the server's vc
 
 
-    def PlaySound(self, channel : discord.VoiceChannel):
-        for vc in self.bot.voice_clients: #cycle through all servers
-            if(vc == channel): #find current voice channel
-                if vc.is_playing() == True:
-                    vc.stop() #stop playing
+    def PlaySound(self, vc : discord.VoiceChannel):
+        if vc.is_playing() == True:
+            vc.stop() #stop playing
 
-                vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'yt.mp3'), after=lambda e: print('Player error: %s' % e) if e else (print(f'[youtube][PlaySound]Played sound') if self.bot.data["debug"]["youtube"] else None)) #play sound on vc
+            vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'yt.mp3', options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[youtube][PlaySound]Played yt sound on {vc.channel.name}') if self.bot.data["debug"]["youtube"] else None)) #play sound on vc
 
-                break 
 
 def setup(bot):
     bot.add_cog(YouTube(bot))
