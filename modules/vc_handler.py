@@ -191,16 +191,12 @@ class VCHandler(commands.Cog):
                     print(f'[vc_handler][_stop]Bot isnt on any vc\n')
 
 
-    async def PlaySound(self, channel : discord.VoiceChannel, array):
-        for vc in self.bot.voice_clients: #cycle through all servers
-            if(vc == channel): #find current voice channel
-                voiceLineId = random.randint(0, (len(array)-1)) #pick random voice line
+    async def PlaySound(self, vc : discord.VoiceChannel, array):
+        voiceLineId = random.randint(0, (len(array)-1)) #pick random voice line
 
-                #play voice line 
-                if vc.is_playing() == False: #if not saying something
-                    vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + array[voiceLineId]), after=lambda e: print('Player error: %s' % e) if e else (print(f'[vc_handler][PlaySound]Played sound') if self.bot.data["debug"]["vc_handler"] else None)) #play voice line on channel
-
-                break 
+        #play voice line 
+        if vc.is_playing() == False: #if not saying something
+            vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + array[voiceLineId], options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[vc_handler][PlaySound]Played sound on {vc.channel.name}\n') if self.bot.data["debug"]["vc_handler"] else None)) #play voice line on channel
 
 
     #auto join vc, and reconnect after discornnected for some time and bot isn't in other vs on same server
@@ -215,11 +211,10 @@ class VCHandler(commands.Cog):
                     channel = discord.utils.get(guild.voice_channels, id=int(os.getenv(str(self.bot.data["setting"]["vc_handler"][str(guild.id)]["auto_join_vc"])))) #get default voice channel
                     
                     if(channel != None):
-                        channel = await channel.connect() #connect to channel
-                        await self.PlaySound(channel, self.bot.data["audio"]["greetings"]) #play greeting voice line
+                        await channel.connect() #connect to channel
 
                         if self.bot.data["debug"]["vc_handler"]:
-                            print(f'[vc_handler][AutoJoinDefaultVC]Auto-joined on {guild.name}')
+                            print(f'[vc_handler][AutoJoinDefaultVC]Auto-joined on {guild.name}\n')
 
 
     #wait before joining until bot is ready

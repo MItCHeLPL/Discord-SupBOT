@@ -23,12 +23,14 @@ class Info(commands.Cog):
             embed.set_author(name='👋Użytkownik opuścił serwer') #embed header
 
             if member.bot == True:
-                embed.description = '`🤖BOT`\n ' #add bot tag
+                embed.description = f'`🤖BOT`\n{member.mention}' #add bot tag
+            else:
+                embed.description = f'{member.mention}'
 
             await self._userinfo(ctx, member, embed)
 
             if self.bot.data["debug"]["info"]:
-                print(f'[info][on_member_remove]{member.name} left {member.guild.name}. Requested user info')
+                print(f'[info][on_member_remove]{member.name} left {member.guild.name}. Requested user info\n')
 
 
     @commands.Cog.listener()
@@ -41,12 +43,14 @@ class Info(commands.Cog):
             embed.set_author(name='👋Użytkownik dołączył na serwer') #embed header
 
             if member.bot == True:
-                embed.description = '`🤖BOT`\n ' #add bot tag
+                embed.description = f'`🤖BOT`\n{member.mention}' #add bot tag
+            else:
+                embed.description = f'{member.mention}'
 
             await self._userinfo(ctx, member, embed)
 
             if self.bot.data["debug"]["info"]:
-                print(f'[info][on_member_join]{member.name} joined {member.guild.name}. Requested user info')
+                print(f'[info][on_member_join]{member.name} joined {member.guild.name}. Requested user info\n')
 
 
     #combined info
@@ -70,13 +74,13 @@ class Info(commands.Cog):
 
         #Calculate total kick amount
         kick_count = 0
-        async for x in ctx.guild.audit_logs(limit=None, before=None, after=None, oldest_first=None, action=discord.AuditLogAction.kick):
+        async for x in ctx.guild.audit_logs(limit=None, action=discord.AuditLogAction.kick):
             if(x.target == member):
                 kick_count += 1
 
         #Calculate total ban amount
         ban_count = 0
-        async for x in ctx.guild.audit_logs(limit=None, before=None, after=None, oldest_first=None, action=discord.AuditLogAction.ban):
+        async for x in ctx.guild.audit_logs(limit=None, action=discord.AuditLogAction.ban):
             if(x.target == member):
                 ban_count += 1
         
@@ -87,9 +91,12 @@ class Info(commands.Cog):
             embed.set_author(name='🛈 Informacje o użytkowniku:')
 
             if member.bot == True:
-                embed.description = '`🤖BOT`\n ' #add bot tag
+                embed.description = f'`🤖BOT`\n{member.mention}' #add bot tag
+            else:
+                embed.description = f'{member.mention}'
+            
 
-        embed.title = str(member.name)
+        embed.title = (str(member.name) + " #" + str(member.discriminator))
         embed.colour = member.color
 
         embed.set_thumbnail(url=member.avatar_url) #avatar
@@ -166,12 +173,12 @@ class Info(commands.Cog):
 
         #Calculate total kick amount
         kick_count = 0
-        async for x in ctx.guild.audit_logs(limit=None, before=None, after=None, oldest_first=None, action=discord.AuditLogAction.kick):
+        async for x in ctx.guild.audit_logs(limit=None, action=discord.AuditLogAction.kick):
             kick_count += 1
 
         #Calculate total ban amount
         ban_count = 0
-        async for x in ctx.guild.audit_logs(limit=None, before=None, after=None, oldest_first=None, action=discord.AuditLogAction.ban):
+        async for x in ctx.guild.audit_logs(limit=None, action=discord.AuditLogAction.ban):
             ban_count += 1
 
         #Calculate current ban amount
@@ -237,9 +244,9 @@ class Info(commands.Cog):
         embed.set_author(name='🛈 Informacje o bocie:') #embed header
 
         if self.bot.data["setting"]["info"]["show_bot_author_info"]:   
-            embed.description = '**Twórca: [M!tCHeL](https://github.com/MItCHeLPL)**\n**Projekt: [GitHub](https://github.com/MItCHeLPL/Discord-SupBOT)**\n\n`🤖BOT`\n '
+            embed.description = f'**Twórca: [M!tCHeL](https://github.com/MItCHeLPL)**\n**Projekt: [GitHub](https://github.com/MItCHeLPL/Discord-SupBOT)**\n`🤖BOT`\n{self.bot.user.mention}\n'
         else:
-            embed.description = '`🤖BOT`\n '
+            embed.description = f'`🤖BOT`\n{self.bot.user.mention}'
 
         await self._userinfo(ctx, ctx.me, embed) #show user info about bot
 

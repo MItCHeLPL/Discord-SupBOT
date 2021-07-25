@@ -23,7 +23,7 @@ class TTS(commands.Cog):
 
         #generate tts
         if(len(txt) > 0 and txt != ' '):
-            message = gtts(txt, lang = self.bot.data["ttsLang"], tld=self.bot.data["ttsTld"])
+            message = gtts(txt, lang = self.bot.data["setting"]["tts"]["ttsLang"], tld=self.bot.data["setting"]["tts"]["ttsTld"])
             message.save(self.bot.data['ttsAudioPath'] + 'tts.mp3')
 
             if self.bot.data["debug"]["tts"]:
@@ -74,15 +74,12 @@ class TTS(commands.Cog):
                 return await user_vc.connect() #connect to the requested channel, bot isn't connected to any of the server's vc
 
 
-    async def PlaySound(self, channel : discord.VoiceChannel):
-        for vc in self.bot.voice_clients: #cycle through all servers
-            if(vc == channel): #find current voice channel
-                if vc.is_playing() == True:
-                    vc.stop() #stop playing
+    async def PlaySound(self, vc : discord.VoiceChannel):
+        if vc.is_playing() == True:
+            vc.stop() #stop playing
 
-                vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'tts.mp3'), after=lambda e: print('Player error: %s' % e) if e else (print(f'[tts][PlaySound]Played tts') if self.bot.data["debug"]["tts"] else None)) #play sound on vc
+        vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'tts.mp3', options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[tts][PlaySound]Played tts on {vc.channel.name}') if self.bot.data["debug"]["tts"] else None)) #play sound on vc
 
-                break 
 
 def setup(bot):
     bot.add_cog(TTS(bot))

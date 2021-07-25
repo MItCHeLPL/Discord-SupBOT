@@ -40,6 +40,7 @@ class Ai(commands.Cog):
 
                     if self.bot.data["debug"]["ai"]:
                         print(f'[ai][on_voice_state_update]Enabled AIBOT category visibility\n')
+                        
                 if member == self.aiBot and member.status == discord.Status.offline:
                     await self.ai_category.set_permissions(self.bbsch_everyone_role, view_channel = False, read_messages = False, send_messages = False)
                     
