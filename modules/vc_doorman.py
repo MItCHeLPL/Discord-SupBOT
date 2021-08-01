@@ -11,7 +11,7 @@ class VCDoorman(commands.Cog):
         self.bot = bot
 
         if self.bot.data["debug"]["vc_doorman"]:
-            print(f"[vc_doorman]Loaded")
+            print(f"[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman]Loaded")
 
 
     @commands.Cog.listener()
@@ -40,7 +40,7 @@ class VCDoorman(commands.Cog):
                             await self.PlaySound(after.channel, self.bot.data["audio"]["greetings"], str(member.display_name))
 
                             if self.bot.data["debug"]["vc_doorman"]:
-                                print(f'[vc_doorman][on_voice_state_update]Greeted {member.name}')
+                                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman][on_voice_state_update]Greeted {member.name}')
 
                     if (str(server.guild.id) in self.bot.data["setting"]["vc_doorman"] and self.bot.data["setting"]["vc_doorman"][str(member.guild.id)]["enable_farewell"]) or (str(server.guild.id) not in self.bot.data["setting"]["vc_doorman"] and self.bot.data["setting"]["vc_doorman"]["default"]["enable_farewell"]):
                         if(server.channel == before.channel): #someone disconnects
@@ -49,7 +49,7 @@ class VCDoorman(commands.Cog):
                                 await self.PlaySound(before.channel, self.bot.data["audio"]["farewells"], str(member.display_name))
 
                                 if self.bot.data["debug"]["vc_doorman"]:
-                                    print(f'[vc_doorman][on_voice_state_update]Said goodbye to {member.name}')
+                                    print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman][on_voice_state_update]Said goodbye to {member.name}')
 
 
             #bot was moved to another channel
@@ -59,7 +59,7 @@ class VCDoorman(commands.Cog):
                     if(x.extra.channel.id == after.channel.id and x.guild.id == after.channel.guild.id): #action was done to bot
 
                         #if self.bot.data["debug"]["vc_doorman"]:
-                            #print(f'[vc_doorman][on_voice_state_update]Bot was last moved {("from " + before.channel.name) if before.channel != None else None} to {after.channel.name}{(" by " + x.user.name) if x.user != None else None}\n')
+                            #print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman][on_voice_state_update]Bot was last moved {("from " + before.channel.name) if before.channel != None else None} to {after.channel.name}{(" by " + x.user.name) if x.user != None else None}\n')
 
                         for server in self.bot.voice_clients: #cycle through all servers
 
@@ -67,11 +67,11 @@ class VCDoorman(commands.Cog):
                                 if(server.channel == after.channel): #connected
 
                                     if len(after.channel.members) > 1: #if someone is on vc
-                                        await asyncio.sleep(0.5) #wait to get vc
+                                        await asyncio.sleep(1) #wait to get vc
                                         await self.PlaySound(after.channel, self.bot.data["audio"]["greetings"]) #greet users on vc
 
                                         if self.bot.data["debug"]["vc_doorman"]:
-                                            print(f'[vc_doorman][on_voice_state_update]Greeted everyone after being moved {("from " + before.channel.name) if before.channel != None else None} to {after.channel.name}{(" by " + x.user.name) if x.user != None else None}')
+                                            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman][on_voice_state_update]Greeted everyone after being moved {("from " + before.channel.name) if before.channel != None else None} to {after.channel.name}{(" by " + x.user.name) if x.user != None else None}')
 
                                         break
                         break    
@@ -90,16 +90,16 @@ class VCDoorman(commands.Cog):
                         message = gtts(str(member), lang = self.bot.data["setting"]["tts"]["ttsLang"], tld=self.bot.data["setting"]["tts"]["ttsTld"])
                         message.save(self.bot.data['ttsAudioPath'] + 'tts_member_name.mp3')
 
-                        vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + array[voiceLineId], options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[vc_doorman][PlaySound]Played voiceline on {vc.channel.name}') if self.bot.data["debug"]["vc_doorman"] else None)) #play voice line on channel
+                        vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + array[voiceLineId], options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman][PlaySound]Played voiceline on {vc.channel.name}') if self.bot.data["debug"]["vc_doorman"] else None)) #play voice line on channel
 
                         #cooldown before saying member name
                         while vc.is_playing(): #Checks if voice is playing
                             await asyncio.sleep(0.1) #While it's playing it sleeps for .1 of a second
                         
-                        vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'tts_member_name.mp3', options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[vc_doorman][PlaySound]Played TTS on {vc.channel.name}\n') if self.bot.data["debug"]["vc_doorman"] else None)) #play member name on channel
+                        vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'tts_member_name.mp3', options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman][PlaySound]Played TTS on {vc.channel.name}\n') if self.bot.data["debug"]["vc_doorman"] else None)) #play member name on channel
 
                     else:#play normal bind
-                        vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + array[voiceLineId], options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[vc_doorman][PlaySound]Played voiceline on {vc.channel.name}\n') if self.bot.data["debug"]["vc_doorman"] else None)) #play voice line on channel
+                        vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + array[voiceLineId], options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman][PlaySound]Played voiceline on {vc.channel.name}\n') if self.bot.data["debug"]["vc_doorman"] else None)) #play voice line on channel
 
                 break 
 

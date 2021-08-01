@@ -3,6 +3,7 @@ from discord.ext import commands
 import datetime
 import random
 import math
+import datetime
 
 class Soundboard(commands.Cog):
     """Bindy"""
@@ -10,7 +11,7 @@ class Soundboard(commands.Cog):
         self.bot = bot
 
         if self.bot.data["debug"]["soundboard"]:
-            print(f"[soundboard]Loaded")
+            print(f"[{str(datetime.datetime.utcnow())[0:-7]}][soundboard]Loaded")
     
 
     @commands.command(name = 'playbind', aliases = ['bind', 'soundboard', 'pb', 'ps', 'sound', 'playsound'])
@@ -27,7 +28,7 @@ class Soundboard(commands.Cog):
             await ctx.reply('Odtwarzam binda `' + name + '`', delete_after=5)
 
             if self.bot.data["debug"]["soundboard"]:
-                print(f'[soundboard][_bind]Playing bind: {name}\n')
+                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][_bind]Playing bind: {name}\n')
 
             return True
 
@@ -35,7 +36,7 @@ class Soundboard(commands.Cog):
             await ctx.reply('Nie znaleziono binda `' + name + '`', delete_after=5)
 
             if self.bot.data["debug"]["soundboard"]:
-                print(f'[soundboard][_bind]Sound not found\n')
+                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][_bind]Sound not found\n')
 
             return False
 
@@ -87,13 +88,13 @@ class Soundboard(commands.Cog):
             await ctx.reply("Wysłałem DM z listą bindów do " + str(ctx.author.mention), delete_after=5)
 
             if self.bot.data["debug"]["soundboard"]:
-                print(f'[soundboard][_bindList]Sent bindlist in DM to {ctx.author.mention}\n')
+                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][_bindList]Sent bindlist in DM to {ctx.author.mention}\n')
 
         else:
             await ctx.reply(embed=embed)
 
             if self.bot.data["debug"]["soundboard"]:
-                print(f'[soundboard][_bindList]Sent bindlist to text channel\n')
+                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][_bindList]Sent bindlist to text channel\n')
 
     
     async def Join(self, ctx):
@@ -108,7 +109,7 @@ class Soundboard(commands.Cog):
                         same_channel = True
 
                         if self.bot.data["debug"]["soundboard"]:
-                            print(f'[soundboard][Join]Bot is in the same vc')
+                            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][Join]Bot is in the same vc')
 
                         return vc #return current channel
 
@@ -116,7 +117,7 @@ class Soundboard(commands.Cog):
                     #await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
 
                     if self.bot.data["debug"]["soundboard"]:
-                        print(f'[soundboard][Join]Bot joined vc (bot was on the other channel)')
+                        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][Join]Bot joined vc (bot was on the other channel)')
 
                     await vc.disconnect() #disconnect from old channel
 
@@ -126,7 +127,7 @@ class Soundboard(commands.Cog):
                 #await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
 
                 if self.bot.data["debug"]["soundboard"]:
-                    print(f'[soundboard][Join]Bot joined vc (bot wasnt connected)')
+                    print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][Join]Bot joined vc (bot wasnt connected)')
 
                 return await user_vc.connect() #connect to the requested channel, bot isn't connected to any of the server's vc
                 
@@ -135,7 +136,7 @@ class Soundboard(commands.Cog):
         if vc.is_playing() == True:
             vc.stop() #stop playing
 
-        vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + voiceline), after=lambda e: print('Player error: %s' % e) if e else (print(f'[soundboard][PlaySound]Played bind on {vc.channel.name}') if self.bot.data["debug"]["soundboard"] else None)) #play sound on vc
+        vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + voiceline), after=lambda e: print('Player error: %s' % e) if e else (print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][PlaySound]Played bind on {vc.channel.name}') if self.bot.data["debug"]["soundboard"] else None)) #play sound on vc
 
 
 def setup(bot):

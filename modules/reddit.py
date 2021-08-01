@@ -17,7 +17,7 @@ class Reddit(commands.Cog):
         self.bot = bot
 
         if self.bot.data["debug"]["reddit"]:
-            print(f"[reddit]Loaded")
+            print(f"[{str(datetime.datetime.utcnow())[0:-7]}][reddit]Loaded")
     
     #Post submission from reddit
     async def PostFromReddit(self, sub : str, ctx):
@@ -73,7 +73,7 @@ class Reddit(commands.Cog):
             embed.timestamp = datetime.datetime.utcnow() #set time
 
         if self.bot.data["debug"]["reddit"]:
-            print(f'[reddit][PostFromReddit]Generated post from reddit: {sub}\n')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][reddit][PostFromReddit]Generated post from reddit: {sub}\n')
 
         return embed
 

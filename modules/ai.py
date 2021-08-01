@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord.ext.commands import CommandNotFound, has_permissions
 import os
 from dotenv import load_dotenv
+import datetime
 
 load_dotenv()
 
@@ -16,7 +17,7 @@ class Ai(commands.Cog):
         self.bbsch_everyone_role = None
 
         if self.bot.data["debug"]["ai"]:
-            print(f"[ai]Loaded")
+            print(f"[{str(datetime.datetime.utcnow())[0:-7]}][ai]Loaded")
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -39,13 +40,13 @@ class Ai(commands.Cog):
                     await self.ai_category.set_permissions(self.bbsch_everyone_role, view_channel = True, read_messages = True, send_messages = False)
 
                     if self.bot.data["debug"]["ai"]:
-                        print(f'[ai][on_voice_state_update]Enabled AIBOT category visibility\n')
+                        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][ai][on_voice_state_update]Enabled AIBOT category visibility\n')
                         
                 if member == self.aiBot and member.status == discord.Status.offline:
                     await self.ai_category.set_permissions(self.bbsch_everyone_role, view_channel = False, read_messages = False, send_messages = False)
                     
                     if self.bot.data["debug"]["ai"]:
-                        print(f'[ai][on_voice_state_update]Disabled AIBOT category visibility\n')
+                        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][ai][on_voice_state_update]Disabled AIBOT category visibility\n')
 
     
 def setup(bot):

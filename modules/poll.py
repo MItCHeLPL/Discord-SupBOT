@@ -46,7 +46,7 @@ class Poll(commands.Cog):
         msg = await ctx.send(embed=embed)
 
         if self.bot.data["debug"]["poll"]:
-            print(f'[poll][_pollLegacy]Generated poll message')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][poll][_pollLegacy]Generated poll message')
 
         #add emojis
         for emoji in emojis:
@@ -55,7 +55,7 @@ class Poll(commands.Cog):
                 i -= 1
 
         if self.bot.data["debug"]["poll"]:
-            print(f'[poll][_pollLegacy]Added reactions to poll message\n')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][poll][_pollLegacy]Added reactions to poll message\n')
 
 
     #update poll
@@ -86,7 +86,7 @@ class Poll(commands.Cog):
                 await message.edit(embed=new_embed) #update message
 
                 if self.bot.data["debug"]["poll"]:
-                    print(f'[poll][on_reaction_add]Updated poll with vote\n')
+                    print(f'[{str(datetime.datetime.utcnow())[0:-7]}][poll][on_reaction_add]Updated poll with vote\n')
 
 
     @commands.Cog.listener()
@@ -110,7 +110,7 @@ class Poll(commands.Cog):
                         i+=1
                 await message.edit(embed=new_embed) #update message
                 if self.bot.data["debug"]["poll"]:
-                    print(f'[poll][on_reaction_add]Updated poll with vote\n')
+                    print(f'[{str(datetime.datetime.utcnow())[0:-7]}][poll][on_reaction_add]Updated poll with vote\n')
 
 
     #convert emoji to opiton id
@@ -178,7 +178,7 @@ class Poll(commands.Cog):
 #        await ctx.send(embed=embed, components=action_rows) #post poll
 #
 #        if self.bot.data["debug"]["poll"]:
-#            print(f'[poll][_poll]Generated poll message')
+#            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][poll][_poll]Generated poll message')
 #
 #
 #    #onclick
@@ -204,7 +204,7 @@ class Poll(commands.Cog):
 #        await ctx.edit_origin(embed=new_embed)
 #
 #        if self.bot.data["debug"]["poll"]:
-#            print(f'[poll][vote]Updated poll with vote')
+#            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][poll][vote]Updated poll with vote')
 
 
 def setup(bot):

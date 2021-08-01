@@ -11,7 +11,7 @@ class Info(commands.Cog):
         self.bot = bot
 
         if self.bot.data["debug"]["info"]:
-            print(f"[info]Loaded")
+            print(f"[{str(datetime.datetime.utcnow())[0:-7]}][info]Loaded")
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
@@ -30,7 +30,7 @@ class Info(commands.Cog):
             await self._userinfo(ctx, member, embed)
 
             if self.bot.data["debug"]["info"]:
-                print(f'[info][on_member_remove]{member.name} left {member.guild.name}. Requested user info\n')
+                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][info][on_member_remove]{member.name} left {member.guild.name}. Requested user info\n')
 
 
     @commands.Cog.listener()
@@ -50,7 +50,7 @@ class Info(commands.Cog):
             await self._userinfo(ctx, member, embed)
 
             if self.bot.data["debug"]["info"]:
-                print(f'[info][on_member_join]{member.name} joined {member.guild.name}. Requested user info\n')
+                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][info][on_member_join]{member.name} joined {member.guild.name}. Requested user info\n')
 
 
     #combined info
@@ -62,7 +62,7 @@ class Info(commands.Cog):
         await self._botinfo(ctx)
 
         if self.bot.data["debug"]["info"]:
-            print(f'[info][_info]Requested full info')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][info][_info]Requested full info')
 
 
     #user info
@@ -145,7 +145,7 @@ class Info(commands.Cog):
             await ctx.send(embed=embed, components=[action_row])
 
         if self.bot.data["debug"]["info"]:
-            print(f'[info][_userinfo]Sent info about {member.name}\n')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][info][_userinfo]Sent info about {member.name}\n')
 
 
 
@@ -233,7 +233,7 @@ class Info(commands.Cog):
         await ctx.send(embed=embed)
 
         if self.bot.data["debug"]["info"]:
-            print(f'[info][_serverinfo]Sent info about {ctx.guild.name}\n')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][info][_serverinfo]Sent info about {ctx.guild.name}\n')
 
 
     #bot info
@@ -251,7 +251,7 @@ class Info(commands.Cog):
         await self._userinfo(ctx, ctx.me, embed) #show user info about bot
 
         if self.bot.data["debug"]["info"]:
-            print(f'[info][_botinfo]Requested info about SupBOT')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][info][_botinfo]Requested info about SupBOT')
         
 
 def setup(bot):

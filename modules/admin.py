@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+import datetime
 
 class Admin(commands.Cog):
     """Admin-only"""
@@ -11,7 +12,7 @@ class Admin(commands.Cog):
         globbot = self.bot
 
         if self.bot.data["debug"]["admin"]:
-            print(f"[admin]Loaded")
+            print(f"[{str(datetime.datetime.utcnow())[0:-7]}][admin]Loaded")
 
 
     #check if sender is admin
@@ -35,7 +36,7 @@ class Admin(commands.Cog):
 
                     await channel.send(text)
                     if self.bot.data["debug"]["admin"]:
-                        print(f'[admin][_say]Admin ({str(ctx.message.author.mention)}) sent {text} on channel {channel.name}\n')
+                        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_say]Admin ({str(ctx.message.author.mention)}) sent {text} on channel {channel.name}\n')
 
 
     @_say.error
@@ -44,7 +45,7 @@ class Admin(commands.Cog):
             await ctx.reply('Nie masz uprawnień do tej komendy', delete_after=5)
 
             if self.bot.data["debug"]["admin"]:
-                print(f'[admin][_say]{ctx.author.name} doesnt have permission to use admin command\n')
+                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_error]{ctx.author.name} doesnt have permission to use admin command\n')
 
 
 def setup(bot):
