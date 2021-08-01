@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import json
+import datetime
 
 class GlobalCounter(commands.Cog):
     """Globalny licznik"""
@@ -8,7 +9,7 @@ class GlobalCounter(commands.Cog):
         self.bot = bot
 
         if self.bot.data["debug"]["global_counter"]:
-            print(f"[global_counter]Loaded")
+            print(f"[{str(datetime.datetime.utcnow())[0:-7]}][global_counter]Loaded")
 
     @commands.command(name = 'add', aliases = ['dodaj', '+', 'licznik', 'counter'])
     async def _add(self, ctx):
@@ -33,7 +34,7 @@ class GlobalCounter(commands.Cog):
         await ctx.reply(f'Licznik wynosi: `{counter}`')
 
         if self.bot.data["debug"]["global_counter"]:
-            print(f'[global_counter][_add]Added {self.bot.data["setting"]["global_counter"]["add_value"]} to global counter value, now it equals: {counter} \n')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][global_counter][_add]Added {self.bot.data["setting"]["global_counter"]["add_value"]} to global counter value, now it equals: {counter} \n')
 
 
 def setup(bot):

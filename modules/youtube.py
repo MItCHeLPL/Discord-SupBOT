@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import youtube_dl
 import re
+import datetime
 
 class YouTube(commands.Cog):
     """Youtube sound"""
@@ -9,7 +10,7 @@ class YouTube(commands.Cog):
         self.bot = bot
     
         if self.bot.data["debug"]["youtube"]:
-            print(f"[youtube]Loaded")
+            print(f"[{str(datetime.datetime.utcnow())[0:-7]}][youtube]Loaded")
 
 
     @commands.command(name = 'playyt', aliases=['playt', 'yt', 'youtube'])
@@ -48,7 +49,7 @@ class YouTube(commands.Cog):
                     await ctx.reply("Odtwarzam film z YouTube", delete_after=5)
 
                     if self.bot.data["debug"]["youtube"]:
-                        print(f'[youtube][_playyt]Playing {youtubeLink}\n')
+                        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][youtube][_playyt]Playing {youtubeLink}\n')
 
                     return True
 
@@ -56,7 +57,7 @@ class YouTube(commands.Cog):
                     await ctx.reply("Film jest za długi.", delete_after=5)
 
                     if self.bot.data["debug"]["youtube"]:
-                        print(f'[youtube][_playyt]{youtubeLink} is too long\n')
+                        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][youtube][_playyt]{youtubeLink} is too long\n')
 
                     return False
 
@@ -73,7 +74,7 @@ class YouTube(commands.Cog):
                         same_channel = True
 
                         if self.bot.data["debug"]["youtube"]:
-                            print(f'[youtube][Join]Bot is in the same vc')
+                            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][youtube][Join]Bot is in the same vc')
 
                         return vc
 
@@ -81,7 +82,7 @@ class YouTube(commands.Cog):
                     #await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
 
                     if self.bot.data["debug"]["youtube"]:
-                        print(f'[youtube][Join]Bot joined vc (bot was on the other channel)')
+                        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][youtube][Join]Bot joined vc (bot was on the other channel)')
 
                     await vc.disconnect() #disconnect from old channel
 
@@ -91,7 +92,7 @@ class YouTube(commands.Cog):
                 #await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
 
                 if self.bot.data["debug"]["youtube"]:
-                    print(f'[youtube][Join]Bot joined vc (bot wasnt connected)')
+                    print(f'[{str(datetime.datetime.utcnow())[0:-7]}][youtube][Join]Bot joined vc (bot wasnt connected)')
 
                 return await user_vc.connect() #connect to the requested channel, bot isn't connected to any of the server's vc
 
@@ -100,7 +101,7 @@ class YouTube(commands.Cog):
         if vc.is_playing() == True:
             vc.stop() #stop playing
 
-            vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'yt.mp3', options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[youtube][PlaySound]Played yt sound on {vc.channel.name}') if self.bot.data["debug"]["youtube"] else None)) #play sound on vc
+            vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'yt.mp3', options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[{str(datetime.datetime.utcnow())[0:-7]}][youtube][PlaySound]Played yt sound on {vc.channel.name}') if self.bot.data["debug"]["youtube"] else None)) #play sound on vc
 
 
 def setup(bot):

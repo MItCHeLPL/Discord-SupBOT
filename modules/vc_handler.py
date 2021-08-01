@@ -5,6 +5,7 @@ import os
 import re
 from dotenv import load_dotenv
 import asyncio
+import datetime
 
 load_dotenv() #load .env
 
@@ -16,7 +17,7 @@ class VCHandler(commands.Cog):
         self.AutoJoinDefaultVC.start() #start joining loop
 
         if self.bot.data["debug"]["vc_handler"]:
-            print(f"[vc_handler]Loaded")
+            print(f"[{str(datetime.datetime.utcnow())[0:-7]}][vc_handler]Loaded")
 
 
     @commands.command(name = 'join', aliases = ['j', 'joi', 'dolacz', 'dołącz', 'connect', 'enter'])
@@ -35,7 +36,7 @@ class VCHandler(commands.Cog):
                         await ctx.reply("Jestem już na tym kanale", delete_after=5)
 
                         if self.bot.data["debug"]["vc_handler"]:
-                            print(f'[vc_handler][_join]Bot is in the same vc\n')
+                            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_handler][_join]Bot is in the same vc\n')
 
                         break
 
@@ -49,7 +50,7 @@ class VCHandler(commands.Cog):
                     await self.PlaySound(vc, self.bot.data["audio"]["greetings"])
 
                     if self.bot.data["debug"]["vc_handler"]:
-                        print(f'[vc_handler][_join]Bot joined vc (bot was on the other channel)\n')
+                        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_handler][_join]Bot joined vc (bot was on the other channel)\n')
 
             else:
                 vc = await user_vc.connect() #connect to the requested channel, bot isn't connected to any of the server's vc
@@ -59,7 +60,7 @@ class VCHandler(commands.Cog):
                 await self.PlaySound(vc, self.bot.data["audio"]["greetings"])
 
                 if self.bot.data["debug"]["vc_handler"]:
-                    print(f'[vc_handler][_join]Bot joined vc (bot wasnt connected)\n')
+                    print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_handler][_join]Bot joined vc (bot wasnt connected)\n')
 
 
     @commands.command(name = 'leave', aliases = ['l', 'leav', 'wyjdz', 'wyjdź', 'disconnect'])
@@ -89,7 +90,7 @@ class VCHandler(commands.Cog):
                         await ctx.reply("Wychodzę z kanału`" + str(user_vc.name) + "`", delete_after=5)
 
                         if self.bot.data["debug"]["vc_handler"]:
-                            print(f'[vc_handler][_leave]Bot left vc\n')
+                            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_handler][_leave]Bot left vc\n')
 
                         break
 
@@ -97,13 +98,13 @@ class VCHandler(commands.Cog):
                     await ctx.reply('Nie jesteśmy na tym samym kanale głosowym', delete_after=5)
 
                     if self.bot.data["debug"]["vc_handler"]:
-                        print(f'[vc_handler][_leave]Bot and user arent in the same vc\n')
+                        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_handler][_leave]Bot and user arent in the same vc\n')
 
             else:
                 await ctx.reply('Nie jestem na żadnym kanale głosowym', delete_after=5) #bot isn't connected to any of the server's vc
 
                 if self.bot.data["debug"]["vc_handler"]:
-                    print(f'[vc_handler][_leave]Bot isnt on any vc\n')
+                    print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_handler][_leave]Bot isnt on any vc\n')
 
 
     #universal play command with source detection (yt -> spotify -> bind -> tts)
@@ -128,7 +129,7 @@ class VCHandler(commands.Cog):
                 yt_result = await yt._playyt(ctx, text)
 
                 if self.bot.data["debug"]["vc_handler"] and yt_result:
-                    print(f'[vc_handler][_play]Chose yt')
+                    print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_handler][_play]Chose yt')
 
 
         if yt_result == False and self.bot.data["setting"]["vc_handler"]["enable_soundboard_play"]:
@@ -137,7 +138,7 @@ class VCHandler(commands.Cog):
                 soundboard_result = await soundboard._bind(ctx, text)
 
                 if self.bot.data["debug"]["vc_handler"] and soundboard_result:
-                    print(f'[vc_handler][_play]Chose soundboard')
+                    print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_handler][_play]Chose soundboard')
 
 
         if yt_result == False and soundboard_result == False and self.bot.data["setting"]["vc_handler"]["enable_tts_play"]:
@@ -146,7 +147,7 @@ class VCHandler(commands.Cog):
                 await tts._tts(ctx, text)
 
                 if self.bot.data["debug"]["vc_handler"]:
-                    print(f'[vc_handler][_play]Chose tts')
+                    print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_handler][_play]Chose tts')
   
 
     @commands.command(name = 'stop', aliases = ['s', 'sto', 'zatrzymaj', 'wstrzymaj', 'cancel', 'pause'])
@@ -168,13 +169,13 @@ class VCHandler(commands.Cog):
                             await ctx.reply("Zatrzymałem odtwarzanie.", delete_after=5)
 
                             if self.bot.data["debug"]["vc_handler"]:
-                                print(f'[vc_handler][_stop]Stopped playing\n')
+                                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_handler][_stop]Stopped playing\n')
 
                         else:
                             await ctx.reply("Nic nie jest odtwarzane.", delete_after=5)
 
                             if self.bot.data["debug"]["vc_handler"]:
-                                print(f'[vc_handler][_stop]Nothing is played right now\n')
+                                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_handler][_stop]Nothing is played right now\n')
 
                         break
 
@@ -182,13 +183,13 @@ class VCHandler(commands.Cog):
                     await ctx.reply('Nie jesteśmy na tym samym kanale głosowym', delete_after=5)
 
                     if self.bot.data["debug"]["vc_handler"]:
-                        print(f'[vc_handler][_stop]Bot and user arent in the same vc\n')
+                        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_handler][_stop]Bot and user arent in the same vc\n')
 
             else:
                 await ctx.reply('Nie jestem na żadnym kanale głosowym', delete_after=5) #bot isn't connected to any of the server's vc
 
                 if self.bot.data["debug"]["vc_handler"]:
-                    print(f'[vc_handler][_stop]Bot isnt on any vc\n')
+                    print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_handler][_stop]Bot isnt on any vc\n')
 
 
     async def PlaySound(self, vc : discord.VoiceChannel, array):
@@ -196,7 +197,7 @@ class VCHandler(commands.Cog):
 
         #play voice line 
         if vc.is_playing() == False: #if not saying something
-            vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + array[voiceLineId], options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[vc_handler][PlaySound]Played sound on {vc.channel.name}\n') if self.bot.data["debug"]["vc_handler"] else None)) #play voice line on channel
+            vc.play(discord.FFmpegPCMAudio(self.bot.data['audioPath'] + array[voiceLineId], options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_handler][PlaySound]Played sound on {vc.channel.name}\n') if self.bot.data["debug"]["vc_handler"] else None)) #play voice line on channel
 
 
     #auto join vc, and reconnect after discornnected for some time and bot isn't in other vs on same server
@@ -214,7 +215,7 @@ class VCHandler(commands.Cog):
                         await channel.connect() #connect to channel
 
                         if self.bot.data["debug"]["vc_handler"]:
-                            print(f'[vc_handler][AutoJoinDefaultVC]Auto-joined on {guild.name}\n')
+                            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_handler][AutoJoinDefaultVC]Auto-joined on {guild.name}\n')
 
 
     #wait before joining until bot is ready

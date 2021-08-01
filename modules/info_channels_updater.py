@@ -3,6 +3,7 @@ from discord.ext import commands, tasks
 from discord.ext.commands import has_permissions
 import os
 from dotenv import load_dotenv
+import datetime
 
 load_dotenv() #load .env
 
@@ -14,7 +15,7 @@ class InfoChannelsUpdater(commands.Cog):
         self._updater.start()
 
         if self.bot.data["debug"]["info_channels_updater"]:
-            print(f"[info_channels_updater]Loaded")
+            print(f"[{str(datetime.datetime.utcnow())[0:-7]}][info_channels_updater]Loaded")
 
         
     def cog_unload(self):
@@ -57,7 +58,7 @@ class InfoChannelsUpdater(commands.Cog):
                     await channel_bot.edit(name='🤖Bot: ' + str(bot_count))  
 
                     if self.bot.data["debug"]["info_channels_updater"]:
-                        print(f'[info_channels_updater][_updater]Updated {guild.name} info channels\n')
+                        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][info_channels_updater][_updater]Updated {guild.name} info channels\n')
 
 
     #wait until bot is ready

@@ -1,13 +1,14 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import CommandNotFound
+import datetime
 
 class MessageHandler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
         if self.bot.data["debug"]["message_handler"]:
-            print(f"[message_handler]Loaded")
+            print(f"[{str(datetime.datetime.utcnow())[0:-7]}][message_handler]Loaded")
 
 
     #any message
@@ -19,7 +20,7 @@ class MessageHandler(commands.Cog):
                 await message.reply('yo')
 
                 if self.bot.data["debug"]["message_handler"]:
-                    print(f'[message_handler][on_message]Sent yo\n')
+                    print(f'[{str(datetime.datetime.utcnow())[0:-7]}][message_handler][on_message]Sent yo\n')
 
         #if message has prefix and command name/alias matches the one in message add processing emoji
         if (message.content.startswith('yo ') or message.content.startswith('Yo ')) and message.author.bot == False:
@@ -38,7 +39,7 @@ class MessageHandler(commands.Cog):
                 await ctx.reply('Yo, nie rozumiem,\nWpisz `yo help` i przestań mi bota prześladować', delete_after=10) #error message
 
             if self.bot.data["debug"]["message_handler"]:
-                print(f'[message_handler][on_command_error]Command error\n')
+                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][message_handler][on_command_error]Command error\n')
 
 
     #command success

@@ -4,6 +4,7 @@ from discord.ext import commands
 from discord.ext.commands import has_permissions
 import os
 from dotenv import load_dotenv
+import datetime
 
 load_dotenv() #load .env
 
@@ -13,7 +14,7 @@ class RoleAssigner(commands.Cog):
         self.bot = bot
         
         if self.bot.data["debug"]["role_assigner"]:
-            print(f"[role_assigner]Loaded")
+            print(f"[{str(datetime.datetime.utcnow())[0:-7]}][role_assigner]Loaded")
 
 
     @commands.Cog.listener()
@@ -29,7 +30,7 @@ class RoleAssigner(commands.Cog):
                     await member.add_roles(role)
 
                     if self.bot.data["debug"]["role_assigner"]:
-                        print(f'[role_assigner][on_member_join]Assigned {role.name} to {member.name}\n')
+                        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][role_assigner][on_member_join]Assigned {role.name} to {member.name}\n')
 
     
 def setup(bot):

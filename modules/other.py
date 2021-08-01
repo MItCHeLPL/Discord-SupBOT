@@ -15,7 +15,7 @@ class Other(commands.Cog):
         self.user_id_szary = None
 
         if self.bot.data["debug"]["other"]:
-            print(f"[other]Loaded")
+            print(f"[{str(datetime.datetime.utcnow())[0:-7]}][other]Loaded")
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -28,7 +28,7 @@ class Other(commands.Cog):
         await ctx.reply("nm u?")
 
         if self.bot.data["debug"]["other"]:
-            print(f'[other][_sup]sup\n')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_sup]sup\n')
 
 
     @commands.command(name = 'nm')
@@ -37,7 +37,7 @@ class Other(commands.Cog):
         await ctx.reply("cool.")
 
         if self.bot.data["debug"]["other"]:
-            print(f'[other][_nm]nm\n')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_nm]nm\n')
 
 
     @commands.command(name = 'wiek')
@@ -47,7 +47,7 @@ class Other(commands.Cog):
         await ctx.reply("Yo, `" + str(wynik) + "` i rzucasz kartę byniu.")
 
         if self.bot.data["debug"]["other"]:
-            print(f'[other][_wiek]wiek\n')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_wiek]wiek\n')
 
 
     @commands.command(name = 'pogoda', aliases=['burza', 'weather', 'piorun', 'mapa', 'map', 'blitz', 'lightning', 'lighting', 'lightingmap', 'lightningmap', 'thunder'])
@@ -64,7 +64,7 @@ class Other(commands.Cog):
         await ctx.reply(embed=embed)
 
         if self.bot.data["debug"]["other"]:
-            print(f'[other][_weathermap]Posted weather map\n')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_weathermap]Posted weather map\n')
 
 
     #send dm to user
@@ -81,12 +81,12 @@ class Other(commands.Cog):
             await ctx.reply("Wysłano dm do " + str(user.mention) + ".", delete_after=10)
 
             if self.bot.data["debug"]["other"]:
-                print(f'[other][_dmuser]Sent DM to {user.mention}, text: {text + spaceText}\n')
+                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_dmuser]Sent DM to {user.mention}, text: {text + spaceText}\n')
         else:
             await ctx.reply("Nie znaleziono użytkownika", delete_after=5)
 
             if self.bot.data["debug"]["other"]:
-                print(f'[other][_dmuser]Didnt find user to sent DM to\n')
+                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_dmuser]Didnt find user to sent DM to\n')
         
 
     @commands.command(name = 'dmszary', aliases=['szary', 'pmszary', 'privszary'])
@@ -98,7 +98,7 @@ class Other(commands.Cog):
                 await self._dmuser(ctx, user, text)
 
                 if self.bot.data["debug"]["other"]:
-                    print(f'[other][_dmszary]Requested DM to Szary')
+                    print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_dmszary]Requested DM to Szary')
 
 
     #picks random person from voicechannel you are in
@@ -117,13 +117,13 @@ class Other(commands.Cog):
             await ctx.reply("Yo, " + str(user.mention) + " jest impostorem.")
 
             if self.bot.data["debug"]["other"]:
-                print(f'[other][_impostor]Requested impostor, outcome: {user.mention}\n')
+                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_impostor]Requested impostor, outcome: {user.mention}\n')
 
         else:
             await ctx.reply("Nie znaleziono kanału, na którym jesteś", delete_after=5)
             
             if self.bot.data["debug"]["other"]:
-                print(f'[other][_impostor]Requested impostor, bot didnt find users channel\n')
+                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_impostor]Requested impostor, bot didnt find users channel\n')
     
 
 def setup(bot):
