@@ -81,7 +81,7 @@ class Other(commands.Cog):
             await ctx.reply("Wysłano dm do " + str(user.mention) + ".", delete_after=10)
 
             if self.bot.data["debug"]["other"]:
-                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_dmuser]Sent DM to {user.mention}, text: {text + spaceText}\n')
+                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_dmuser]Sent DM to {user.name}, text: {text + spaceText}\n')
         else:
             await ctx.reply("Nie znaleziono użytkownika", delete_after=5)
 
@@ -117,7 +117,7 @@ class Other(commands.Cog):
             await ctx.reply("Yo, " + str(user.mention) + " jest impostorem.")
 
             if self.bot.data["debug"]["other"]:
-                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_impostor]Requested impostor, outcome: {user.mention}\n')
+                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_impostor]Requested impostor, outcome: {user.name}\n')
 
         else:
             await ctx.reply("Nie znaleziono kanału, na którym jesteś", delete_after=5)
