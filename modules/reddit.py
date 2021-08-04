@@ -66,21 +66,22 @@ class Reddit(commands.Cog):
         embed.set_author(name="r/"+subreddit.display_name, url="http://reddit.com/r/"+sub, icon_url=subreddit.icon_img)
         
         #disable nsfw posts if channel is not set to nsfw
-        if((submission.over_18 and allowNSFW == False) or (ctx.channel.is_nsfw() == False and submission.over_18)):
-            embed=discord.Embed()
-            embed.title = "Nie mogę tego tu wysłać"
-            embed.description = "`Posty NSFW tylko na kanałach NSFW`"
-            embed.timestamp = datetime.datetime.utcnow() #set time
+        if(not isinstance(ctx.channel, discord.channel.DMChannel)):
+            if((submission.over_18 and allowNSFW == False) or (ctx.channel.is_nsfw() == False and submission.over_18)):
+                embed=discord.Embed()
+                embed.title = "Nie mogę tego tu wysłać"
+                embed.description = "`Posty NSFW tylko na kanałach NSFW lub w dm`"
+                embed.timestamp = datetime.datetime.utcnow() #set time
 
         if self.bot.data["debug"]["reddit"]:
-            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][reddit][PostFromReddit]Generated post from reddit: {sub}\n')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][reddit][PostFromReddit]Generated post ({submission.url}) from reddit: {sub}\n')
 
         return embed
 
 
     @commands.command(name = 'subreddit', aliases = ['sub', 'reddit'])
     async def _sub(self, ctx, sub : str):
-        """Wysyła losowy post z danego subreddita. (yo reddit subreddit)"""
+        """Wysyła losowy post z danego subreddita. (yo subreddit subreddit)"""
         embed = await self.PostFromReddit(sub, ctx)
 
         await ctx.reply(embed=embed)    
