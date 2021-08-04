@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 import random
 import datetime
+from discord_slash import cog_ext, SlashContext
 
 load_dotenv()
 
@@ -22,13 +23,22 @@ class Other(commands.Cog):
         self.user_id_szary = os.getenv('DISCORD_ID_SZARY')
 
 
-    @commands.command(name = 'sup')
     async def _sup(self, ctx):
-        """Pytasz bota co tam u niego."""
-        await ctx.reply("nm u?")
+        if isinstance(ctx, SlashContext): #slash command
+            await ctx.send("nm u?")
+        else: #normal command
+            await ctx.reply("nm u?")
 
         if self.bot.data["debug"]["other"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_sup]sup\n')
+
+    @commands.command(name = 'sup', help="Pytasz bota co tam u niego.", brief="Pytasz bota co tam u niego.")
+    async def _sup_command(self, ctx):
+        await self._sup(ctx)
+
+    @cog_ext.cog_slash(name="sup", description="Pytasz bota co tam u niego.", guild_ids=[495666208939573248])
+    async def _sup_slash(self, ctx:SlashContext):
+        await self._sup(ctx)
 
 
     @commands.command(name = 'nm')

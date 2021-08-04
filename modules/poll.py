@@ -14,7 +14,6 @@ class Poll(commands.Cog):
         if self.bot.data["debug"]["poll"]:
             print(f"[{str(datetime.datetime.utcnow())[0:-7]}][poll]Loaded")
 
-
     #old system for making polls based on reactions and limited to 10 fields
     @commands.command(name='ankieta', aliases=['poll', 'glosowanie', 'głosowanie'])
     async def _pollLegacy(self, ctx, option1 : str, *args):
