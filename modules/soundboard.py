@@ -88,7 +88,7 @@ class Soundboard(commands.Cog):
             await ctx.reply("Wysłałem DM z listą bindów do " + str(ctx.author.mention), delete_after=5)
 
             if self.bot.data["debug"]["soundboard"]:
-                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][_bindList]Sent bindlist in DM to {ctx.author.mention}\n')
+                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][_bindList]Sent bindlist in DM to {ctx.author.name}\n')
 
         else:
             await ctx.reply(embed=embed)

@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 import datetime
+import random
+import math
 
 class Admin(commands.Cog):
     """Admin-only"""
@@ -36,7 +38,32 @@ class Admin(commands.Cog):
 
                     await channel.send(text)
                     if self.bot.data["debug"]["admin"]:
-                        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_say]Admin ({str(ctx.message.author.mention)}) sent {text} on channel {channel.name}\n')
+                        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_say]Admin ({str(ctx.message.author.name)}) sent {text} on channel {channel.name}\n')
+
+
+    @commands.command(name = 'showlog', aliases = ['showoutput', 'log', 'botlog', 'printlog', 'logprint', 'adminlog', 'adminoutput', 'dziennik', 'zdarzenia'])
+    @commands.check(is_admin)
+    async def _log(self, ctx):
+        """Wysyła dziennik zdarzeń bota w dm"""
+
+        with open("output.log") as file:
+            data = file.read()
+
+        txt = data[data.rfind("[main][__main__]--------SETUP STARTED--------"):] #find newest log
+
+        #4096 - limit of characters in embed description
+        for x in range(0, math.ceil(len(txt)/4096)):
+            embed=discord.Embed() 
+            embed.colour = random.randint(0, 0xffffff)
+            embed.title = f'Dziennik zdarzeń ({x+1}/{str(math.ceil(len(txt)/4096))})' #set title
+            embed.timestamp = datetime.datetime.utcnow()
+
+            embed.description = txt[x*4096:(x+1)*4096] #split log to embeds
+
+            await ctx.author.send(embed=embed) 
+
+        if self.bot.data["debug"]["admin"]:
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_log]Sent debug log to {str(ctx.author.name)}\n')
 
 
     @_say.error
