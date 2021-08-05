@@ -21,7 +21,7 @@ class GlobalCounter(commands.Cog):
 
         #update json
         with open('data.json', 'w') as outfile:
-            json.dump(self.bot.data, outfile)
+            json.dump(self.bot.data, outfile, indent=4)
 
         await ctx.reply(f'Licznik wynosi: `{self.bot.data["counter"]}`') #send outcome
 
