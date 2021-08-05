@@ -8,33 +8,25 @@ class GlobalCounter(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        if self.bot.data["debug"]["global_counter"]:
+        if self.bot.settings["debug"]["global_counter"]:
             print(f"[{str(datetime.datetime.utcnow())[0:-7]}][global_counter]Loaded")
+
 
     @commands.command(name = 'add', aliases = ['dodaj', '+', 'licznik', 'counter'])
     async def _add(self, ctx):
         """Dodaj do globalnego licznika"""
 
-        with open('global_counter.json', 'r+') as file: #read json file
-            counter_data = json.load(file) #get current value 
+        #add to counter
+        self.bot.data["counter"] += 1
 
-        counter = int(counter_data["counter"])
+        #update json
+        with open('data.json', 'w') as outfile:
+            json.dump(self.bot.data, outfile)
 
-        counter += int(self.bot.data["setting"]["global_counter"]["add_value"]) #add to current value
+        await ctx.reply(f'Licznik wynosi: `{self.bot.data["counter"]}`') #send outcome
 
-        #prepare json scheme with current counter value
-        data = {
-            "counter": counter,
-        }
-
-        #save json
-        with open('global_counter.json', 'w') as outfile:
-            json.dump(data, outfile)
-
-        await ctx.reply(f'Licznik wynosi: `{counter}`')
-
-        if self.bot.data["debug"]["global_counter"]:
-            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][global_counter][_add]Added {self.bot.data["setting"]["global_counter"]["add_value"]} to global counter value, now it equals: {counter} \n')
+        if self.bot.settings["debug"]["global_counter"]:
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][global_counter][_add]Added {self.bot.settings["setting"]["global_counter"]["add_value"]} to global counter value, now it equals: {self.bot.data["counter"]} \n')
 
 
 def setup(bot):

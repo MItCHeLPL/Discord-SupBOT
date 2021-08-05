@@ -8,7 +8,7 @@ class TTS(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        if self.bot.data["debug"]["tts"]:
+        if self.bot.settings["debug"]["tts"]:
             print(f"[{str(datetime.datetime.utcnow())[0:-7]}][tts]Loaded")
             
     
@@ -24,10 +24,10 @@ class TTS(commands.Cog):
 
         #generate tts
         if(len(txt) > 0 and txt != ' '):
-            message = gtts(txt, lang = self.bot.data["setting"]["tts"]["ttsLang"], tld=self.bot.data["setting"]["tts"]["ttsTld"])
-            message.save(self.bot.data['ttsAudioPath'] + 'tts.mp3')
+            message = gtts(txt, lang = self.bot.settings["setting"]["tts"]["ttsLang"], tld=self.bot.settings["setting"]["tts"]["ttsTld"])
+            message.save(self.bot.settings['ttsAudioPath'] + 'tts.mp3')
 
-            if self.bot.data["debug"]["tts"]:
+            if self.bot.settings["debug"]["tts"]:
                 print(f'[{str(datetime.datetime.utcnow())[0:-7]}][tts][_tts]Generated TTS: {txt}')
 
             vc = await self.Join(ctx) #join vc
@@ -36,7 +36,7 @@ class TTS(commands.Cog):
 
             await ctx.reply("Odtwarzam TTS: `" + txt + "`", delete_after=5)
 
-            if self.bot.data["debug"]["tts"]:
+            if self.bot.settings["debug"]["tts"]:
                 print(f'[{str(datetime.datetime.utcnow())[0:-7]}][tts][_tts]Playing TTS\n')
 
     
@@ -51,7 +51,7 @@ class TTS(commands.Cog):
                     if(vc.channel == user_vc): #bot is already on the same vc
                         same_channel = True
 
-                        if self.bot.data["debug"]["tts"]:
+                        if self.bot.settings["debug"]["tts"]:
                             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][tts][Join]Bot is in the same vc')
 
                         return vc #return current channel
@@ -59,7 +59,7 @@ class TTS(commands.Cog):
                 if same_channel == False: #User is on the same server's vc, but not the same channel
                     #await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
 
-                    if self.bot.data["debug"]["tts"]:
+                    if self.bot.settings["debug"]["tts"]:
                         print(f'[{str(datetime.datetime.utcnow())[0:-7]}][tts][Join]Bot joined vc (bot was on the other channel)')
 
                     await vc.disconnect() #disconnect from old channel
@@ -69,7 +69,7 @@ class TTS(commands.Cog):
             else:
                 #await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
 
-                if self.bot.data["debug"]["tts"]:
+                if self.bot.settings["debug"]["tts"]:
                     print(f'[{str(datetime.datetime.utcnow())[0:-7]}][tts][Join]Bot joined vc (bot wasnt connected)')
 
                 return await user_vc.connect() #connect to the requested channel, bot isn't connected to any of the server's vc
@@ -79,7 +79,7 @@ class TTS(commands.Cog):
         if vc.is_playing() == True:
             vc.stop() #stop playing
 
-        vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'tts.mp3', options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[{str(datetime.datetime.utcnow())[0:-7]}][tts][PlaySound]Played tts on {vc.channel.name}') if self.bot.data["debug"]["tts"] else None)) #play sound on vc
+        vc.play(discord.FFmpegPCMAudio(self.bot.settings['ttsAudioPath'] + 'tts.mp3', options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[{str(datetime.datetime.utcnow())[0:-7]}][tts][PlaySound]Played tts on {vc.channel.name}') if self.bot.settings["debug"]["tts"] else None)) #play sound on vc
 
 
 def setup(bot):

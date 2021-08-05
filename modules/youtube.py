@@ -9,7 +9,7 @@ class YouTube(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-        if self.bot.data["debug"]["youtube"]:
+        if self.bot.settings["debug"]["youtube"]:
             print(f"[{str(datetime.datetime.utcnow())[0:-7]}][youtube]Loaded")
 
 
@@ -20,7 +20,7 @@ class YouTube(commands.Cog):
         #download vid
         ytdlopts = {
             'format': 'bestaudio/best',
-            'outtmpl': self.bot.data['ttsAudioPath'] + 'yt.%(ext)s',
+            'outtmpl': self.bot.settings['ttsAudioPath'] + 'yt.%(ext)s',
             'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec':'mp3', 'preferredquality': '192'}],
             'restrictfilenames': True,
             'noplaylist': True,
@@ -39,7 +39,7 @@ class YouTube(commands.Cog):
 
             with youtube_dl.YoutubeDL(ytdlopts) as ytdl:
                 meta = ytdl.extract_info(youtubeLink, download=False)
-                if meta['duration'] < self.bot.data["setting"]["youtube"]["max_duration"]: #if shorter than max duration
+                if meta['duration'] < self.bot.settings["setting"]["youtube"]["max_duration"]: #if shorter than max duration
                     ytdl.download([youtubeLink])
 
                     vc = await self.Join(ctx) #join vc
@@ -48,7 +48,7 @@ class YouTube(commands.Cog):
 
                     await ctx.reply("Odtwarzam film z YouTube", delete_after=5)
 
-                    if self.bot.data["debug"]["youtube"]:
+                    if self.bot.settings["debug"]["youtube"]:
                         print(f'[{str(datetime.datetime.utcnow())[0:-7]}][youtube][_playyt]Playing {youtubeLink}\n')
 
                     return True
@@ -56,7 +56,7 @@ class YouTube(commands.Cog):
                 else:
                     await ctx.reply("Film jest za długi.", delete_after=5)
 
-                    if self.bot.data["debug"]["youtube"]:
+                    if self.bot.settings["debug"]["youtube"]:
                         print(f'[{str(datetime.datetime.utcnow())[0:-7]}][youtube][_playyt]{youtubeLink} is too long\n')
 
                     return False
@@ -73,7 +73,7 @@ class YouTube(commands.Cog):
                     if(vc.channel == user_vc): #bot is already on the same vc
                         same_channel = True
 
-                        if self.bot.data["debug"]["youtube"]:
+                        if self.bot.settings["debug"]["youtube"]:
                             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][youtube][Join]Bot is in the same vc')
 
                         return vc
@@ -81,7 +81,7 @@ class YouTube(commands.Cog):
                 if same_channel == False: #User is on the same server's vc, but not the same channel
                     #await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
 
-                    if self.bot.data["debug"]["youtube"]:
+                    if self.bot.settings["debug"]["youtube"]:
                         print(f'[{str(datetime.datetime.utcnow())[0:-7]}][youtube][Join]Bot joined vc (bot was on the other channel)')
 
                     await vc.disconnect() #disconnect from old channel
@@ -91,7 +91,7 @@ class YouTube(commands.Cog):
             else:
                 #await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
 
-                if self.bot.data["debug"]["youtube"]:
+                if self.bot.settings["debug"]["youtube"]:
                     print(f'[{str(datetime.datetime.utcnow())[0:-7]}][youtube][Join]Bot joined vc (bot wasnt connected)')
 
                 return await user_vc.connect() #connect to the requested channel, bot isn't connected to any of the server's vc
@@ -101,7 +101,7 @@ class YouTube(commands.Cog):
         if vc.is_playing() == True:
             vc.stop() #stop playing
 
-            vc.play(discord.FFmpegPCMAudio(self.bot.data['ttsAudioPath'] + 'yt.mp3', options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[{str(datetime.datetime.utcnow())[0:-7]}][youtube][PlaySound]Played yt sound on {vc.channel.name}') if self.bot.data["debug"]["youtube"] else None)) #play sound on vc
+            vc.play(discord.FFmpegPCMAudio(self.bot.settings['ttsAudioPath'] + 'yt.mp3', options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[{str(datetime.datetime.utcnow())[0:-7]}][youtube][PlaySound]Played yt sound on {vc.channel.name}') if self.bot.settings["debug"]["youtube"] else None)) #play sound on vc
 
 
 def setup(bot):

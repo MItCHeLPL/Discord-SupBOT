@@ -1,8 +1,10 @@
 {
-    "modules": [
-        "vc_doorman", "global_counter", "reddit", "custom_help", "poll", "other", "ai", "message_handler", "vc_votekick", "tts", "vc_handler", "info_channels_updater", "info", "role_assigner", "soundboard", "admin"
+    "modules": ["vc_doorman", "global_counter", "reddit", "custom_help", "poll", "other", "ai", "message_handler", "vc_votekick", "tts", "vc_handler", "info_channels_updater", "info", "role_assigner", "soundboard", "admin"
     ],
     "setting": { 
+        "main": {
+            "save_guilds_on_ready": true
+        },
         "vc_doorman": {
             "default":{
                 "enable_greeting": true,
