@@ -11,7 +11,7 @@ class Poll(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        if self.bot.data["debug"]["poll"]:
+        if self.bot.settings["debug"]["poll"]:
             print(f"[{str(datetime.datetime.utcnow())[0:-7]}][poll]Loaded")
 
     #old system for making polls based on reactions and limited to 10 fields
@@ -45,7 +45,7 @@ class Poll(commands.Cog):
 
         msg = await ctx.send(embed=embed)
 
-        if self.bot.data["debug"]["poll"]:
+        if self.bot.settings["debug"]["poll"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][poll][_pollLegacy]Generated poll message')
 
         #add emojis
@@ -54,7 +54,7 @@ class Poll(commands.Cog):
                 await msg.add_reaction(emoji)
                 i -= 1
 
-        if self.bot.data["debug"]["poll"]:
+        if self.bot.settings["debug"]["poll"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][poll][_pollLegacy]Added reactions to poll message\n')
 
 
@@ -85,7 +85,7 @@ class Poll(commands.Cog):
 
                 await message.edit(embed=new_embed) #update message
 
-                if self.bot.data["debug"]["poll"]:
+                if self.bot.settings["debug"]["poll"]:
                     print(f'[{str(datetime.datetime.utcnow())[0:-7]}][poll][on_reaction_add]Updated poll with vote\n')
 
 
@@ -109,7 +109,7 @@ class Poll(commands.Cog):
                             new_embed.add_field(name=field.name, value=field.value, inline=True) #rest of options
                         i+=1
                 await message.edit(embed=new_embed) #update message
-                if self.bot.data["debug"]["poll"]:
+                if self.bot.settings["debug"]["poll"]:
                     print(f'[{str(datetime.datetime.utcnow())[0:-7]}][poll][on_reaction_add]Updated poll with vote\n')
 
 
@@ -177,7 +177,7 @@ class Poll(commands.Cog):
 #
 #        await ctx.send(embed=embed, components=action_rows) #post poll
 #
-#        if self.bot.data["debug"]["poll"]:
+#        if self.bot.settings["debug"]["poll"]:
 #            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][poll][_poll]Generated poll message')
 #
 #
@@ -203,7 +203,7 @@ class Poll(commands.Cog):
 #
 #        await ctx.edit_origin(embed=new_embed)
 #
-#        if self.bot.data["debug"]["poll"]:
+#        if self.bot.settings["debug"]["poll"]:
 #            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][poll][vote]Updated poll with vote')
 
 

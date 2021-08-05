@@ -16,15 +16,15 @@ class Reddit(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        if self.bot.data["debug"]["reddit"]:
+        if self.bot.settings["debug"]["reddit"]:
             print(f"[{str(datetime.datetime.utcnow())[0:-7]}][reddit]Loaded")
     
     #Post submission from reddit
     async def PostFromReddit(self, sub : str, ctx):
         post_to_pick = 2 #start post to pick     
-        isRandom = self.bot.data["setting"]["reddit"]["pickRandom"] #true -> select random post, false -> sort from top hot
-        limit = self.bot.data["setting"]["reddit"]["postToPickLimit"] #select this amount of posts from hot
-        allowNSFW = self.bot.data["setting"]["reddit"]["allowNSFW"] #true -> can show nsfw posts if channel is set to nsfw, false -> doesn't show nsfw posts at all
+        isRandom = self.bot.settings["setting"]["reddit"]["pickRandom"] #true -> select random post, false -> sort from top hot
+        limit = self.bot.settings["setting"]["reddit"]["postToPickLimit"] #select this amount of posts from hot
+        allowNSFW = self.bot.settings["setting"]["reddit"]["allowNSFW"] #true -> can show nsfw posts if channel is set to nsfw, false -> doesn't show nsfw posts at all
 
         subreddit = await reddit.subreddit(sub, fetch=True)
 
@@ -73,7 +73,7 @@ class Reddit(commands.Cog):
                 embed.description = "`Posty NSFW tylko na kanałach NSFW lub w dm`"
                 embed.timestamp = datetime.datetime.utcnow() #set time
 
-        if self.bot.data["debug"]["reddit"]:
+        if self.bot.settings["debug"]["reddit"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][reddit][PostFromReddit]Generated post ({submission.url}) from reddit: {sub}\n')
 
         return embed

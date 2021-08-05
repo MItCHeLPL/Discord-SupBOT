@@ -14,7 +14,7 @@ class InfoChannelsUpdater(commands.Cog):
 
         self._updater.start()
 
-        if self.bot.data["debug"]["info_channels_updater"]:
+        if self.bot.settings["debug"]["info_channels_updater"]:
             print(f"[{str(datetime.datetime.utcnow())[0:-7]}][info_channels_updater]Loaded")
 
         
@@ -27,11 +27,11 @@ class InfoChannelsUpdater(commands.Cog):
     @has_permissions(manage_channels=True)
     async def _updater(self):
         for guild in self.bot.guilds:
-            if (str(guild.id) in self.bot.data["setting"]["info_channels_updater"] and self.bot.data["setting"]["info_channels_updater"][str(guild.id)]["update_channels"]):
+            if (str(guild.id) in self.bot.settings["setting"]["info_channels_updater"] and self.bot.settings["setting"]["info_channels_updater"][str(guild.id)]["update_channels"]):
 
-                channel_online = discord.utils.get(guild.voice_channels, id=int(os.getenv(str(self.bot.data["setting"]["info_channels_updater"][str(guild.id)]["channels"]["channel_online"]))))
-                channel_invc = discord.utils.get(guild.voice_channels, id=int(os.getenv(str(self.bot.data["setting"]["info_channels_updater"][str(guild.id)]["channels"]["channel_in_vc"]))))
-                channel_bot = discord.utils.get(guild.voice_channels, id=int(os.getenv(str(self.bot.data["setting"]["info_channels_updater"][str(guild.id)]["channels"]["channel_bot"]))))
+                channel_online = discord.utils.get(guild.voice_channels, id=int(os.getenv(str(self.bot.settings["setting"]["info_channels_updater"][str(guild.id)]["channels"]["channel_online"]))))
+                channel_invc = discord.utils.get(guild.voice_channels, id=int(os.getenv(str(self.bot.settings["setting"]["info_channels_updater"][str(guild.id)]["channels"]["channel_in_vc"]))))
+                channel_bot = discord.utils.get(guild.voice_channels, id=int(os.getenv(str(self.bot.settings["setting"]["info_channels_updater"][str(guild.id)]["channels"]["channel_bot"]))))
 
                 if(channel_online != None and channel_invc != None and channel_bot != None):
                     online_count = 0
@@ -57,7 +57,7 @@ class InfoChannelsUpdater(commands.Cog):
                     await channel_invc.edit(name='🎤Na kanałach: ' + str(invc_count))   
                     await channel_bot.edit(name='🤖Bot: ' + str(bot_count))  
 
-                    if self.bot.data["debug"]["info_channels_updater"]:
+                    if self.bot.settings["debug"]["info_channels_updater"]:
                         print(f'[{str(datetime.datetime.utcnow())[0:-7]}][info_channels_updater][_updater]Updated {guild.name} info channels\n')
 
 

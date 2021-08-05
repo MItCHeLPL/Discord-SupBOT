@@ -10,13 +10,13 @@ class Info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        if self.bot.data["debug"]["info"]:
+        if self.bot.settings["debug"]["info"]:
             print(f"[{str(datetime.datetime.utcnow())[0:-7]}][info]Loaded")
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
 
-        if (str(member.guild.id) in self.bot.data["setting"]["info"] and self.bot.data["setting"]["info"][str(member.guild.id)]["show_info_on_leave"]) or (str(member.guild.id) not in self.bot.data["setting"]["info"] and self.bot.data["setting"]["info"]["default"]["show_info_on_leave"]):
+        if (str(member.guild.id) in self.bot.settings["setting"]["info"] and self.bot.settings["setting"]["info"][str(member.guild.id)]["show_info_on_leave"]) or (str(member.guild.id) not in self.bot.settings["setting"]["info"] and self.bot.settings["setting"]["info"]["default"]["show_info_on_leave"]):
             ctx = member.guild.system_channel
 
             embed = discord.Embed()
@@ -29,14 +29,14 @@ class Info(commands.Cog):
 
             await self._userinfo(ctx, member, embed)
 
-            if self.bot.data["debug"]["info"]:
+            if self.bot.settings["debug"]["info"]:
                 print(f'[{str(datetime.datetime.utcnow())[0:-7]}][info][on_member_remove]{member.name} left {member.guild.name}. Requested user info\n')
 
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
 
-        if (str(member.guild.id) in self.bot.data["setting"]["info"] and self.bot.data["setting"]["info"][str(member.guild.id)]["show_info_on_join"]) or (str(member.guild.id) not in self.bot.data["setting"]["info"] and self.bot.data["setting"]["info"]["default"]["show_info_on_join"]):
+        if (str(member.guild.id) in self.bot.settings["setting"]["info"] and self.bot.settings["setting"]["info"][str(member.guild.id)]["show_info_on_join"]) or (str(member.guild.id) not in self.bot.settings["setting"]["info"] and self.bot.settings["setting"]["info"]["default"]["show_info_on_join"]):
             ctx = member.guild.system_channel
 
             embed = discord.Embed()
@@ -49,7 +49,7 @@ class Info(commands.Cog):
 
             await self._userinfo(ctx, member, embed)
 
-            if self.bot.data["debug"]["info"]:
+            if self.bot.settings["debug"]["info"]:
                 print(f'[{str(datetime.datetime.utcnow())[0:-7]}][info][on_member_join]{member.name} joined {member.guild.name}. Requested user info\n')
 
 
@@ -61,7 +61,7 @@ class Info(commands.Cog):
         await self._serverinfo(ctx)
         await self._botinfo(ctx)
 
-        if self.bot.data["debug"]["info"]:
+        if self.bot.settings["debug"]["info"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][info][_info]Requested full info')
 
 
@@ -144,7 +144,7 @@ class Info(commands.Cog):
         else:
             await ctx.send(embed=embed, components=[action_row])
 
-        if self.bot.data["debug"]["info"]:
+        if self.bot.settings["debug"]["info"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][info][_userinfo]Sent info about {member.name}\n')
 
 
@@ -232,7 +232,7 @@ class Info(commands.Cog):
 
         await ctx.send(embed=embed)
 
-        if self.bot.data["debug"]["info"]:
+        if self.bot.settings["debug"]["info"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][info][_serverinfo]Sent info about {ctx.guild.name}\n')
 
 
@@ -243,14 +243,14 @@ class Info(commands.Cog):
         embed=discord.Embed() 
         embed.set_author(name='🛈 Informacje o bocie:') #embed header
 
-        if self.bot.data["setting"]["info"]["show_bot_author_info"]:   
+        if self.bot.settings["setting"]["info"]["show_bot_author_info"]:   
             embed.description = f'**Twórca: [M!tCHeL](https://github.com/MItCHeLPL)**\n**Projekt: [GitHub](https://github.com/MItCHeLPL/Discord-SupBOT)**\n`🤖BOT`\n{self.bot.user.mention}\n'
         else:
             embed.description = f'`🤖BOT`\n{self.bot.user.mention}'
 
         await self._userinfo(ctx, ctx.me, embed) #show user info about bot
 
-        if self.bot.data["debug"]["info"]:
+        if self.bot.settings["debug"]["info"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][info][_botinfo]Requested info about SupBOT')
         
 

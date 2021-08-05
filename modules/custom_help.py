@@ -15,7 +15,7 @@ class CustomHelp(commands.Cog):
         ending_note = f"Wpisz `yo help [komenda]` aby zobaczyć szczegóły dotyczące danej komendy"
 
         #Preety help command configuration
-        self.bot.help_command = PrettyHelp(menu=menu, ending_note=ending_note, index_title="Kategorie", no_category="Bez kategorii", show_index=True, dm_help=self.bot.data["setting"]["custom_help"]["send_help_in_dm"]) #help command settings
+        self.bot.help_command = PrettyHelp(menu=menu, ending_note=ending_note, index_title="Kategorie", no_category="Bez kategorii", show_index=True, dm_help=self.bot.settings["setting"]["custom_help"]["send_help_in_dm"]) #help command settings
 
 
 def setup(bot):
