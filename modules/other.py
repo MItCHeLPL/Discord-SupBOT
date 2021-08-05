@@ -38,7 +38,7 @@ class Other(commands.Cog):
         brief="Pytasz bota co tam u niego.")
     async def _sup_command(self, ctx):
         if self.bot.settings["debug"]["other"]:
-            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_sup_command]{ctx.author.name} requested normal command')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_sup_command]{ctx.author.name} requested normal command')
 
         await self._sup(ctx)
 
@@ -47,7 +47,7 @@ class Other(commands.Cog):
     #    description="Pytasz bota co tam u niego.")
     #async def _sup_slash(self, ctx:SlashContext):
     #    if self.bot.settings["debug"]["other"]:
-    #        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_sup_slash]{ctx.author.name} requested slash command')
+    #        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_sup_slash]{ctx.author.name} requested slash command')
     #
     #    await self._sup(ctx)
 
@@ -68,7 +68,7 @@ class Other(commands.Cog):
         brief="Reakcja bota na to że nic ciekawego się u ciebie nie dzieje.")
     async def _nm_command(self, ctx):
         if self.bot.settings["debug"]["other"]:
-            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_nm_command]{ctx.author.name} requested normal command')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_nm_command]{ctx.author.name} requested normal command')
 
         await self._nm(ctx)
 
@@ -77,7 +77,7 @@ class Other(commands.Cog):
     #    description="Reakcja bota na to że nic ciekawego się u ciebie nie dzieje.")
     #async def _nm_slash(self, ctx:SlashContext):
         #if self.bot.settings["debug"]["other"]:
-            #print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_nm_slash]{ctx.author.name} requested slash command')
+            #print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_nm_slash]{ctx.author.name} requested slash command')
     #
     #    await self._nm(ctx)
 
@@ -100,7 +100,7 @@ class Other(commands.Cog):
         brief="Czy możesz robić ruchy dla takiego wieku? (yo wiek [liczba])")
     async def _wiek_command(self, ctx, wiek:int):
         if self.bot.settings["debug"]["other"]:
-            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_wiek_command]{ctx.author.name} requested normal command')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_wiek_command]{ctx.author.name} requested normal command')
 
         await self._wiek(ctx, wiek)
 
@@ -116,7 +116,7 @@ class Other(commands.Cog):
         guild_ids=[int(os.getenv('DISCORD_ID_BOBERSCHLESIEN')), int(os.getenv('DISCORD_ID_SCAMELOT'))])
     async def _wiek_slash(self, ctx:SlashContext, wiek:int):
         if self.bot.settings["debug"]["other"]:
-            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_wiek_slash]{ctx.author.name} requested slash command')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_wiek_slash]{ctx.author.name} requested slash command')
 
         await self._wiek(ctx, wiek)
 
@@ -146,7 +146,7 @@ class Other(commands.Cog):
         brief="Wyświetla mapę burz dla polski")
     async def _weathermap_command(self, ctx):
         if self.bot.settings["debug"]["other"]:
-            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_weathermap_command]{ctx.author.name} requested normal command')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_weathermap_command]{ctx.author.name} requested normal command')
 
         await self._weathermap(ctx)
 
@@ -155,7 +155,7 @@ class Other(commands.Cog):
         description="Wyświetla mapę burz dla polski")
     async def _weathermap_slash(self, ctx:SlashContext):
         if self.bot.settings["debug"]["other"]:
-            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_weathermap_slash]{ctx.author.name} requested slash command')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_weathermap_slash]{ctx.author.name} requested slash command')
 
         await self._weathermap(ctx)
 
@@ -189,7 +189,7 @@ class Other(commands.Cog):
         text += spaceText
 
         if self.bot.settings["debug"]["other"]:
-            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_dmszary_command]{ctx.author.name} requested normal command')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_dmszary_command]{ctx.author.name} requested normal command')
 
         await self._dmszary(ctx, text)
 
@@ -205,7 +205,7 @@ class Other(commands.Cog):
         guild_ids=[int(os.getenv('DISCORD_ID_BOBERSCHLESIEN')), int(os.getenv('DISCORD_ID_SCAMELOT'))])
     async def _dmszary_slash(self, ctx:SlashContext, text : str):
         if self.bot.settings["debug"]["other"]:
-            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_dmszary_slash]{ctx.author.name} requested slash command')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_dmszary_slash]{ctx.author.name} requested slash command')
 
         await self._dmszary(ctx, text)
 
@@ -245,7 +245,7 @@ class Other(commands.Cog):
         brief="Kto z kanału głosowego jest impostorem")
     async def _impostor_command(self, ctx):
         if self.bot.settings["debug"]["other"]:
-            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_impostor_command]{ctx.author.name} requested normal command')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_impostor_command]{ctx.author.name} requested normal command')
 
         await self._impostor(ctx)
 
@@ -254,7 +254,7 @@ class Other(commands.Cog):
         description="Kto z kanału głosowego jest impostorem")
     async def _impostor_slash(self, ctx:SlashContext):
         if self.bot.settings["debug"]["other"]:
-            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_impostor_slash]{ctx.author.name} requested slash command')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_impostor_slash]{ctx.author.name} requested slash command')
 
         await self._impostor(ctx)
     

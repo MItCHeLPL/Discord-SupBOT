@@ -24,9 +24,10 @@ class VCDoorman(commands.Cog):
         stream = ((before.self_stream == False and after.self_stream == True) or (before.self_stream == True and after.self_stream ==False)) #ignore when someone switches stream
         video = ((before.self_video == False and after.self_video == True) or (before.self_video == True and after.self_video == False)) #ignore when someone switches video
         suppress = ((before.suppress == False and after.suppress == True) or (before.suppress == True and after.suppress == False)) #ignore when the user is suppressed from speaking
+        afk = ((before.afk == False and after.afk == True) or (before.afk == True and after.afk == False))#ignore when bot switches mute
 
         #ignore events
-        if smute or mute or sdeaf or deaf or stream or video or suppress:
+        if smute or mute or sdeaf or deaf or stream or video or suppress or afk:
             return
         else:
 
@@ -37,6 +38,7 @@ class VCDoorman(commands.Cog):
 
                     if (str(server.guild.id) in self.bot.settings["setting"]["vc_doorman"] and self.bot.settings["setting"]["vc_doorman"][str(member.guild.id)]["enable_greeting"]) or (str(server.guild.id) not in self.bot.settings["setting"]["vc_doorman"] and self.bot.settings["setting"]["vc_doorman"]["default"]["enable_greeting"]):
                         if(server.channel == after.channel): #someone connects
+                            await asyncio.sleep(0.5) #wait to get vc
                             await self.PlaySound(after.channel, self.bot.settings["audio"]["greetings"], str(member.display_name))
 
                             if self.bot.settings["debug"]["vc_doorman"]:
@@ -46,6 +48,7 @@ class VCDoorman(commands.Cog):
                         if(server.channel == before.channel): #someone disconnects
 
                             if len(before.channel.members) > 1:
+                                await asyncio.sleep(0.5) #wait to get vc
                                 await self.PlaySound(before.channel, self.bot.settings["audio"]["farewells"], str(member.display_name))
 
                                 if self.bot.settings["debug"]["vc_doorman"]:
@@ -67,7 +70,7 @@ class VCDoorman(commands.Cog):
                                 if(server.channel == after.channel): #connected
 
                                     if len(after.channel.members) > 1: #if someone is on vc
-                                        await asyncio.sleep(1) #wait to get vc
+                                        await asyncio.sleep(0.5) #wait to get vc
                                         await self.PlaySound(after.channel, self.bot.settings["audio"]["greetings"]) #greet users on vc
 
                                         if self.bot.settings["debug"]["vc_doorman"]:
@@ -90,16 +93,26 @@ class VCDoorman(commands.Cog):
                         message = gtts(str(member), lang = self.bot.settings["setting"]["tts"]["ttsLang"], tld=self.bot.settings["setting"]["tts"]["ttsTld"])
                         message.save(self.bot.settings['ttsAudioPath'] + 'tts_member_name.mp3')
 
-                        vc.play(discord.FFmpegPCMAudio(self.bot.settings['audioPath'] + array[voiceLineId], options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman][PlaySound]Played voiceline on {vc.channel.name}') if self.bot.settings["debug"]["vc_doorman"] else None)) #play voice line on channel
+                        try:
+                            vc.play(discord.FFmpegPCMAudio(self.bot.settings['audioPath'] + array[voiceLineId], options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman][PlaySound]Played voiceline on {vc.channel.name}') if self.bot.settings["debug"]["vc_doorman"] else None)) #play voice line on channel
+                        except discord.ClientException:
+                            pass
+                        
 
                         #cooldown before saying member name
                         while vc.is_playing(): #Checks if voice is playing
                             await asyncio.sleep(0.1) #While it's playing it sleeps for .1 of a second
                         
-                        vc.play(discord.FFmpegPCMAudio(self.bot.settings['ttsAudioPath'] + 'tts_member_name.mp3', options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman][PlaySound]Played TTS on {vc.channel.name}\n') if self.bot.settings["debug"]["vc_doorman"] else None)) #play member name on channel
+                        try:
+                            vc.play(discord.FFmpegPCMAudio(self.bot.settings['ttsAudioPath'] + 'tts_member_name.mp3', options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman][PlaySound]Played TTS on {vc.channel.name}\n') if self.bot.settings["debug"]["vc_doorman"] else None)) #play member name on channel
+                        except discord.ClientException:
+                            pass
 
                     else:#play normal bind
-                        vc.play(discord.FFmpegPCMAudio(self.bot.settings['audioPath'] + array[voiceLineId], options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman][PlaySound]Played voiceline on {vc.channel.name}\n') if self.bot.settings["debug"]["vc_doorman"] else None)) #play voice line on channel
+                        try:
+                            vc.play(discord.FFmpegPCMAudio(self.bot.settings['audioPath'] + array[voiceLineId], options = "-loglevel error"), after=lambda e: print('Player error: %s' % e) if e else (print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman][PlaySound]Played voiceline on {vc.channel.name}\n') if self.bot.settings["debug"]["vc_doorman"] else None)) #play voice line on channel
+                        except discord.ClientException:
+                            pass
 
                 break 
 

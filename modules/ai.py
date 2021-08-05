@@ -26,23 +26,26 @@ class Ai(commands.Cog):
                 self.aiBot = discord.utils.get(guild.members, id=int(os.getenv('DISCORD_ID_AISUPBOT'))) #get AI discord bot
 
                 if self.bot.settings["setting"]["ai"]["change_cat_visibility_for_aibot"]:
-                    self.ai_category = discord.utils.get(guild.categories, id=int(os.getenv('DISCORD_ID_AI_CATEGORY')))
-                    self.bbsch_everyone_role = discord.utils.get(guild.roles, id=int(os.getenv('DISCORD_ROLE_BBSCH_EVERYONE')))
+                    self.ai_category = discord.utils.get(guild.categories, id=int(os.getenv('DISCORD_ID_AI_CATEGORY'))) #get ai bot channels category
+                    self.bbsch_everyone_role = discord.utils.get(guild.roles, id=int(os.getenv('DISCORD_ROLE_BBSCH_EVERYONE'))) #get boberschlesien @everyone role
 
 
     @commands.Cog.listener()
     @has_permissions(manage_roles=True, manage_channels=True)
-    async def on_voice_state_update(self, member, before, after):      
+    async def on_voice_state_update(self, member, before, after):     
+        ignore_afk = not ((before.afk == False and after.afk == True) or (before.afk == True and after.afk == False))#ignore when bot switches mute
+ 
         if self.bot.settings["setting"]["ai"]["change_cat_visibility_for_aibot"]:   
-            if self.ai_category is not None and self.bbsch_everyone_role is not None:
-                #show/hide AI category
-                if member == self.aiBot and member.status == discord.Status.online:
+            if self.ai_category is not None and self.bbsch_everyone_role is not None and member == self.aiBot and ignore_afk:
+                #show AI category
+                if member.status == discord.Status.online:
                     await self.ai_category.set_permissions(self.bbsch_everyone_role, view_channel = True, read_messages = True, send_messages = False)
 
                     if self.bot.settings["debug"]["ai"]:
                         print(f'[{str(datetime.datetime.utcnow())[0:-7]}][ai][on_voice_state_update]Enabled AIBOT category visibility\n')
                         
-                if member == self.aiBot and member.status == discord.Status.offline:
+                #hide AI category
+                elif member.status == discord.Status.offline:
                     await self.ai_category.set_permissions(self.bbsch_everyone_role, view_channel = False, read_messages = False, send_messages = False)
                     
                     if self.bot.settings["debug"]["ai"]:
