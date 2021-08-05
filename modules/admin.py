@@ -140,10 +140,10 @@ class Admin(commands.Cog):
 
                 await ctx.author.send(embed=embed) #send emebd
 
-                if isinstance(ctx, SlashContext): #slash command
-                    await ctx.send("Wysłano dziennik zdarzeń w dm", hidden=True)
-                else: #normal command
-                    await ctx.reply("Wysłano dziennik zdarzeń w dm", delete_after=10)
+            if isinstance(ctx, SlashContext): #slash command
+                await ctx.send("Wysłano dziennik zdarzeń w dm", hidden=True)
+            else: #normal command
+                await ctx.reply("Wysłano dziennik zdarzeń w dm", delete_after=10)
 
             if self.bot.settings["debug"]["admin"]:
                 print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_log]Sent debug log to {str(ctx.author.name)}\n')

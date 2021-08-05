@@ -17,7 +17,7 @@ class MessageHandler(commands.Cog):
     async def on_message(self, message):
         if self.bot.settings["setting"]["message_handler"]["reply_yo"]:   
             #reply 'yo', if someone says yo
-            if ((message.content == 'yo' or message.content == 'Yo' or message.content == 'yo ' or message.content == 'Yo ') and message.author.bot == False):
+            if (message.content.strip().lower() == 'yo' and message.author.bot == False):
                 await message.reply('yo')
 
                 if self.bot.settings["debug"]["message_handler"]:
@@ -48,8 +48,8 @@ class MessageHandler(commands.Cog):
             if self.bot.settings["setting"]["message_handler"]["reply_error_message"]:   
                 await ctx.reply('Yo, nie rozumiem,\nWpisz `yo help` i przestań mi bota prześladować', delete_after=10) #error message
 
-            if self.bot.settings["debug"]["message_handler"]:
-                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][message_handler][on_command_error]Command error\n')
+        if self.bot.settings["debug"]["message_handler"]:
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][message_handler][on_command_error]Command error: {error}\n')
 
     #slash command error
     @commands.Cog.listener()
@@ -58,7 +58,7 @@ class MessageHandler(commands.Cog):
             await ctx.send('Yo, wystąpił błąd komendy,\nWpisz `yo help` lub `/help` i przestań mi bota prześladować', hidden=True) #error message
 
         if self.bot.settings["debug"]["message_handler"]:
-            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][message_handler][on_slash_command_error]Command error\n')
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][message_handler][on_slash_command_error]Command error: {error}\n')
 
 
     #normal command success
