@@ -52,10 +52,12 @@ class GlobalCounter(commands.Cog):
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][global_counter][_add]Created add message\n')
 
     #normal command
-    @commands.command(name = 'dodaj', 
-        aliases=['add', '+', 'licznik', 'counter'],
-        help="Dodaj do globalnego licznika", 
-        brief="Dodaj do globalnego licznika")
+    @commands.command(name = 'dodaj',
+        aliases = ['add', '+', 'licznik', 'counter'], 
+        brief = "Dodaj punkt do globalnego licznika", 
+        help = "Dodaj punkt do globalnego licznika tego bota", 
+        usage = "yo dodaj"
+    )
     async def _add_command(self, ctx):
         if self.bot.settings["debug"]["global_counter"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][global_counter][_add_command]{ctx.author.name} requested normal command')
@@ -64,7 +66,8 @@ class GlobalCounter(commands.Cog):
 
     #slash command
     @cog_ext.cog_slash(name="dodaj", 
-        description="Dodaj do globalnego licznika")
+        description="Dodaj punkt do globalnego licznika"
+    )
     async def _add_slash(self, ctx:SlashContext):
         if self.bot.settings["debug"]["global_counter"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][global_counter][_add_slash]{ctx.author.name} requested slash command')

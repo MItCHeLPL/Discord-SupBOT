@@ -79,10 +79,12 @@ class Admin(commands.Cog):
                         print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_say]Admin ({str(ctx.author.name)}) sent {userText} on channel {channel.name}\n')
 
     #normal command
-    @commands.command(name = 'say', 
-        aliases = ['sayadmin', 'ownersay', 'sayowner', 'admin_say', 'say_admin', 'owner_say', 'say_owner', 'adminsay'],
-        help="Wypisz tekst na dowolnym kanale (yo adminsay [id_kanału] [tekst])", 
-        brief="Wypisz tekst na dowolnym kanale (yo adminsay [id_kanału] [tekst])")
+    @commands.command(name = 'say',
+        aliases = ['sayadmin', 'ownersay', 'sayowner', 'admin_say', 'say_admin', 'owner_say', 'say_owner', 'adminsay'], 
+        brief = "Wypisz tekst na dowolnym kanale (yo say [id_kanału] [tekst])", 
+        help = "Będąc adminem tego bota możesz wypisać dowolną wiadomość na dowolnym serwerze, na którym jest ten bot", 
+        usage = "yo say [id_kanału] [tekst]"
+    )
     @commands.check(is_admin)
     async def _say_command(self, ctx, channel_id, text : str, *args):
         #combine text to one string
@@ -98,20 +100,24 @@ class Admin(commands.Cog):
 
     #slash command
     @cog_ext.cog_slash(name="say", 
-        description="Wypisz tekst na dowolnym kanale", 
+        description="Wyślij wiadomość na dowolnym kanale", 
         options=[
             create_option(
                 name="channel_id", 
                 description="Podaj id kanału tekstowego", 
                 option_type=3, 
-                required=True),
+                required=True
+            ),
             create_option(
                 name="text", 
                 description="Podaj tekst wiadomości", 
                 option_type=3, 
-                required=True)],
+                required=True
+            )
+        ],
         default_permission = False,
-        permissions = slash_admin_permissions)
+        permissions = slash_admin_permissions
+    )
     async def _say_slash(self, ctx:SlashContext, channel_id, text : str):
         if self.bot.settings["debug"]["admin"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_say_slash]{ctx.author.name} requested slash command')
@@ -149,10 +155,12 @@ class Admin(commands.Cog):
                 print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_log]Sent debug log to {str(ctx.author.name)}\n')
 
     #normal command
-    @commands.command(name = 'showeventlog', 
-        aliases = ['showoutput', 'log', 'botlog', 'printlog', 'logprint', 'adminlog', 'adminoutput', 'dziennik', 'zdarzenia', 'showlog', 'showevetlog'],
-        help="Wysyła dziennik zdarzeń bota w dm", 
-        brief="Wysyła dziennik zdarzeń bota w dm")
+    @commands.command(name = 'showeventlog',
+        aliases = ['showoutput', 'log', 'botlog', 'printlog', 'logprint', 'adminlog', 'adminoutput', 'dziennik', 'zdarzenia', 'showlog', 'showevetlog'], 
+        brief = "Wysyła dziennik zdarzeń bota w wiadomości prywatnej", 
+        help = "Będąc adminem tego bota możesz zobaczyć dziennik zdarzeń SupBOT w wiadomości prywatnej od niego", 
+        usage = "yo showeventlog"
+    )
     @commands.check(is_admin)
     async def _log_command(self, ctx):
         if self.bot.settings["debug"]["admin"]:
@@ -162,9 +170,10 @@ class Admin(commands.Cog):
 
     #slash command
     @cog_ext.cog_slash(name="showeventlog", 
-        description="Wysyła dziennik zdarzeń bota w dm",
+        description="Wysyła dziennik zdarzeń bota w wiadomości prywatnej",
         default_permission = False,
-        permissions = slash_admin_permissions)
+        permissions = slash_admin_permissions
+    )
     async def _log_slash(self, ctx:SlashContext):
         if self.bot.settings["debug"]["admin"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_log_slash]{ctx.author.name} requested slash command')
@@ -195,10 +204,12 @@ class Admin(commands.Cog):
                 print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_dmuser]Didnt find user to sent DM to\n')
 
     #normal command
-    @commands.command(name = 'dmuser', 
-        aliases=['dm', 'pm', 'priv', 'admindmuser', 'dmadmin', 'pmadmin', 'adminpm', 'admindm', 'dmuseradmin', 'privadmin', 'adminpriv'],
-        help="Wysyła dm do użytkownika (yo dmuser [@użytkownik] [tekst])", 
-        brief="Wysyła dm do użytkownika (yo dmuser [@użytkownik] [tekst])")
+    @commands.command(name = 'dmuser',
+        aliases = ['dm', 'pm', 'priv', 'admindmuser', 'dmadmin', 'pmadmin', 'adminpm', 'admindm', 'dmuseradmin', 'privadmin', 'adminpriv'], 
+        brief = "Napisz prywatną wiadomość do dowolnego użytkownika (yo dmuser [@użytkownik] [tekst])", 
+        help = "Będąc adminem tego bota możesz napisz prywatną wiadomość do dowolnego użytkownika, którego widzi ten bot", 
+        usage = "yo dmuser [@użytkownik] [tekst]"
+    )
     @commands.check(is_admin)
     async def _dmuser_command(self, ctx, user : discord.Member, text : str, *args):
         #combine text into one string
@@ -214,20 +225,24 @@ class Admin(commands.Cog):
 
     #slash command
     @cog_ext.cog_slash(name="dmuser", 
-        description="Wysyła dm do użytkownika", 
+        description="Wysyła prywatną wiadomość do dowolnego użytkownika", 
         options=[
             create_option(
                 name="user", 
                 description="Podaj @użytkownika", 
                 option_type=6, 
-                required=True),
+                required=True
+            ),
             create_option(
                 name="text", 
                 description="Podaj tekst wiadomości", 
                 option_type=3, 
-                required=True)],
+                required=True
+            )
+        ],
         default_permission = False,
-        permissions = slash_admin_permissions)
+        permissions = slash_admin_permissions
+    )
     async def _dmuser_slash(self, ctx:SlashContext, user : discord.Member, text : str):
         if self.bot.settings["debug"]["admin"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_dmuser_slash]{ctx.author.name} requested slash command')

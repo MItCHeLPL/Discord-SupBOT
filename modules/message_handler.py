@@ -32,7 +32,8 @@ class MessageHandler(commands.Cog):
 
     #yo slash command
     @cog_ext.cog_slash(name="yo", 
-        description="yo")
+        description="yo"
+    )
     async def _yo_slash(self, ctx:SlashContext):
         await ctx.send("yo")
 
