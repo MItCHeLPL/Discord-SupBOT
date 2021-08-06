@@ -4,8 +4,10 @@ import os
 from dotenv import load_dotenv
 import random
 import datetime
-from discord_slash import cog_ext, SlashContext
+from discord_slash import cog_ext, SlashContext, ComponentContext
 from discord_slash.utils.manage_commands import create_option
+from discord_slash.utils.manage_components import create_button, create_actionrow
+from discord_slash.model import ButtonStyle
 
 load_dotenv()
 
@@ -33,9 +35,12 @@ class Other(commands.Cog):
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_sup]sup\n')
 
     #normal command
-    @commands.command(name = 'sup', 
-        help="Pytasz bota co tam u niego.", 
-        brief="Pytasz bota co tam u niego.")
+    @commands.command(name = 'sup',
+        aliases = [], 
+        brief = "Pytasz bota co tam u niego", 
+        help = "(ang)'sup' - pochodzące ze slangu angielskiego słowo oznaczające (ang)'What's up?' wymawiane '/ˌwɒtsˈʌp / (vowel nº10 /ʌ/)' oznacza po polsku 'Co tam u ciebie?'", 
+        usage = "yo sup"
+    )
     async def _sup_command(self, ctx):
         if self.bot.settings["debug"]["other"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_sup_command]{ctx.author.name} requested normal command')
@@ -44,7 +49,8 @@ class Other(commands.Cog):
 
     #slash command
     #@cog_ext.cog_slash(name="sup", 
-    #    description="Pytasz bota co tam u niego.")
+    #    description="Pytasz bota co tam u niego"
+    #)
     #async def _sup_slash(self, ctx:SlashContext):
     #    if self.bot.settings["debug"]["other"]:
     #        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_sup_slash]{ctx.author.name} requested slash command')
@@ -63,9 +69,12 @@ class Other(commands.Cog):
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_nm]nm\n')
             
     #normal command
-    @commands.command(name = 'nm', 
-        help="Reakcja bota na to że nic ciekawego się u ciebie nie dzieje.", 
-        brief="Reakcja bota na to że nic ciekawego się u ciebie nie dzieje.")
+    @commands.command(name = 'nm',
+        aliases = [], 
+        brief = "Reakcja bota na to że nic ciekawego się u ciebie nie dzieje", 
+        help = "(ang)'nm' - skrót od wyrażenia (ang)'not much' wymawiane ':nɒt mʌʧ' oznacza po polsku 'nie dużo', bot reaguje na stwierdzenie, że nic ciekawego się u ciebie nie dzieje", 
+        usage = "yo nm"
+    )
     async def _nm_command(self, ctx):
         if self.bot.settings["debug"]["other"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_nm_command]{ctx.author.name} requested normal command')
@@ -74,7 +83,8 @@ class Other(commands.Cog):
 
     #slash command
     #@cog_ext.cog_slash(name="nm", 
-    #    description="Reakcja bota na to że nic ciekawego się u ciebie nie dzieje.")
+    #    description="Reakcja bota na to że nic ciekawego się u ciebie nie dzieje"
+    #)
     #async def _nm_slash(self, ctx:SlashContext):
         #if self.bot.settings["debug"]["other"]:
             #print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_nm_slash]{ctx.author.name} requested slash command')
@@ -95,9 +105,12 @@ class Other(commands.Cog):
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_wiek]wiek: {str(wynik)}\n')
     
     #normal command
-    @commands.command(name = 'wiek', 
-        help="Czy możesz robić ruchy dla takiego wieku? (yo wiek [liczba])", 
-        brief="Czy możesz robić ruchy dla takiego wieku? (yo wiek [liczba])")
+    @commands.command(name = 'wiek',
+        aliases = [], 
+        brief = "Czy możesz robić ruchy dla takiego wieku? (yo wiek [liczba])", 
+        help = "Wyświetla wiek, dla którego można robić ruchy używając równania '(wiek / 2) + 7'", 
+        usage = "yo wiek [liczba]"
+    )
     async def _wiek_command(self, ctx, wiek:int):
         if self.bot.settings["debug"]["other"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_wiek_command]{ctx.author.name} requested normal command')
@@ -112,8 +125,11 @@ class Other(commands.Cog):
                 name="wiek", 
                 description="Podaj wiek", 
                 option_type=4, 
-                required=True)], 
-        guild_ids=[int(os.getenv('DISCORD_ID_BOBERSCHLESIEN')), int(os.getenv('DISCORD_ID_SCAMELOT'))])
+                required=True
+            )
+        ], 
+        guild_ids=[int(os.getenv('DISCORD_ID_BOBERSCHLESIEN')), int(os.getenv('DISCORD_ID_SCAMELOT'))]
+    )
     async def _wiek_slash(self, ctx:SlashContext, wiek:int):
         if self.bot.settings["debug"]["other"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_wiek_slash]{ctx.author.name} requested slash command')
@@ -131,19 +147,30 @@ class Other(commands.Cog):
 
         embed.timestamp = datetime.datetime.utcnow() #set timestamp
 
+        #create button
+        buttons = [
+            create_button(
+                style=ButtonStyle.URL,
+                label="Mapa burz na żywo",
+                url="https://www.lightningmaps.org/"),
+        ]
+        action_row = create_actionrow(*buttons)
+
         if isinstance(ctx, SlashContext): #slash command
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, components=[action_row])
         else: #normal command
-            await ctx.reply(embed=embed)
+            await ctx.reply(embed=embed, components=[action_row])
 
         if self.bot.settings["debug"]["other"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_weathermap]Posted weather map\n')
 
     #normal command
-    @commands.command(name = 'burza', 
-        aliases=['pogoda', 'weather', 'piorun', 'mapa', 'map', 'blitz', 'lightning', 'lighting', 'lightingmap', 'lightningmap', 'thunder'],
-        help="Wyświetla mapę burz dla polski", 
-        brief="Wyświetla mapę burz dla polski")
+    @commands.command(name = 'burza',
+        aliases = ['pogoda', 'weather', 'piorun', 'mapa', 'map', 'blitz', 'lightning', 'lighting', 'lightingmap', 'lightningmap', 'thunder'], 
+        brief = "Wyświetla mapę burz dla polski", 
+        help = "Wyświetla mapę burz dla polski ze strony https://www.blitzortung.org", 
+        usage = "yo burza"
+    )
     async def _weathermap_command(self, ctx):
         if self.bot.settings["debug"]["other"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_weathermap_command]{ctx.author.name} requested normal command')
@@ -152,7 +179,8 @@ class Other(commands.Cog):
 
     #slash command
     @cog_ext.cog_slash(name="burza", 
-        description="Wyświetla mapę burz dla polski")
+        description="Wyświetla mapę burz dla polski"
+    )
     async def _weathermap_slash(self, ctx:SlashContext):
         if self.bot.settings["debug"]["other"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_weathermap_slash]{ctx.author.name} requested slash command')
@@ -177,10 +205,12 @@ class Other(commands.Cog):
                     print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_dmszary]Sent DM to szary, text: {text}\n')
 
     #normal command
-    @commands.command(name = 'dmszary', 
-        aliases=['szary', 'pmszary', 'privszary'],
-        help="Wysyła dm do Szarego (yo dmszary [tekst])", 
-        brief="Wysyła dm do Szarego (yo dmszary [tekst])")
+    @commands.command(name = 'dmszary',
+        aliases = ['szary', 'pmszary', 'privszary'], 
+        brief = "Wysyła wiadomość prywatną do Szarego (yo dmszary [tekst])", 
+        help = "Wysyła wiadomość prywatną o dowolnej treści do Szarego", 
+        usage = "yo dmszary [tekst]"
+    )
     async def _dmszary_command(self, ctx, text : str, *args):
         #combine text into one string
         spaceText = ""
@@ -195,14 +225,17 @@ class Other(commands.Cog):
 
     #slash command
     @cog_ext.cog_slash(name="dmszary", 
-        description="Wysyła dm do Szarego", 
+        description="Wysyła wiadomość prywatną do Szarego", 
         options=[
             create_option(
                 name="text", 
                 description="Podaj tekst wiadomości", 
                 option_type=3, 
-                required=True)], 
-        guild_ids=[int(os.getenv('DISCORD_ID_BOBERSCHLESIEN')), int(os.getenv('DISCORD_ID_SCAMELOT'))])
+                required=True
+            )
+        ], 
+        guild_ids=[int(os.getenv('DISCORD_ID_BOBERSCHLESIEN')), int(os.getenv('DISCORD_ID_SCAMELOT'))]
+    )
     async def _dmszary_slash(self, ctx:SlashContext, text : str):
         if self.bot.settings["debug"]["other"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_dmszary_slash]{ctx.author.name} requested slash command')
@@ -239,10 +272,12 @@ class Other(commands.Cog):
                 print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_impostor]Requested impostor, bot didnt find users channel\n')
     
     #normal command
-    @commands.command(name = 'impostor', 
-        aliases=['imposter', 'amogus', 'amongus', 'sus'],
-        help="Kto z kanału głosowego jest impostorem", 
-        brief="Kto z kanału głosowego jest impostorem")
+    @commands.command(name = 'impostor',
+        aliases = ['imposter', 'amogus', 'amongus', 'sus'], 
+        brief = "Kto z kanału głosowego jest impostorem", 
+        help = "Wybiera losowego użytkownika z twojego kanału głosowego i nazywa go impostorem", 
+        usage = "yo impostor"
+    )
     async def _impostor_command(self, ctx):
         if self.bot.settings["debug"]["other"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_impostor_command]{ctx.author.name} requested normal command')
@@ -251,7 +286,8 @@ class Other(commands.Cog):
 
     #slash command
     @cog_ext.cog_slash(name="impostor", 
-        description="Kto z kanału głosowego jest impostorem")
+        description="Kto z kanału głosowego jest impostorem"
+    )
     async def _impostor_slash(self, ctx:SlashContext):
         if self.bot.settings["debug"]["other"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][other][_impostor_slash]{ctx.author.name} requested slash command')

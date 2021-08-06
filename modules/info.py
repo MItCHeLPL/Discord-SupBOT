@@ -71,8 +71,10 @@ class Info(commands.Cog):
     #normal command
     @commands.command(name = 'info',
         aliases = ['stats'], 
-        help="Wyświetla informacje", 
-        brief="Wyświetla informacje")
+        brief = "Wyświetla informacje", 
+        help = "Wyświetla informacje o użytkowniku, serwerze oraz bocie", 
+        usage = "yo info"
+    )
     async def _info_command(self, ctx):
         if self.bot.settings["debug"]["info"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][info][_info_command]{ctx.author.name} requested normal command')
@@ -109,7 +111,8 @@ class Info(commands.Cog):
                 option_type=6,
                 required=False
             )
-        ])
+        ]
+    )
     async def _info_slash(self, ctx:SlashContext, choice:str=None, user:discord.Member=None):
         if self.bot.settings["debug"]["info"]:
             print(f'[{str(datetime.datetime.utcnow())[0:-7]}][info][_info_slash]{ctx.author.name} requested slash command')
@@ -130,10 +133,12 @@ class Info(commands.Cog):
 
 
     #user info
-    @commands.command(name = 'userinfo', 
+    @commands.command(name = 'userinfo',
         aliases = ['user', 'infouser', 'baninfo', 'kickinfo', 'userstats'], 
-        help="Informacje o użytkowniku (yo userinfo [@użytkownik])", 
-        brief="Informacje o użytkowniku (yo userinfo [@użytkownik])")
+        brief = "Wyświetla informacje o użytkowniku (yo userinfo [(opt)@użytkownik])", 
+        help = "Wyświetla wszystkie dostępne informacje o podanym użytkowniku, lub o wysyłającym jeśli nie podano użytkownika", 
+        usage = "yo userinfo [(opt)@użytkownik]"
+    )
     async def _userinfo(self, ctx, member:discord.Member=None, embed:discord.Embed=None, action_row:dict=None):
         #if member wasn't passed show info about author
         if str(member).strip() == "" or member is None:
@@ -220,10 +225,12 @@ class Info(commands.Cog):
 
 
     #server info
-    @commands.command(name = 'serverinfo', 
+    @commands.command(name = 'serverinfo',
         aliases = ['server', 'infoserver', 'serwer', 'infoserwer', 'serwerinfo', 'serverstats'], 
-        help="Informacje o serwerze", 
-        brief="Informacje o serwerze")
+        brief = "Wyświetla informacje o serwerze", 
+        help = "Wyświetla wszystkie dostępne informacje o serwerze", 
+        usage = "yo serverinfo"
+    )
     @has_permissions(view_audit_log=True)
     async def _serverinfo(self, ctx):
         online_count = 0
@@ -344,10 +351,12 @@ class Info(commands.Cog):
 
 
     #bot info
-    @commands.command(name = 'botinfo', 
+    @commands.command(name = 'botinfo',
         aliases = ['infobot', 'infosupbot', 'supbotinfo', 'about', 'aboutbot', 'github', 'project'], 
-        help="Informacje o tym bocie",
-        brief="Informacje o tym bocie")
+        brief = "Wyświetla informacje o SupBOT", 
+        help = "Wyświetla wszystkie dostępne informacje o tym bocie", 
+        usage = "yo botinfo"
+    )
     async def _botinfo(self, ctx):
         embed=discord.Embed() 
         embed.set_author(name='🛈 Informacje o bocie:') #embed header
