@@ -8,7 +8,7 @@ from discord_slash.utils.manage_components import create_button, create_actionro
 from discord_slash.model import ButtonStyle
 
 class Info(commands.Cog):
-    """Inforamcje i statystyki"""
+    """Informacje i statystyki"""
     def __init__(self, bot):
         self.bot = bot
 
