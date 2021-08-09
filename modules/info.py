@@ -336,7 +336,8 @@ class Info(commands.Cog):
                 create_button(
                     style=ButtonStyle.URL,
                     label=str(f"Zaproszenie na {str(ctx.guild.name)}"),
-                    url=str(invite_url)),
+                    url=str(invite_url)
+                ),
             ]
             action_row = create_actionrow(*buttons)
 
@@ -372,11 +373,13 @@ class Info(commands.Cog):
             create_button(
                 style=ButtonStyle.URL,
                 label="Twórca",
-                url="https://github.com/MItCHeLPL"),
+                url="https://github.com/MItCHeLPL"
+            ),
             create_button(
                 style=ButtonStyle.URL,
                 label="SupBOT",
-                url="https://github.com/MItCHeLPL/Discord-SupBOT"),
+                url="https://github.com/MItCHeLPL/Discord-SupBOT"
+            ),
         ]
         action_row = create_actionrow(*buttons)
 
