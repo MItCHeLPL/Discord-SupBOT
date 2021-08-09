@@ -4,6 +4,8 @@ import datetime
 import random
 import math
 import datetime
+from discord_slash import cog_ext, SlashContext
+from discord_slash.utils.manage_commands import create_option
 
 class Soundboard(commands.Cog):
     """Bindy"""
@@ -14,36 +16,69 @@ class Soundboard(commands.Cog):
             print(f"[{str(datetime.datetime.utcnow())[0:-7]}][soundboard]Loaded")
     
 
-    @commands.command(name = 'playbind', aliases = ['bind', 'soundboard', 'pb', 'ps', 'sound', 'playsound'])
     async def _bind(self, ctx, name : str):
-        """Odtwarza binda (yo playbind [nazwa]) 
-        Lista bindów dostępna używając: (yo bindlist)"""
         voiceline = name + '.mp3'
 
         if voiceline in self.bot.settings["audio"]['binds']:
             vc = await self.Join(ctx) #join vc
 
-            await self.PlaySound(vc, voiceline) #play tts
+            if vc != None:
+                await self.PlaySound(vc, voiceline) #play tts
 
-            await ctx.reply('Odtwarzam binda `' + name + '`', delete_after=5)
+                if isinstance(ctx, SlashContext): #slash command
+                    await ctx.send('Odtwarzam binda `' + name + '`', hidden=True)
+                else: #normal command
+                    await ctx.reply('Odtwarzam binda `' + name + '`', delete_after=5)
 
-            if self.bot.settings["debug"]["soundboard"]:
-                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][_bind]Playing bind: {name}\n')
+                if self.bot.settings["debug"]["soundboard"]:
+                    print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][_bind]Playing bind: {name}')
 
-            return True
+                return True
 
         else:
-            await ctx.reply('Nie znaleziono binda `' + name + '`', delete_after=5)
+            if isinstance(ctx, SlashContext): #slash command
+                await ctx.send('Nie znaleziono binda `' + name + '`', hidden=True)
+            else: #normal command
+                await ctx.reply('Nie znaleziono binda `' + name + '`', delete_after=5)
 
             if self.bot.settings["debug"]["soundboard"]:
                 print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][_bind]Sound not found\n')
 
             return False
+    
+    #normal command
+    @commands.command(name = 'playbind',
+        aliases = ['bind', 'soundboard', 'pb', 'ps', 'sound', 'playsound'], 
+        brief = "Odtwarza binda (yo playbind [nazwa])", 
+        help = "Odtwarza wskazanego przez użytkownika binda. Lista bindów dostępna używając: (yo bindlist)", 
+        usage = "yo playbind [nazwa]"
+    )
+    async def _bind_command(self, ctx, name : str):
+        if self.bot.settings["debug"]["soundboard"]:
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][_bind_command]{ctx.author.name} requested normal command')
+
+        await self._bind(ctx, name)
+
+    #slash command
+    @cog_ext.cog_slash(name="playbind", 
+        description="Odtwarza binda", 
+        options=[
+            create_option(
+                name="nazwa", 
+                description="Podaj nazwę binda", 
+                option_type=3, 
+                required=True
+            )
+        ]
+    )
+    async def _bind_slash(self, ctx:SlashContext, nazwa : str):
+        if self.bot.settings["debug"]["soundboard"]:
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][_bind_slash]{ctx.author.name} requested slash command')
+
+        await self._bind(ctx, nazwa)
 
 
-    @commands.command(name = 'bindlist', aliases = ['bindy', 'listabindów', 'listbind', 'bindslist', 'listbinds'])
     async def _bindList(self, ctx):
-        """Wyświetla listę dostępnych bindów"""
         list = self.bot.settings["audio"]['binds'] #take all the available binds
         list = sorted(list, key=str.lower) #sort list alphabetically
 
@@ -67,7 +102,11 @@ class Soundboard(commands.Cog):
                 if self.bot.settings["setting"]["soundboard"]["send_bindlist_in_dm"]:  
                     await ctx.author.send(embed=embed) #dm
                 else:
-                    await ctx.reply(embed=embed)
+                    if isinstance(ctx, SlashContext): #slash command
+                        await ctx.send(embed=embed, hidden=True)
+                    else: #normal command
+                        await ctx.reply(embed=embed)
+                    
 
                 j += 1 #add to message counter
 
@@ -85,20 +124,49 @@ class Soundboard(commands.Cog):
 
         if self.bot.settings["setting"]["soundboard"]["send_bindlist_in_dm"]:   
             await ctx.author.send(embed=embed) #send last message in dm
-            await ctx.reply("Wysłałem DM z listą bindów do " + str(ctx.author.mention), delete_after=5)
+            if isinstance(ctx, SlashContext): #slash command
+                await ctx.send("Wysłałem DM z listą bindów do " + str(ctx.author.mention), hidden=True)
+            else: #normal command
+                await ctx.reply("Wysłałem DM z listą bindów do " + str(ctx.author.mention), delete_after=5)
 
             if self.bot.settings["debug"]["soundboard"]:
                 print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][_bindList]Sent bindlist in DM to {ctx.author.name}\n')
 
         else:
-            await ctx.reply(embed=embed)
+            if isinstance(ctx, SlashContext): #slash command
+                await ctx.send(embed=embed, hidden=True)
+            else: #normal command
+                await ctx.reply(embed=embed)
 
             if self.bot.settings["debug"]["soundboard"]:
                 print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][_bindList]Sent bindlist to text channel\n')
+    
+    #normal command
+    @commands.command(name = 'bindlist',
+        aliases = ['bindy', 'listabindów', 'listbind', 'bindslist', 'listbinds'], 
+        brief = "Wyświetla listę dostępnych bindów", 
+        help = "Wysyła listę dostępnych bindów w wiadomości prywatnej", 
+        usage = "yo bindlist"
+    )
+    async def _bindList_command(self, ctx):
+        if self.bot.settings["debug"]["soundboard"]:
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][_bindList_command]{ctx.author.name} requested normal command')
+
+        await self._bindList(ctx)
+
+    #slash command
+    @cog_ext.cog_slash(name="bindlist", 
+        description="Wyświetla listę dostępnych bindów"
+    )
+    async def _bindList_slash(self, ctx:SlashContext):
+        if self.bot.settings["debug"]["soundboard"]:
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][_bindList_slash]{ctx.author.name} requested slash command')
+
+        await self._bindList(ctx)
 
     
     async def Join(self, ctx):
-        user_vc=ctx.message.author.voice.channel #get user's vc
+        user_vc:discord.Member=ctx.author.voice.channel #get user's vc
 
         same_channel = False
 
@@ -113,30 +181,29 @@ class Soundboard(commands.Cog):
 
                         return vc #return current channel
 
-                if same_channel == False: #User is on the same server's vc, but not the same channel
-                    #await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
+                if same_channel == False: #User isn't on the same vc
+                    for vc in self.bot.voice_clients: #cycle through all servers
+                        if vc.guild == user_vc.guild: #bot is on the same guild, but on other channel
 
-                    if self.bot.settings["debug"]["soundboard"]:
-                        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][Join]Bot joined vc (bot was on the other channel)')
+                            if self.bot.settings["debug"]["soundboard"]:
+                                print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][Join]Bot joined vc (bot was on the other channel)')
 
-                    await vc.disconnect() #disconnect from old channel
+                            await vc.disconnect() #disconnect from old channel
 
-                    return await user_vc.connect() #join user channel
+                            return await user_vc.connect() #join user channel
                     
-            else:
-                #await ctx.reply("Dołączam na kanał `" + str(voice_channel.name) + "`", delete_after=5)
+                    #bot isn't connected to any of the server's vc
+                    if self.bot.settings["debug"]["soundboard"]:
+                        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][Join]Bot joined vc (bot wasnt connected)')
 
-                if self.bot.settings["debug"]["soundboard"]:
-                    print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][Join]Bot joined vc (bot wasnt connected)')
-
-                return await user_vc.connect() #connect to the requested channel, bot isn't connected to any of the server's vc
+                    return await user_vc.connect() #connect to the requested channel
                 
 
     async def PlaySound(self, vc : discord.VoiceChannel, voiceline):
         if vc.is_playing() == True:
             vc.stop() #stop playing
 
-        vc.play(discord.FFmpegPCMAudio(self.bot.settings['audioPath'] + voiceline), after=lambda e: print('Player error: %s' % e) if e else (print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][PlaySound]Played bind on {vc.channel.name}') if self.bot.settings["debug"]["soundboard"] else None)) #play sound on vc
+        vc.play(discord.FFmpegPCMAudio(self.bot.settings['audioPath'] + voiceline), after=lambda e: print('Player error: %s' % e) if e else (print(f'[{str(datetime.datetime.utcnow())[0:-7]}][soundboard][PlaySound]Played bind on {vc.channel.name}\n') if self.bot.settings["debug"]["soundboard"] else None)) #play sound on vc
 
 
 def setup(bot):
