@@ -16,53 +16,52 @@ class VCDoorman(commands.Cog):
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
-        #ignore
+        #ignore certain events
         smute = ((before.self_mute == False and after.self_mute == True) or (before.self_mute == True and after.self_mute == False))#ignore when bot switches mute
-        mute = ((before.mute == False and after.mute == True) or (before.mute == True and after.mute == False)) #ignore when someoneswitches mute
+        mute = ((before.mute == False and after.mute == True) or (before.mute == True and after.mute == False)) #ignore when someone switches mute
         sdeaf = ((before.self_deaf == False and after.self_deaf == True) or (before.self_deaf == True and after.self_deaf == False))#ingore when bot switches deaf
-        deaf = ((before.deaf == False and after.deaf == True) or (before.deaf == True and after.deaf == False)) #ignore when someoneswitches deaf
+        deaf = ((before.deaf == False and after.deaf == True) or (before.deaf == True and after.deaf == False)) #ignore when someone switches deaf
         stream = ((before.self_stream == False and after.self_stream == True) or (before.self_stream == True and after.self_stream ==False)) #ignore when someone switches stream
         video = ((before.self_video == False and after.self_video == True) or (before.self_video == True and after.self_video == False)) #ignore when someone switches video
-        suppress = ((before.suppress == False and after.suppress == True) or (before.suppress == True and after.suppress == False)) #ignore when the user is suppressed from speaking
-        afk = ((before.afk == False and after.afk == True) or (before.afk == True and after.afk == False))#ignore when bot switches mute
+        suppress = ((before.suppress == False and after.suppress == True) or (before.suppress == True and after.suppress == False)) #ignore when user is suppressed from speaking
+        afk = ((before.afk == False and after.afk == True) or (before.afk == True and after.afk == False))#ignore when bot switches afk
 
         #ignore events
         if smute or mute or sdeaf or deaf or stream or video or suppress or afk:
             return
         else:
-
             if(self.bot.voice_clients != [] and member.id != self.bot.user.id): #if bot is in the same voice channel
                 
                 #somebody leaved/entered voice channel
                 for server in self.bot.voice_clients: #cycle through all servers
 
-                    if (str(server.guild.id) in self.bot.settings["setting"]["vc_doorman"] and self.bot.settings["setting"]["vc_doorman"][str(member.guild.id)]["enable_greeting"]) or (str(server.guild.id) not in self.bot.settings["setting"]["vc_doorman"] and self.bot.settings["setting"]["vc_doorman"]["default"]["enable_greeting"]):
+                    if (str(server.guild.id) in self.bot.settings["setting"]["vc_doorman"] and self.bot.settings["setting"]["vc_doorman"][str(member.guild.id)]["enable_greeting"]) or (str(server.guild.id) not in self.bot.settings["setting"]["vc_doorman"] and self.bot.settings["setting"]["vc_doorman"]["default"]["enable_greeting"]): #greeting enabled on this guild
                         if(server.channel == after.channel): #someone connects
                             await asyncio.sleep(0.5) #wait to get vc
-                            await self.PlaySound(after.channel, self.bot.settings["audio"]["greetings"], str(member.display_name))
+                            await self.PlaySound(after.channel, self.bot.settings["audio"]["greetings"], str(member.display_name)) #play greetings sound
 
                             if self.bot.settings["debug"]["vc_doorman"]:
                                 print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman][on_voice_state_update]Greeted {member.name}')
 
-                    if (str(server.guild.id) in self.bot.settings["setting"]["vc_doorman"] and self.bot.settings["setting"]["vc_doorman"][str(member.guild.id)]["enable_farewell"]) or (str(server.guild.id) not in self.bot.settings["setting"]["vc_doorman"] and self.bot.settings["setting"]["vc_doorman"]["default"]["enable_farewell"]):
+                    if (str(server.guild.id) in self.bot.settings["setting"]["vc_doorman"] and self.bot.settings["setting"]["vc_doorman"][str(member.guild.id)]["enable_farewell"]) or (str(server.guild.id) not in self.bot.settings["setting"]["vc_doorman"] and self.bot.settings["setting"]["vc_doorman"]["default"]["enable_farewell"]): #farewelling enabled on this guild
                         if(server.channel == before.channel): #someone disconnects
 
-                            if len(before.channel.members) > 1:
+                            if len(before.channel.members) > 1: #there is someone else in the vc
                                 await asyncio.sleep(0.5) #wait to get vc
-                                await self.PlaySound(before.channel, self.bot.settings["audio"]["farewells"], str(member.display_name))
+                                await self.PlaySound(before.channel, self.bot.settings["audio"]["farewells"], str(member.display_name)) #say farewell
 
                                 if self.bot.settings["debug"]["vc_doorman"]:
                                     print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman][on_voice_state_update]Said goodbye to {member.name}')
 
 
             #bot was moved to another channel
-            elif(self.bot.voice_clients != [] and member.id == self.bot.user.id and after.channel != None):
+            elif(self.bot.voice_clients != [] and member.id == self.bot.user.id and after.channel != None and before.channel != None and before.channel != after.channel):
                 async for x in after.channel.guild.audit_logs(limit=3, before=datetime.datetime.utcnow(), after=(datetime.datetime.utcnow() - datetime.timedelta(seconds=5)), oldest_first=False, action=discord.AuditLogAction.member_move): #look through audit log
 
                     if(x.extra.channel.id == after.channel.id and x.guild.id == after.channel.guild.id): #action was done to bot
 
                         #if self.bot.settings["debug"]["vc_doorman"]:
-                            #print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman][on_voice_state_update]Bot was last moved {("from " + before.channel.name) if before.channel != None else None} to {after.channel.name}{(" by " + x.user.name) if x.user != None else None}\n')
+                            #print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman][on_voice_state_update]Bot was last moved {("from " + before.channel.name) if before.channel != None else ""} to {after.channel.name}{(" by " + x.user.name) if x.user != None else ""}\n')
 
                         for server in self.bot.voice_clients: #cycle through all servers
 
@@ -74,7 +73,7 @@ class VCDoorman(commands.Cog):
                                         await self.PlaySound(after.channel, self.bot.settings["audio"]["greetings"]) #greet users on vc
 
                                         if self.bot.settings["debug"]["vc_doorman"]:
-                                            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman][on_voice_state_update]Greeted everyone after being moved {("from " + before.channel.name) if before.channel != None else None} to {after.channel.name}{(" by " + x.user.name) if x.user != None else None}')
+                                            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][vc_doorman][on_voice_state_update]Greeted everyone after being moved {("from " + before.channel.name) if before.channel != None else ""} to {after.channel.name}{(" by " + x.user.name) if x.user != None else ""}')
 
                                         break
                         break    
@@ -98,7 +97,6 @@ class VCDoorman(commands.Cog):
                         except discord.ClientException:
                             pass
                         
-
                         #cooldown before saying member name
                         while vc.is_playing(): #Checks if voice is playing
                             await asyncio.sleep(0.1) #While it's playing it sleeps for .1 of a second
