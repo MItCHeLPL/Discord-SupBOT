@@ -77,7 +77,7 @@ class CustomHelp(commands.Cog):
                 buttons = []
 
                 for match in close_matches:
-                    buttons.append(create_button(style=ButtonStyle.green, label=str(f"Informacje o '{match}'"), custom_id=match),)
+                    buttons.append(create_button(style=ButtonStyle.primary, label=str(f"Informacje o '{match}'"), custom_id=match),)
 
                 action_row = create_actionrow(*buttons)
 

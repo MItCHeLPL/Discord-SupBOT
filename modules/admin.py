@@ -135,7 +135,7 @@ class Admin(commands.Cog):
             txt = log[log.rfind("[main][__main__]--------SETUP STARTED--------"):] #find newest log header
 
             #4096 - limit of characters in embed description
-            #split log into chunks of 4096 characters and send them as seperate embeds
+            #split log into chunks of 4096 characters and send them as separate embeds
             for x in range(0, math.ceil(len(txt)/4096)):
                 embed=discord.Embed() #create embed
                 embed.colour = random.randint(0, 0xffffff) #set random color to embed
@@ -144,7 +144,7 @@ class Admin(commands.Cog):
 
                 embed.description = txt[x*4096:(x+1)*4096] #type chunk of 4096 characters into embed
 
-                await ctx.author.send(embed=embed) #send emebd
+                await ctx.author.send(embed=embed) #send embed
 
             if isinstance(ctx, SlashContext): #slash command
                 await ctx.send("Wysłano dziennik zdarzeń w dm", hidden=True)
@@ -156,7 +156,7 @@ class Admin(commands.Cog):
 
     #normal command
     @commands.command(name = 'showeventlog',
-        aliases = ['showoutput', 'log', 'botlog', 'printlog', 'logprint', 'adminlog', 'adminoutput', 'dziennik', 'zdarzenia', 'showlog', 'showevetlog'], 
+        aliases = ['showoutput', 'log', 'botlog', 'printlog', 'logprint', 'adminlog', 'adminoutput', 'dziennik', 'zdarzenia', 'showlog'], 
         brief = "Wysyła dziennik zdarzeń bota w wiadomości prywatnej", 
         help = "Będąc adminem tego bota możesz zobaczyć dziennik zdarzeń SupBOT w wiadomości prywatnej od niego", 
         usage = "yo showeventlog"
