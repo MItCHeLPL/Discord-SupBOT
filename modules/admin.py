@@ -79,27 +79,27 @@ class Admin(commands.Cog):
                         print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_say]Admin ({str(ctx.author.name)}) sent {userText} on channel {channel.name}\n')
 
     #normal command
-    @commands.command(name = 'say',
-        aliases = ['sayadmin', 'ownersay', 'sayowner', 'admin_say', 'say_admin', 'owner_say', 'say_owner', 'adminsay'], 
+    @commands.command(name = 'type',
+        aliases = ['sayadmin', 'ownersay', 'sayowner', 'admin_say', 'say_admin', 'owner_say', 'say_owner', 'adminsay', 'say'], 
         brief = "Wypisz tekst na dowolnym kanale (yo say [id_kanału] [tekst])", 
         help = "Będąc adminem tego bota możesz wypisać dowolną wiadomość na dowolnym serwerze, na którym jest ten bot", 
-        usage = "yo say [id_kanału] [tekst]"
+        usage = "yo type [id_kanału] [tekst]"
     )
     @commands.check(is_admin)
     async def _say_command(self, ctx, channel_id, text : str, *args):
+        if self.bot.settings["debug"]["admin"]:
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_say_command]{ctx.author.name} requested normal command')
+        
         #combine text to one string
         spaceText = ""
         for txt in args:
             spaceText += (" " + str(txt))
         text += spaceText
 
-        if self.bot.settings["debug"]["admin"]:
-            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_say_command]{ctx.author.name} requested normal command')
-
         await self._say(ctx, channel_id, text)
 
     #slash command
-    @cog_ext.cog_slash(name="say", 
+    @cog_ext.cog_slash(name="type", 
         description="Wyślij wiadomość na dowolnym kanale", 
         options=[
             create_option(
@@ -212,14 +212,14 @@ class Admin(commands.Cog):
     )
     @commands.check(is_admin)
     async def _dmuser_command(self, ctx, user : discord.Member, text : str, *args):
+        if self.bot.settings["debug"]["admin"]:
+            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_dmuser_command]{ctx.author.name} requested normal command')
+            
         #combine text into one string
         spaceText = ""
         for txt in args:
             spaceText += (" " + str(txt))
         text += spaceText
-
-        if self.bot.settings["debug"]["admin"]:
-            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_dmuser_command]{ctx.author.name} requested normal command')
 
         await self._dmuser(ctx, user, text)
 
