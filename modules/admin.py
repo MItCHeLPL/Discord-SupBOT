@@ -79,7 +79,7 @@ class Admin(commands.Cog):
                         print(f'[{str(datetime.datetime.utcnow())[0:-7]}][admin][_say]Admin ({str(ctx.author.name)}) sent {userText} on channel {channel.name}\n')
 
     #normal command
-    @commands.command(name = 'type',
+    @commands.command(name = 'napisz',
         aliases = ['sayadmin', 'ownersay', 'sayowner', 'admin_say', 'say_admin', 'owner_say', 'say_owner', 'adminsay', 'say'], 
         brief = "Wypisz tekst na dowolnym kanale (yo say [id_kanału] [tekst])", 
         help = "Będąc adminem tego bota możesz wypisać dowolną wiadomość na dowolnym serwerze, na którym jest ten bot", 
@@ -99,7 +99,7 @@ class Admin(commands.Cog):
         await self._say(ctx, channel_id, text)
 
     #slash command
-    @cog_ext.cog_slash(name="type", 
+    @cog_ext.cog_slash(name="napisz", 
         description="Wyślij wiadomość na dowolnym kanale", 
         options=[
             create_option(
