@@ -24,8 +24,7 @@ with open('data.json') as file:
 
 #start booting process
 if __name__ == "__main__":
-    if bot.settings["debug"]["main"]:
-        print(f'\n\n[{str(datetime.datetime.utcnow())[0:-7]}][main][__main__]--------SETUP STARTED--------\n')
+    print(f'\n\n[{str(datetime.datetime.utcnow())[0:-7]}][main][__main__]--------SETUP STARTED--------\n')
 
 
 #load modules
@@ -60,8 +59,8 @@ async def on_ready():
         if bot.settings["debug"]["main"]:
             print(f'\n[{str(datetime.datetime.utcnow())[0:-7]}][main][on_ready]Saved connected guilds')
 
-        #complete setup
-        print(f"\n[{str(datetime.datetime.utcnow())[0:-7]}][main][on_ready]--------SETUP COMPLETE--------\n\n")
+    #complete setup
+    print(f"\n[{str(datetime.datetime.utcnow())[0:-7]}][main][on_ready]--------SETUP COMPLETE--------\n\n")
 
 
 #run bot
