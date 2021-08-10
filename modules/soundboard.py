@@ -60,7 +60,7 @@ class Soundboard(commands.Cog):
         await self._bind(ctx, name)
 
     #slash command
-    @cog_ext.cog_slash(name="playbind", 
+    @cog_ext.cog_slash(name="bind", 
         description="Odtwarza binda", 
         options=[
             create_option(
