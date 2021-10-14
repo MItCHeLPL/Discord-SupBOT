@@ -193,7 +193,7 @@ class Info(commands.Cog):
             embed.add_field(name="‌‌ ", value="‌‌ ", inline=False) #separator
 
             #server count/ping
-            embed.add_field(name="📊Ilość serwerów", value=('`'+str(len(ctx.bot.guilds))+'`'), inline=True)
+            embed.add_field(name="📊Ilość serwerów", value=('`'+str(len(self.bot.guilds))+'`'), inline=True)
             embed.add_field(name="📶Ping", value=('`'+str(round(ctx.bot.latency * 100, 2)) + "ms"+'`'), inline=True)
 
             embed.add_field(name="‌‌ ", value="‌‌ ", inline=False) #separator
