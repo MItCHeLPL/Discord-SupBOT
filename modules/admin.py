@@ -132,7 +132,7 @@ class Admin(commands.Cog):
             log = file.read()
         
         if log != None:
-            txt = log[log.rfind("[main][__main__]--------SETUP STARTED--------"):] #find newest log header
+            txt = log[log.rfind("[main][on_ready]Logged in as"):] #find newest log header
 
             #4096 - limit of characters in embed description
             #split log into chunks of 4096 characters and send them as separate embeds

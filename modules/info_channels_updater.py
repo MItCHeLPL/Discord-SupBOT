@@ -55,7 +55,7 @@ class InfoChannelsUpdater(commands.Cog):
                         invc_count += len(vc.members)
                 
                     #edit channels
-                    await channel_online.edit(name='🟢Online: ' + str(online_count) + '-' + str(total_count)) 
+                    await channel_online.edit(name='🟢Online: ' + str(online_count) + '/' + str(total_count)) 
                     await channel_invc.edit(name='🎤Na kanałach: ' + str(invc_count))   
                     await channel_bot.edit(name='🤖Bot: ' + str(bot_count))  
 
