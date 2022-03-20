@@ -1,5 +1,5 @@
 {
-    "modules": ["vc_doorman", "global_counter", "reddit", "custom_help", "poll", "other", "ai", "message_handler", "vc_votekick", "tts", "vc_handler", "info_channels_updater", "info", "role_assigner", "soundboard", "admin"
+    "modules": ["vc_doorman", "global_counter", "reddit", "custom_help", "poll", "other", "ai", "message_handler", "vc_votekick", "tts", "vc_handler", "info_channels_updater", "info", "role_assigner", "soundboard", "admin", "archiver"
     ],
     "setting": { 
         "main": {
@@ -44,50 +44,50 @@
             "ttsTld": "pl"
         },
         "vc_handler": {
-            "495666208939573248": { 
+            "12345678910111213": { 
                 "enable_auto_join" : true,
-                "auto_join_vc": "DISCORD_ID_BBSCH_DEFAULT_VC"
+                "auto_join_vc": "DISCORD_ID_SERVER1_DEFAULT_VC"
             },
-            "536251306994827285": { 
+            "12345678910111213": { 
                 "enable_auto_join" : true,
-                "auto_join_vc": "DISCORD_ID_SCAMELOT_DEFAULT_VC"
+                "auto_join_vc": "DISCORD_ID_SERVER2_DEFAULT_VC"
             },
-            "775284221701783582": { 
+            "12345678910111213": { 
                 "enable_auto_join" : true,
-                "auto_join_vc": "DISCORD_ID_WOJTINI_DEFAULT_VC"
+                "auto_join_vc": "DISCORD_ID_SERVER3_DEFAULT_VC"
             },
             "enable_yt_play": false,
             "enable_soundboard_play": true,
             "enable_tts_play": true
         },
         "info_channels_updater": {
-            "495666208939573248": { 
+            "12345678910111213": { 
                 "update_channels": true,
                 "channels": {
-                    "channel_online": "DISCORD_ID_BBSCH_ONLINE",
-                    "channel_in_vc": "DISCORD_ID_BBSCH_INVC",
-                    "channel_bot": "DISCORD_ID_BBSCH_BOT"
+                    "channel_online": "DISCORD_ID_SERVER1_ONLINE",
+                    "channel_in_vc": "DISCORD_ID_SERVER1_INVC",
+                    "channel_bot": "DISCORD_ID_SERVER1_BOT"
                 }
             },
-            "536251306994827285": { 
+            "12345678910111213": { 
                 "update_channels": true,
                 "channels": {
-                    "channel_online": "DISCORD_ID_SCAMELOT_ONLINE",
-                    "channel_in_vc": "DISCORD_ID_SCAMELOT_INVC",
-                    "channel_bot": "DISCORD_ID_SCAMELOT_BOT"
+                    "channel_online": "DISCORD_ID_SERVER2_ONLINE",
+                    "channel_in_vc": "DISCORD_ID_SERVER2_INVC",
+                    "channel_bot": "DISCORD_ID_SERVER2_BOT"
                 }
             }
         },
         "info": {
-            "495666208939573248": { 
+            "12345678910111213": { 
                 "show_info_on_join": true,
                 "show_info_on_leave": true
             },
-            "536251306994827285": { 
+            "12345678910111213": { 
                 "show_info_on_join": true,
                 "show_info_on_leave": true
             },
-            "775284221701783582": { 
+            "12345678910111213": { 
                 "show_info_on_join": true,
                 "show_info_on_leave": true
             },
@@ -98,13 +98,13 @@
             "show_bot_author_info": true
         },
         "role_assigner": {
-            "495666208939573248": { 
+            "12345678910111213": { 
                 "assign_roles": true,
-                "roles": ["DISCORD_ROLE_BBSCH_DJ"]
+                "roles": ["DISCORD_ROLE_SERVER1_ROLE1"]
             },
-            "536251306994827285": { 
+            "12345678910111213": { 
                 "assign_roles": true,
-                "roles": ["DISCORD_ROLE_SCAMELOT_DJ", "DISCORD_ROLE_SCAMELOT_SCAM"]
+                "roles": ["DISCORD_ROLE_SERVER2_ROLE1", "DISCORD_ROLE_SERVER2_ROLE2"]
             }
         },
         "soundboard": {
@@ -114,7 +114,12 @@
             "max_duration": 60
         },
         "admin": {
-            "admin_ids": ["495662595932553216", "276034527044829194"]
+            "admin_ids": ["12345678910111213", "12345678910111213"]
+        },
+        "archiver": {
+            "archive_new_messeges": true,
+            "archive_removed_messeges": true,
+            "archive_channel_id": "12345678910111213"
         }
     },
     "debug": { 
@@ -135,17 +140,18 @@
         "role_assigner": true,
         "soundboard": true,
         "youtube": true,
-        "admin": true
+        "admin": true,
+        "archiver": false
     },
     "audio": {
         "greetings": [
-            "tts_yo.mp3", "czesc.mp3", "eloeloelo.mp3", "hello_there.mp3", "owitam.mp3", "radczesc.mp3", "radczesc.mp3", "radczesc.mp3", "siema.mp3", "siemkaa.mp3", "yczesc.mp3", "witajx3.mp3", "szmitekhalo.mp3", "dziendobrykochamcie.mp3", "tts_jolsap.mp3", "tts_czesc.mp3", "tts_witam.mp3", "tts_dzien_dobry.mp3", "tts_jol.mp3"
+            "1.mp3", "2.mp3", "3.mp3"
         ],
         "farewells": [
-            "tts_yo.mp3", "czesc.mp3", "eloeloelo.mp3", "naura.mp3", "radczesc.mp3", "radczesc.mp3", "radczesc.mp3", "siema.mp3", "siemkaa.mp3", "yczesc.mp3", "adios.mp3","gnight_girl_no_earrape.mp3", "ja_spierdalam.mp3", "tts_jol.mp3", "tts_czesc.mp3", "tts_nara.mp3", "tts_do_widzenia.mp3", "tts_do_uslyszenia.mp3", "tts_zegnam.mp3"
+            "1.mp3", "2.mp3", "3.mp3"
         ],
         "binds": [
-            "alecizajebiekurwa.mp3", "azjatyckimkraju.mp3", "bezkappy.mp3", "billieeilish.mp3", "billieeilish2.mp3", "chrobareeeeeeee.mp3", "chrobarsmiech.mp3", "chybaprzywale.mp3", "chłop.mp3", "cicho.mp3", "daj.mp3", "Daj_daj_daj.mp3", "dredy.mp3", "dudzikkurwa.mp3", "dziwkotaksuówo.mp3", "eloeloelo.mp3", "fajnybober.mp3", "hello_there.mp3", "jarobilemdobrze.mp3", "jazdakurwa.mp3", "katapulty.mp3", "kielbasa.mp3", "kurdystan.mp3", "kurwafirstblood.mp3", "lizaniedupylolxa.mp3", "mialmial.mp3", "misa.mp3", "mlecyk.mp3", "nakiblu.mp3", "nierobtego.mp3", "notaksrednio.mp3", "notykuro.mp3", "oja.mp3", "okurwaalebebol.mp3", "pacha.mp3", "parówa.mp3", "perolewas.mp3", "pogczamp.mp3", "pojemnik.mp3", "polskietango.mp3", "radczesc.mp3", "skurbobrze.mp3", "slazak.mp3", "smiechlolxa.mp3", "smiechlolxa2.mp3", "szmato.mp3", "takodupajakstodoła.mp3", "tuptasz.mp3", "tybobrze.mp3", "wojtekcos.mp3", "wojtekkurewko.mp3", "wojtekmałpalolxhaha.mp3", "wojtekswinia.mp3", "zniszczylbymswiat.mp3"
+            "1.mp3", "2.mp3", "3.mp3"
         ]
     },
     "modulePath": "modules.",

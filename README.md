@@ -86,6 +86,9 @@ Bot is written in **english**, but all messages are in **polish**. Bot was creat
 **RoleAssigner**
 * Bot can assign specific roles for user, when user joins specific server
 
+**Archiver**
+* Archive all text messages in specified text channel
+
 **Debug**
 * Bot can output debug messages to both log file and console
 
