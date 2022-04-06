@@ -22,9 +22,17 @@ class Archiver(commands.Cog):
                 archive_channel = discord.utils.get(self.bot.get_all_channels(), id=int(id)) #get archive channel
 
                 content = "\n◤━━━━━━━━━━━━━━\n"
+                content += "**🟩New message**"
 
                 #source info
-                content += ("**🟩New message** \n__🌐" + message.guild.name + "\n💬" + message.channel.name + "\n👤" + (str(message.author.name) + " #" + str(message.author.discriminator)) + "\n🆕" + str(datetime.datetime.utcnow())[0:-7] +  "__\n\n")
+                if message.guild:
+                    content += "\n__🌐" + message.guild.name
+                    content += "\n💬" + message.channel.name
+                else:
+                    content += "\n__💬Direct Message"
+
+                content += "\n👤" + (str(message.author.name) + " #" + str(message.author.discriminator)) 
+                content += "\n🆕" + str(datetime.datetime.utcnow())[0:-7] +  "__\n\n"
 
                 #text content
                 if message.content != "":
@@ -51,9 +59,18 @@ class Archiver(commands.Cog):
                     archive_channel = discord.utils.get(self.bot.get_all_channels(), id=int(id)) #get archive channel
 
                     content = "\n◤━━━━━━━━━━━━━━\n"
+                    content += "**🟩New removed message**"
 
                     #source info
-                    content += ("**🟥New removed message** \n__🌐" + payload.cached_message.guild.name + "\n💬" + payload.cached_message.channel.name + "\n👤" + (str(payload.cached_message.author.name) + " #" + str(payload.cached_message.author.discriminator)) + "\n🆕" + payload.cached_message.created_at.strftime("%Y-%m-%d %H:%M:%S") + "\n🗑️" + str(datetime.datetime.utcnow())[0:-7] +  "__\n\n")
+                    if payload.cached_message.guild:
+                        content += "\n__🌐" + payload.cached_message.guild.name
+                        content += "\n💬" + payload.cached_message.channel.name
+                    else:
+                        content += "\n__💬Direct Message"
+
+                    content += "\n👤" + (str(payload.cached_message.author.name) + " #" + str(payload.cached_message.author.discriminator)) 
+                    content += "\n🆕" + payload.cached_message.created_at.strftime("%Y-%m-%d %H:%M:%S")
+                    content += "\n🗑️" + str(datetime.datetime.utcnow())[0:-7] +  "__\n\n"
 
                     #text content
                     if payload.cached_message.content != "":
