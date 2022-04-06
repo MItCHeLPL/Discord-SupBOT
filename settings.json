@@ -119,7 +119,7 @@
         "archiver": {
             "archive_new_messeges": true,
             "archive_removed_messeges": true,
-            "archive_channel_id": "12345678910111213"
+            "archive_channel_ids": ["12345678910111213", "12345678910111213"]
         }
     },
     "debug": { 
