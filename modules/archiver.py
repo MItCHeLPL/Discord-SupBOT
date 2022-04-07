@@ -59,7 +59,7 @@ class Archiver(commands.Cog):
                     archive_channel = discord.utils.get(self.bot.get_all_channels(), id=int(id)) #get archive channel
 
                     content = "\n◤━━━━━━━━━━━━━━\n"
-                    content += "**🟩New removed message**"
+                    content += "**🟥New removed message**"
 
                     #source info
                     if payload.cached_message.guild:
