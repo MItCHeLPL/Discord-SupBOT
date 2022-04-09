@@ -35,16 +35,35 @@ class Archiver(commands.Cog):
                 content += "\n🆕" + str(datetime.datetime.utcnow())[0:-7] +  "__\n\n"
 
                 #text content
-                if message.content != "":
-                    content += message.content + "\n"
-
-                #attachment content
-                for attachment in message.attachments:
-                    content += attachment.url + "\n"
+                if message.clean_content != "":
+                    content += message.clean_content + "\n"
 
                 content += "\n"
 
-                await archive_channel.send(content=content)
+                #add attachments as files
+                try:
+                    files = [await f.to_file() for f in message.attachments]
+                except:
+                    #there's no files attached found
+                    files = None
+
+                    #attachment content as text
+                    for attachment in message.attachments:
+                        content += attachment.url + "\n"
+
+                    content += "\n"
+
+                try:
+                    await archive_channel.send(content=content, files=files)
+                except:
+                    #file is too large to send
+                    #attachment content as text
+                    for attachment in message.attachments:
+                        content += attachment.url + "\n"
+
+                    content += "\n"
+
+                    await archive_channel.send(content=content)
 
                 if self.bot.settings["debug"]["archiver"]:
                     print(f'[{str(datetime.datetime.utcnow())[0:-7]}][archiver][on_message]Archived message\n')
@@ -73,8 +92,8 @@ class Archiver(commands.Cog):
                     content += "\n🗑️" + str(datetime.datetime.utcnow())[0:-7] +  "__\n\n"
 
                     #text content
-                    if payload.cached_message.content != "":
-                        content += payload.cached_message.content + "\n"
+                    if payload.cached_message.clean_content != "":
+                        content += payload.cached_message.clean_content + "\n"
 
                     content += "\n"
 
