@@ -10,7 +10,7 @@ from discord_slash import SlashCommand
 Name: SupBOT
 Description: Multi purpose discord bot.
 Author: M!tCHeL
-Version: v2.1.4
+Version: v2.1.5
 """
 
 load_dotenv() #load .env

@@ -76,16 +76,35 @@ class Archiver(commands.Cog):
                     if payload.cached_message.content != "":
                         content += payload.cached_message.content + "\n"
 
-                    #attachment content
-                    for attachment in payload.cached_message.attachments:
-                        content += attachment.url + "\n"
-
                     content += "\n"
 
-                    await archive_channel.send(content=content)
+                    #add attachments as files
+                    try:
+                        files = [await f.to_file() for f in payload.cached_message.attachments]
+                    except:
+                        #there's no files attached found
+                        files = None
+
+                        #attachment content as text
+                        for attachment in payload.cached_message.attachments:
+                            content += attachment.url + "\n"
+
+                        content += "\n"
+
+                    try:
+                        await archive_channel.send(content=content, files=files)
+                    except:
+                        #file is too large to send
+                        #attachment content as text
+                        for attachment in payload.cached_message.attachments:
+                            content += attachment.url + "\n"
+
+                        content += "\n"
+
+                        await archive_channel.send(content=content)
 
                     if self.bot.settings["debug"]["archiver"]:
-                        print(f'[{str(datetime.datetime.utcnow())[0:-7]}][archiver][on_raw_message_delete]Archived removed message\n')
+                            print(f'[{str(datetime.datetime.utcnow())[0:-7]}][archiver][on_raw_message_delete]Archived removed message\n')
 
 def setup(bot):
     bot.add_cog(Archiver(bot))
