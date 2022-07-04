@@ -17,7 +17,7 @@ class Archiver(commands.Cog):
     #any message
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.author.bot is False and self.bot.settings["setting"]["archiver"]["archive_new_messeges"]:
+        if message.author.id is not self.bot.user.id and self.bot.settings["setting"]["archiver"]["archive_new_messeges"]:
             for id in self.bot.settings["setting"]["archiver"]["archive_channel_ids"]:
                 archive_channel = discord.utils.get(self.bot.get_all_channels(), id=int(id)) #get archive channel
 
@@ -73,7 +73,7 @@ class Archiver(commands.Cog):
     @commands.Cog.listener()
     async def on_raw_message_delete(self, payload):
         if payload.cached_message is not None:
-            if payload.cached_message.author.bot is False and self.bot.settings["setting"]["archiver"]["archive_removed_messeges"]:
+            if payload.cached_message.author.id is not self.bot.user.id and self.bot.settings["setting"]["archiver"]["archive_removed_messeges"]:
                 for id in self.bot.settings["setting"]["archiver"]["archive_channel_ids"]:
                     archive_channel = discord.utils.get(self.bot.get_all_channels(), id=int(id)) #get archive channel
 
